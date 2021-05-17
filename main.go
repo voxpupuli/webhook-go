@@ -3,7 +3,7 @@ package main
 import (
     "net/http"
     "github.com/gin-gonic/gin"
-    "github.com/voxpupuli/webhook-go/helpers"
+    "github.com/voxpupuli/webhook-go/helpers/config"
 )
 
 type User struct {
@@ -12,6 +12,11 @@ type User struct {
 }
 
 func main() {
+    config, err := initializeConfig()
+    if err != nil {
+        panic(err)
+    }
+
     router := gin.Default()
 
     router.GET("/heartbeat", func(c *gin.Context) {
@@ -20,17 +25,27 @@ func main() {
         })
     })
 
-    authorized := router.Group("/secrets", gin.BasicAuth(gin.Accounts{
-        "dhollinger": "pass",
+    authorized := router.Group("/api", gin.BasicAuth(gin.Accounts{
+        config.Authentication.Username: config.Authentication.Password,
     }))
-
-    authorized.GET("/test", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "secret": "Now you now the secret!",
-        })
-    })
 
     router.Run()
 }
 
-func initializeConfig() 
+func initializeConfig() (*config.Config, error) {
+    path := config.DefaultConfigPath()
+    config := &config.Config{}
+
+    err := config.ValidateConfigPath(path)
+    if err != nil {
+        return config, err
+    }
+
+    config, err = config.NewConfig(path)
+    if err != nil {
+        return config, err
+    }
+
+    return config, nil
+}
+

@@ -1,4 +1,4 @@
-package helpers
+package config
 
 import (
 	"fmt"
@@ -46,7 +46,7 @@ func ValidateConfigPath(path string) error {
 
 func DefaultConfigPath() string {
     path := os.Getenv("PWH_CONFIG")
-    if path != "" {
+    if path == "" {
         return "/etc/voxpupuli/webhook/config.yml"
     }
 
