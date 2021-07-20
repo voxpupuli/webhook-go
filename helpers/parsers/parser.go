@@ -2,6 +2,7 @@ package parsers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -27,6 +28,18 @@ func (d *Data) ParseData(c *gin.Context) error {
 		if err != nil {
 			return err
 		}
+	case "gitlab":
+		err = d.ParseGitlab(c)
+		if err != nil {
+			return err
+		}
+	case "bitbucket-cloud":
+		err = d.ParseBitbucket(c)
+		if err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf("unsupported version control systems: %s", vcs)
 	}
 
 	return nil
