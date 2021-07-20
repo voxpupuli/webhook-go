@@ -3,19 +3,14 @@ package main
 import (
     "net/http"
     "github.com/gin-gonic/gin"
-    "github.com/voxpupuli/webhook-go/helpers/config"
+    helpers "github.com/voxpupuli/webhook-go/helpers"
 )
 
-type User struct {
-    Username string `json:"username" binding:"required"`
-    Password string `json:"password" binding:"required"` 
-}
-
 func main() {
-    config, err := initializeConfig()
-    if err != nil {
-        panic(err)
-    }
+    //helpers, err := initializeConfig()
+    //if err != nil {
+    //    panic(err)
+    //}
 
     router := gin.Default()
 
@@ -25,23 +20,29 @@ func main() {
         })
     })
 
-    authorized := router.Group("/api", gin.BasicAuth(gin.Accounts{
-        config.Authentication.Username: config.Authentication.Password,
-    }))
+    // authorized := router.Group("/api", gin.BasicAuth(gin.Accounts{
+    //     helpers.Authentication.Username: helpers.Authentication.Password,
+    // }))
+
+    router.GET("/headers", func(c *gin.Context) {
+        c.JSON(http.StatusOK, gin.H{
+            "message": c.Request.Header,
+        })
+    })
 
     router.Run()
 }
 
-func initializeConfig() (*config.Config, error) {
-    path := config.DefaultConfigPath()
-    config := &config.Config{}
+func initializeConfig() (*helpers.Config, error) {
+    path := helpers.DefaultConfigPath()
+    config := &helpers.Config{}
 
-    err := config.ValidateConfigPath(path)
+    err := helpers.ValidateConfigPath(path)
     if err != nil {
         return config, err
     }
 
-    config, err = config.NewConfig(path)
+    config, err = helpers.NewConfig(path)
     if err != nil {
         return config, err
     }
