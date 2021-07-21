@@ -2,43 +2,41 @@ package parsers
 
 import (
 	"fmt"
-	"io/ioutil"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/suhaibmujahid/go-bitbucket-server/bitbucket"
+	bitbucketserver "github.com/go-playground/webhooks/v6/bitbucket-server"
 )
 
 func (d *Data) ParseBitbucketServer(c *gin.Context) error {
-	payload, err := ioutil.ReadAll(c.Request.Body)
+	bh, err := bitbucketserver.New()
 	if err != nil {
 		return err
 	}
-	defer c.Request.Body.Close()
 
-	event, err := bitbucket.ParseWebHook(bitbucket.WebHookType(c.Request), payload)
+	payload, err := bh.Parse(c.Request, bitbucketserver.RepositoryReferenceChangedEvent)
 	if err != nil {
-		return nil
+		return err
 	}
 
-	switch e := event.(type) {
-	case *bitbucket.PushEvent:
-		d.Branch = d.BsParseBranch(e)
-		d.Deleted = d.BitbucketServerDeleted(e)
-		d.ModuleName = e.Repository.Name
-		d.RepoName = e.Repository.Project.Name + "/" + e.Repository.Name
-		d.RepoUser = e.Repository.Project.Name
+	switch p := payload.(type) {
+	case bitbucketserver.RepositoryReferenceChangedPayload:
+		d.Branch = d.BsParseBranch(p)
+		d.Deleted = d.BitbucketServerDeleted(p)
+		d.ModuleName = p.Repository.Name
+		d.RepoName = p.Repository.Project.Name + "/" + p.Repository.Name
+		d.RepoUser = p.Repository.Project.Name
 	default:
-		return fmt.Errorf("unknown event type %s", bitbucket.WebHookType(c.Request))
+		return fmt.Errorf("unknown event type %s", payload)
 	}
 
 	return nil
 }
 
-func (d *Data) BitbucketServerDeleted(c *bitbucket.PushEvent) bool {
+func (d *Data) BitbucketServerDeleted(c bitbucketserver.RepositoryReferenceChangedPayload) bool {
 	return c.Changes[0].Type == "DELETE"
 }
 
-func (d *Data) BsParseBranch(e *bitbucket.PushEvent) string {
-	return strings.ReplaceAll(e.Changes[0].Ref.DisplayID, "refs/heads/", "")
+func (d *Data) BsParseBranch(e bitbucketserver.RepositoryReferenceChangedPayload) string {
+	return strings.ReplaceAll(e.Changes[0].ReferenceID, "refs/heads/", "")
 }

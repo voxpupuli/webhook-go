@@ -43,6 +43,11 @@ func (d *Data) ParseData(c *gin.Context) error {
 		if err != nil {
 			return err
 		}
+	case "azuredevops":
+		err = d.ParseAzureDevops(c)
+		if err != nil {
+			return err
+		}
 	default:
 		return fmt.Errorf("unsupported version control systems: %s", vcs)
 	}
@@ -62,7 +67,7 @@ func (d *Data) ParseHeaders(headers *http.Header) (string, error) {
 			return "bitbucket-server", nil
 		}
 	} else if headers.Get("X-Azure-DevOps") != "" {
-		return "tfs", nil
+		return "azuredevops", nil
 	} else {
 		return "", errors.New("your Webhook provider is not supported")
 	}

@@ -13,10 +13,9 @@ func (d *Data) ParseBitbucket(c *gin.Context) error {
 		return err
 	}
 
-	var event bitbucket.Event
-
-	payload, err := bh.Parse(c.Request, event)
+	payload, err := bh.Parse(c.Request, bitbucket.RepoPushEvent)
 	if err != nil {
+		fmt.Print(err)
 		return err
 	}
 

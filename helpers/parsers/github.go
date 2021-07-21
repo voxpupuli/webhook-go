@@ -27,7 +27,7 @@ func (d *Data) ParseGithub(c *gin.Context) error {
 		d.Deleted = *e.Deleted
 		d.ModuleName = *e.Repo.Name
 		d.RepoName = *e.Repo.FullName
-		d.RepoUser = *e.Repo.Organization
+		d.RepoUser = *e.Repo.Owner.Name
 	default:
 		return fmt.Errorf("unknown event type %s", github.WebHookType(c.Request))
 	}

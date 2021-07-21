@@ -11,7 +11,7 @@ import (
 )
 
 func (d *Data) ParseAzureDevops(c *gin.Context) error {
-	payload, err := ioutil.ReadAll(c.Request.Response.Body)
+	payload, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func (d *Data) ParseAzureDevops(c *gin.Context) error {
 		d.RepoName = *parsed.Repository.Name
 		d.RepoUser = *parsed.Repository.ID
 	default:
-		return fmt.Errorf("unknown event type %s", event.EventType)
+		return fmt.Errorf("unknown event type %v", event.PayloadType)
 	}
 
 	return nil
