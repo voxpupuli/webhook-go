@@ -3,11 +3,9 @@ package parsers
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/go-github/github"
 )
 
 type Data struct {
@@ -15,28 +13,49 @@ type Data struct {
 	Deleted    bool
 	ModuleName string
 	RepoName   string
-	RepoUser   *string
+	RepoUser   string
 }
 
-func ParseData(c *gin.Context) (Data, error) {
-	data := Data{}
-	vcs, err := parseHeaders(&c.Request.Header)
+func (d *Data) ParseData(c *gin.Context) error {
+	vcs, err := d.ParseHeaders(&c.Request.Header)
 	if err != nil {
-		return Data{}, err
+		return err
 	}
 
-	switch {
-	case vcs == "github":
-		data, err = parseGithub(c)
+	switch vcs {
+	case "github":
+		err = d.ParseGithub(c)
 		if err != nil {
-			return Data{}, err
+			return err
 		}
+	case "gitlab":
+		err = d.ParseGitlab(c)
+		if err != nil {
+			return err
+		}
+	case "bitbucket-cloud":
+		err = d.ParseBitbucket(c)
+		if err != nil {
+			return err
+		}
+	case "bitbucket-server":
+		err = d.ParseBitbucketServer(c)
+		if err != nil {
+			return err
+		}
+	case "azuredevops":
+		err = d.ParseAzureDevops(c)
+		if err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf("unsupported version control systems: %s", vcs)
 	}
 
-	return data, nil
+	return nil
 }
 
-func parseHeaders(headers *http.Header) (string, error) {
+func (d *Data) ParseHeaders(headers *http.Header) (string, error) {
 	if headers.Get("X-Github-Event") != "" {
 		return "github", nil
 	} else if headers.Get("X-Gitlab-Event") != "" {
@@ -47,43 +66,11 @@ func parseHeaders(headers *http.Header) (string, error) {
 		} else if headers.Get("X-Request-Id") != "" {
 			return "bitbucket-server", nil
 		}
-	} else if headers.Get("X-Atlassian-Token") != "" {
-		return "stash", nil
 	} else if headers.Get("X-Azure-DevOps") != "" {
-		return "tfs", nil
+		return "azuredevops", nil
 	} else {
 		return "", errors.New("your Webhook provider is not supported")
 	}
 
 	return "", errors.New("couldn't find a valid provider")
-}
-
-func parseGithub(c *gin.Context) (Data, error) {
-	var data Data
-	payload, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		return Data{}, err
-	}
-	defer c.Request.Body.Close()
-
-	gh, err := github.ParseWebHook(github.WebHookType(c.Request), payload)
-	if err != nil {
-		return Data{}, err
-	}
-
-	switch e := gh.(type) {
-	case *github.PushEvent:
-		data = Data{
-			Branch:     *e.Ref,
-			Deleted:    false,
-			ModuleName: *e.Repo.Name,
-			RepoName:   *e.Repo.Name,
-			RepoUser:   e.Repo.Organization,
-		}
-	default:
-		err := fmt.Errorf("unknown event type %s", github.WebHookType(c.Request))
-		return Data{}, err
-	}
-
-	return data, nil
 }
