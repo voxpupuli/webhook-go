@@ -17,7 +17,7 @@ type Data struct {
 }
 
 func (d *Data) ParseData(c *gin.Context) error {
-	vcs, err := d.parseHeaders(&c.Request.Header)
+	vcs, err := d.ParseHeaders(&c.Request.Header)
 	if err != nil {
 		return err
 	}
@@ -38,6 +38,11 @@ func (d *Data) ParseData(c *gin.Context) error {
 		if err != nil {
 			return err
 		}
+	case "bitbucket-server":
+		err = d.ParseBitbucketServer(c)
+		if err != nil {
+			return err
+		}
 	default:
 		return fmt.Errorf("unsupported version control systems: %s", vcs)
 	}
@@ -45,7 +50,7 @@ func (d *Data) ParseData(c *gin.Context) error {
 	return nil
 }
 
-func (d *Data) parseHeaders(headers *http.Header) (string, error) {
+func (d *Data) ParseHeaders(headers *http.Header) (string, error) {
 	if headers.Get("X-Github-Event") != "" {
 		return "github", nil
 	} else if headers.Get("X-Gitlab-Event") != "" {
@@ -56,8 +61,6 @@ func (d *Data) parseHeaders(headers *http.Header) (string, error) {
 		} else if headers.Get("X-Request-Id") != "" {
 			return "bitbucket-server", nil
 		}
-	} else if headers.Get("X-Atlassian-Token") != "" {
-		return "stash", nil
 	} else if headers.Get("X-Azure-DevOps") != "" {
 		return "tfs", nil
 	} else {

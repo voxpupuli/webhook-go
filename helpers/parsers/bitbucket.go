@@ -25,7 +25,7 @@ func (d *Data) ParseBitbucket(c *gin.Context) error {
 		d.Deleted = d.BitbucketDeleted(p)
 
 		if d.Deleted {
-			d.Branch = ""
+			d.Branch = p.Push.Changes[0].Old.Name
 		} else {
 			d.Branch = p.Push.Changes[0].New.Name
 		}

@@ -3,6 +3,7 @@ package parsers
 import (
 	"fmt"
 	"io/ioutil"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/github"
@@ -13,6 +14,7 @@ func (d *Data) ParseGithub(c *gin.Context) error {
 	if err != nil {
 		return err
 	}
+	defer c.Request.Body.Close()
 
 	event, err := github.ParseWebHook(github.WebHookType(c.Request), payload)
 	if err != nil {
@@ -21,7 +23,7 @@ func (d *Data) ParseGithub(c *gin.Context) error {
 
 	switch e := event.(type) {
 	case *github.PushEvent:
-		d.Branch = *e.Ref
+		d.Branch = strings.ReplaceAll(*e.Ref, "refs/heads/", "")
 		d.Deleted = *e.Deleted
 		d.ModuleName = *e.Repo.Name
 		d.RepoName = *e.Repo.FullName
