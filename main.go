@@ -1,15 +1,21 @@
 package main
 
 import (
-	"log"
+	"flag"
+	"fmt"
+	"os"
 
-	"github.com/gin-gonic/gin"
-	"github.com/voxpupuli/webhook-go/api"
-	"github.com/voxpupuli/webhook-go/customerrors"
+	"github.com/voxpupuli/webhook-go/config"
+	"github.com/voxpupuli/webhook-go/server"
 )
 
 func main() {
-	r := api.NewRoutes()
-
-	r.Run(":4000")
+	environment := flag.String("e", "develoment", "")
+	flag.Usage = func() {
+		fmt.Println("Usage: server -e {mode}")
+		os.Exit(1)
+	}
+	flag.Parse()
+	config.Init(*environment)
+	server.Init()
 }

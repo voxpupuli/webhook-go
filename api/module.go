@@ -1,36 +1,33 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"os/exec"
 
 	"github.com/gin-gonic/gin"
-	"github.com/voxpupuli/webhook-go/parsers"
+	"github.com/voxpupuli/webhook-go/lib/parsers"
 )
 
-func (r Routes) addModule(rg *gin.RouterGroup) {
-	module := rg.Group("/module")
+type ModuleController struct{}
 
-	module.POST("/", deployModule)
-}
-
-func deployModule(c *gin.Context) {
+func (m ModuleController) DeployModule(c *gin.Context) {
 	data := parsers.Data{}
 
 	err := data.ParseData(c)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error Parsing Webhook", "error": err})
+		c.Abort()
+		return
 	}
 
 	cmd := exec.Command("r10k", "module", "deploy", data.ModuleName)
 
-	stdout, err := cmd.Output()
-
+	out, err := cmd.Output()
 	if err != nil {
-		fmt.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error deploying module", "error": err})
+		c.Abort()
 		return
 	}
 
-	fmt.Println(string(stdout))
+	c.JSON(http.StatusAccepted, gin.H{"message": out})
 }
