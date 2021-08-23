@@ -3,7 +3,7 @@ package parsers
 import (
 	"fmt"
 	"io/ioutil"
-	"strings"
+	"path"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/github"
@@ -23,7 +23,7 @@ func (d *Data) ParseGithub(c *gin.Context) error {
 
 	switch e := event.(type) {
 	case *github.PushEvent:
-		d.Branch = strings.ReplaceAll(*e.Ref, "refs/heads/", "")
+		d.Branch = path.Base(*e.Ref)
 		d.Deleted = *e.Deleted
 		d.ModuleName = *e.Repo.Name
 		d.RepoName = *e.Repo.FullName

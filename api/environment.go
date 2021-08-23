@@ -11,21 +11,22 @@ import (
 	"github.com/voxpupuli/webhook-go/lib/parsers"
 )
 
-type ModuleController struct{}
+type EnvironmentController struct{}
 
-func (m ModuleController) DeployModule(c *gin.Context) {
+func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	data := parsers.Data{}
-	cmd := exec.Command("r10k", "deploy", "module")
+	cmd := exec.Command("r10k", "deploy", "environment")
 	config := config.GetConfig()
 
 	err := data.ParseData(c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error Parsing Webhook", "error": err})
+		log.Errorf("error parsing webhook: %s", err)
 		c.Abort()
 		return
 	}
 
-	cmd.Args = append(cmd.Args, data.ModuleName)
+	cmd.Args = append(cmd.Args, data.Branch)
 
 	if config.GetBool("verbose") {
 		cmd.Args = append(cmd.Args, "-v")
@@ -41,5 +42,4 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": string(res)})
 	log.Info(fmt.Sprintf("\n%s", string(res)))
-
 }

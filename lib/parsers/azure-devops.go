@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"strings"
+	"path"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mcdafydd/go-azuredevops/azuredevops"
@@ -57,5 +57,5 @@ func (d *Data) AzureDevopsDeleted(e *azuredevops.GitPush) bool {
 }
 
 func (d *Data) ParseBranch(e *azuredevops.GitPush) string {
-	return strings.ReplaceAll(*e.RefUpdates[0].Name, "refs/heads/", "")
+	return path.Base(*e.RefUpdates[0].Name)
 }

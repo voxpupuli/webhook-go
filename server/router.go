@@ -20,6 +20,8 @@ func NewRouter() *gin.Engine {
 		{
 			module := new(wapi.ModuleController)
 			v1.POST("/module", module.DeployModule)
+			environment := new(wapi.EnvironmentController)
+			v1.POST("/environment", environment.DeployEnvironment)
 		}
 	}
 

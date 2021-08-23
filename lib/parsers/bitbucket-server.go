@@ -2,7 +2,7 @@ package parsers
 
 import (
 	"fmt"
-	"strings"
+	"path"
 
 	"github.com/gin-gonic/gin"
 	bitbucketserver "github.com/go-playground/webhooks/v6/bitbucket-server"
@@ -38,5 +38,5 @@ func (d *Data) BitbucketServerDeleted(c bitbucketserver.RepositoryReferenceChang
 }
 
 func (d *Data) BsParseBranch(e bitbucketserver.RepositoryReferenceChangedPayload) string {
-	return strings.ReplaceAll(e.Changes[0].ReferenceID, "refs/heads/", "")
+	return path.Base(e.Changes[0].ReferenceID)
 }
