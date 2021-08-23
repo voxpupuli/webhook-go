@@ -1,10 +1,13 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"os/exec"
 
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+	"github.com/voxpupuli/webhook-go/config"
 	"github.com/voxpupuli/webhook-go/lib/parsers"
 )
 
@@ -12,6 +15,8 @@ type ModuleController struct{}
 
 func (m ModuleController) DeployModule(c *gin.Context) {
 	data := parsers.Data{}
+	cmd := exec.Command("r10k", "deploy", "module")
+	config := config.GetConfig()
 
 	err := data.ParseData(c)
 	if err != nil {
@@ -20,14 +25,21 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 		return
 	}
 
-	cmd := exec.Command("r10k", "module", "deploy", data.ModuleName)
+	cmd.Args = append(cmd.Args, data.ModuleName)
 
-	out, err := cmd.Output()
+	if config.GetBool("verbose") {
+		cmd.Args = append(cmd.Args, "-v")
+	}
+
+	res, err := cmd.CombinedOutput()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error deploying module", "error": err})
+		log.Errorf("cmd.Run() failed with error %s", string(res))
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "error executing command", "error": string(res)})
 		c.Abort()
 		return
 	}
 
-	c.JSON(http.StatusAccepted, gin.H{"message": out})
+	c.JSON(http.StatusOK, gin.H{"message": string(res)})
+	log.Info(fmt.Sprintf("\n%s", string(res)))
+
 }
