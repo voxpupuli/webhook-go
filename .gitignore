@@ -1,2 +1,10 @@
 config.yml
 .tool-versions
+*.zip
+*.tar.xz
+*.tgz
+*.tar.gz
+*.7z
+*.exe
+*.bin
+webhook-go
