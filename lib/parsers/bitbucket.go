@@ -32,6 +32,8 @@ func (d *Data) ParseBitbucket(c *gin.Context) error {
 		d.ModuleName = p.Repository.Name
 		d.RepoName = p.Repository.FullName
 		d.RepoUser = p.Repository.Owner.NickName
+		d.Completed = true
+		d.Succeed = true
 	default:
 		return fmt.Errorf("unknown event type %s", payload)
 	}

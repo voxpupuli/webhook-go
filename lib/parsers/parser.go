@@ -14,6 +14,8 @@ type Data struct {
 	ModuleName string
 	RepoName   string
 	RepoUser   string
+	Completed  bool
+	Succeed    bool
 }
 
 // ParseData will takes in a *gin.Context c and parses webhook data into a Data struct.

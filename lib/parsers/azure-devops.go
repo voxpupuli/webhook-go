@@ -33,6 +33,8 @@ func (d *Data) ParseAzureDevops(c *gin.Context) error {
 		d.ModuleName = *parsed.Repository.Name
 		d.RepoName = *parsed.Repository.Name
 		d.RepoUser = *parsed.Repository.ID
+		d.Completed = true
+		d.Succeed = true
 	default:
 		return fmt.Errorf("unknown event type %v", event.PayloadType)
 	}

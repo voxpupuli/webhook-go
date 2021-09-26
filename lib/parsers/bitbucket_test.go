@@ -33,6 +33,8 @@ func Test_Bitbucket(t *testing.T) {
 		ModuleName: "hello_app",
 		RepoName:   "dhollinger/hello_app",
 		RepoUser:   "dhollinger",
+		Completed:  true,
+		Succeed:    true,
 	}
 
 	assert.NilError(t, err)

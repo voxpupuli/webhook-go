@@ -33,6 +33,8 @@ func Test_ParseBitbucketServer(t *testing.T) {
 		ModuleName: "repository",
 		RepoName:   "project/repository",
 		RepoUser:   "project",
+		Completed:  true,
+		Succeed:    true,
 	}
 	assert.NilError(t, err)
 	assert.Equal(t, d, d_base)

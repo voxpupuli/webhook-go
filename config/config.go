@@ -26,6 +26,10 @@ type Config struct {
 		AllowUppercase bool   `yaml:"allow_uppercase"`
 		Verbose        bool   `yaml:"verbose"`
 	} `yaml:"r10k"`
+	Pipeline struct {
+		Enabled       bool `yaml:"enabled"`
+		DeployOnError bool `yaml:"deploy_on_error"`
+	} `yaml:"pipeline"`
 }
 
 func Init(path string) {
@@ -61,6 +65,8 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("r10k.allow_uppercase", false)
 	v.SetDefault("r10k.prefix", "")
 	v.SetDefault("r10k.verbose", true)
+	v.SetDefault("pipeline.enabled", false)
+	v.SetDefault("pipeline.deploy_on_error", false)
 
 	return v
 }
