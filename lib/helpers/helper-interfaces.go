@@ -9,4 +9,5 @@ type Helpers interface {
 	GetPrefix(data parsers.Data, prefix string) string
 	GetBranch(data parsers.Data, defaultBranch string) string
 	GetEnvironment(branch, prefix string, allowUppercase bool) string
+	GetR10kConfig() string
 }
