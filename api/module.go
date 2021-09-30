@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/voxpupuli/webhook-go/config"
+	"github.com/voxpupuli/webhook-go/lib/helpers"
 	"github.com/voxpupuli/webhook-go/lib/parsers"
 )
 
@@ -15,8 +16,9 @@ type ModuleController struct{}
 
 func (m ModuleController) DeployModule(c *gin.Context) {
 	data := parsers.Data{}
+	h := helpers.Helper{}
 	cmd := exec.Command("r10k", "deploy", "module")
-	conf := config.GetConfig()
+	conf := config.GetConfig().R10k
 
 	err := data.ParseData(c)
 	if err != nil {
@@ -27,7 +29,9 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 
 	cmd.Args = append(cmd.Args, data.ModuleName)
 
-	if conf.GetBool("verbose") {
+	cmd.Args = append(cmd.Args, fmt.Sprintf("-c %s", h.GetR10kConfig()))
+
+	if conf.Verbose {
 		cmd.Args = append(cmd.Args, "-v")
 	}
 
