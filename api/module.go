@@ -16,7 +16,7 @@ type ModuleController struct{}
 func (m ModuleController) DeployModule(c *gin.Context) {
 	data := parsers.Data{}
 	cmd := exec.Command("r10k", "deploy", "module")
-	config := config.GetConfig()
+	conf := config.GetConfig()
 
 	err := data.ParseData(c)
 	if err != nil {
@@ -27,7 +27,7 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 
 	cmd.Args = append(cmd.Args, data.ModuleName)
 
-	if config.GetBool("verbose") {
+	if conf.GetBool("verbose") {
 		cmd.Args = append(cmd.Args, "-v")
 	}
 

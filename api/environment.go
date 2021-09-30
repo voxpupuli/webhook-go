@@ -16,7 +16,7 @@ type EnvironmentController struct{}
 func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	data := parsers.Data{}
 	cmd := exec.Command("r10k", "deploy", "environment")
-	config := config.GetConfig()
+	conf := config.GetConfig()
 
 	err := data.ParseData(c)
 	if err != nil {
@@ -28,7 +28,7 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 
 	cmd.Args = append(cmd.Args, data.Branch)
 
-	if config.GetBool("verbose") {
+	if conf.GetBool("verbose") {
 		cmd.Args = append(cmd.Args, "-v")
 	}
 
