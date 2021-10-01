@@ -1,0 +1,12 @@
+server:
+  protected: false
+  user: puppet
+  password: puppet
+  port: 4000
+chatops:
+  enabled: false
+r10k:
+  config_path: /etc/puppetlabs/r10k/r10k.yaml
+  default_branch: main
+  allow_uppercase: false
+  verbose: true
