@@ -54,6 +54,20 @@ func (_m *Helpers) GetPrefix(data parsers.Data, prefix string) string {
 	return r0
 }
 
+// GetR10kConfig provides a mock function with given fields:
+func (_m *Helpers) GetR10kConfig() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 // Normalize provides a mock function with given fields: allowUpper, str
 func (_m *Helpers) Normalize(allowUpper bool, str string) string {
 	ret := _m.Called(allowUpper, str)

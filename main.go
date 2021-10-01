@@ -10,12 +10,12 @@ import (
 )
 
 func main() {
-	environment := flag.String("e", "develoment", "")
 	flag.Usage = func() {
-		fmt.Println("Usage: server -e {mode}")
+		fmt.Println("Usage: server -c {path}")
 		os.Exit(1)
 	}
+	confPath := flag.String("c", ".", "")
 	flag.Parse()
-	config.Init(*environment)
+	config.Init(*confPath)
 	server.Init()
 }

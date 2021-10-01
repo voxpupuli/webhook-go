@@ -5,7 +5,7 @@ import (
 )
 
 func Init() {
-	config := config.GetConfig()
+	config := config.GetConfig().Server
 	r := NewRouter()
-	r.Run(":" + config.GetString("server.port"))
+	r.Run(":" + config.Port)
 }

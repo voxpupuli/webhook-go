@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/voxpupuli/webhook-go/config"
+	"github.com/voxpupuli/webhook-go/lib/helpers"
 	"github.com/voxpupuli/webhook-go/lib/parsers"
 )
 
@@ -15,8 +16,12 @@ type EnvironmentController struct{}
 
 func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	data := parsers.Data{}
+	h := helpers.Helper{}
 	cmd := exec.Command("r10k", "deploy", "environment")
-	conf := config.GetConfig()
+	conf := config.GetConfig().R10k
+	prefix := h.GetPrefix(data, conf.Prefix)
+	branch := h.GetBranch(data, conf.DefaultBranch)
+	env := h.GetEnvironment(branch, prefix, conf.AllowUppercase)
 
 	err := data.ParseData(c)
 	if err != nil {
@@ -26,9 +31,11 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		return
 	}
 
-	cmd.Args = append(cmd.Args, data.Branch)
+	cmd.Args = append(cmd.Args, env)
 
-	if conf.GetBool("verbose") {
+	cmd.Args = append(cmd.Args, fmt.Sprintf("-c %s", h.GetR10kConfig()))
+
+	if conf.Verbose {
 		cmd.Args = append(cmd.Args, "-v")
 	}
 
