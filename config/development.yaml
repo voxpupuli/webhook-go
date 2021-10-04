@@ -1,6 +1,0 @@
-server:
-  port: 4000
-
-environment: webhook_test
-verbose: true
-

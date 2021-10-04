@@ -33,7 +33,7 @@ func Init(path string) {
 	var config Config
 
 	v := viper.New()
-	v.SetConfigType("yaml")
+	v.SetConfigType("yml")
 	v.SetConfigName("webhook")
 	v.AddConfigPath(path)
 	v.AddConfigPath("/etc/voxpupupli/webhook/")
