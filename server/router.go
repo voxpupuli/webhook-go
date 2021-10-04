@@ -5,6 +5,8 @@ import (
 	wapi "github.com/voxpupuli/webhook-go/api"
 )
 
+// The NewRouter function sets up the main web routes
+// for the Gin API server.
 func NewRouter() *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Logger())
