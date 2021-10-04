@@ -9,6 +9,7 @@ import (
 	"github.com/voxpupuli/webhook-go/server"
 )
 
+// Main function that starts the application
 func main() {
 	flag.Usage = func() {
 		fmt.Println("Usage: server -c {path}")

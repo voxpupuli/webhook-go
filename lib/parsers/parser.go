@@ -16,6 +16,8 @@ type Data struct {
 	RepoUser   string
 }
 
+// ParseData will takes in a *gin.Context c and parses webhook data into a Data struct.
+// This function returns an error if something goes wrong and nil if it completes successfully.
 func (d *Data) ParseData(c *gin.Context) error {
 	vcs, err := d.ParseHeaders(&c.Request.Header)
 	if err != nil {
@@ -55,6 +57,8 @@ func (d *Data) ParseData(c *gin.Context) error {
 	return nil
 }
 
+// ParseHeaders parses the headers and returns a string containing the VCS tool that is making the request.
+// If an unsupported VCS tool makes a request, then an error is returned.
 func (d *Data) ParseHeaders(headers *http.Header) (string, error) {
 	if headers.Get("X-Github-Event") != "" {
 		return "github", nil
