@@ -5,8 +5,7 @@ go 1.16
 require (
 	github.com/gin-gonic/gin v1.7.1
 	github.com/go-playground/webhooks/v6 v6.0.0-beta.3
-	github.com/google/go-github v17.0.0+incompatible
-	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/google/go-github/v39 v39.1.0
 	github.com/mcdafydd/go-azuredevops v0.12.0
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.8.1

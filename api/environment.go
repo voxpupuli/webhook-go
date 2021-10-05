@@ -19,6 +19,7 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	h := helpers.Helper{}
 	cmd := exec.Command("r10k", "deploy", "environment")
 	conf := config.GetConfig().R10k
+	pipelineConf := config.GetConfig().Pipeline
 	prefix := h.GetPrefix(data, conf.Prefix)
 	branch := h.GetBranch(data, conf.DefaultBranch)
 	env := h.GetEnvironment(branch, prefix, conf.AllowUppercase)
@@ -29,6 +30,15 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		log.Errorf("error parsing webhook: %s", err)
 		c.Abort()
 		return
+	}
+
+	if pipelineConf.Enabled {
+		if err := h.CheckPipelineStatus(data, pipelineConf.DeployOnError); err != nil {
+			c.JSON(http.StatusAccepted, gin.H{"message": fmt.Sprintf("%v", err)})
+			log.Debug(fmt.Sprintf("%v", err))
+			c.Abort()
+			return
+		}
 	}
 
 	cmd.Args = append(cmd.Args, env)

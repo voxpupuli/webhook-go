@@ -29,6 +29,8 @@ func Test_ParseAzureDevops(t *testing.T) {
 		ModuleName: "Fabrikam-Fiber-Git",
 		RepoName:   "Fabrikam-Fiber-Git",
 		RepoUser:   "278d5cd2-584d-4b63-824a-2ba458937249",
+		Completed:  true,
+		Succeed:    true,
 	}
 	assert.NilError(t, err)
 	assert.Equal(t, d, d_base)

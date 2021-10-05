@@ -38,6 +38,9 @@ r10k:
   default_branch: main
   allow_uppercase: false
   verbose: true
+pipeline:
+  enabled: false
+  deploy_on_error: false
 ```
 
 ### Server options
@@ -101,3 +104,23 @@ Default: `false`
 Type: bool
 Description: Log verbose output when running the r10k command
 Default: `true`
+
+### Pipeline Options
+
+#### `enabled`
+
+Type: bool
+
+Description: Whether to enable handling of Workflow/Pipeline events
+(Only available for Github/Gitlab)
+
+Default: `false`
+
+#### `deploy_on_error`
+
+Type: bool
+
+Description: Allow deployments even if the CI pipeline has failed. 
+To be used with Workflow/Pipeline events 
+
+Default: `false`

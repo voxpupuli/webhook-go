@@ -19,12 +19,22 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 	h := helpers.Helper{}
 	cmd := exec.Command("r10k", "deploy", "module")
 	conf := config.GetConfig().R10k
+	pipelineConf := config.GetConfig().Pipeline
 
 	err := data.ParseData(c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error Parsing Webhook", "error": err})
 		c.Abort()
 		return
+	}
+
+	if pipelineConf.Enabled {
+		if err := h.CheckPipelineStatus(data, pipelineConf.DeployOnError); err != nil {
+			c.JSON(http.StatusAccepted, gin.H{"message": fmt.Sprintf("%v", err)})
+			log.Debug(fmt.Sprintf("%v", err))
+			c.Abort()
+			return
+		}
 	}
 
 	cmd.Args = append(cmd.Args, data.ModuleName)
@@ -45,5 +55,4 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": string(res)})
 	log.Info(fmt.Sprintf("\n%s", string(res)))
-
 }

@@ -1,0 +1,94 @@
+{
+  "object_kind": "pipeline",
+  "object_attributes": {
+    "id": 364,
+    "ref": "master",
+    "tag": false,
+    "sha": "12787b2314bc7212e7f6bbfab8a461897ca67920",
+    "before_sha": "5e17b1fb4ff67e244e9a017fe8e75b307c543390",
+    "source": "push",
+    "status": "success",
+    "detailed_status": "passed",
+    "stages": [
+      "build"
+    ],
+    "created_at": "2021-08-30 19:52:21 UTC",
+    "finished_at": "2021-10-04 20:42:58 UTC",
+    "duration": 42,
+    "queued_duration": null,
+    "variables": [
+
+    ]
+  },
+  "merge_request": null,
+  "user": {
+    "id": 17,
+    "name": "Test Guy",
+    "username": "meow",
+    "avatar_url": "https://secure.gravatar.com/avatar/af5fa6ec1610f4f170f1cad95a83aeef?s=80&d=identicon",
+    "email": "test@test.com"
+  },
+  "project": {
+    "id": 15,
+    "name": "webhook-test",
+    "description": "",
+    "web_url": "https://gitlab.com/meow/webhook-test",
+    "avatar_url": null,
+    "git_ssh_url": "git@gitlab.com:meow/webhook-test.git",
+    "git_http_url": "https://gitlab.com/meow/webhook-test.git",
+    "namespace": "meow",
+    "visibility_level": 0,
+    "path_with_namespace": "meow/webhook-test",
+    "default_branch": "master",
+    "ci_config_path": null
+  },
+  "commit": {
+    "id": "12787b2314bc7212e7f6bbfab8a461897ca67920",
+    "message": "meow",
+    "title": "meow",
+    "timestamp": "2021-08-30T19:52:20+00:00",
+    "url": "https://gitlab.com/meow/webhook-test/-/commit/12787b2314bc7212e7f6bbfab8a461897ca67920",
+    "author": {
+      "name": "Test Guy",
+      "email": "test@test.com"
+    }
+  },
+  "builds": [
+    {
+      "id": 574,
+      "stage": "build",
+      "name": "build",
+      "status": "success",
+      "created_at": "2021-10-04 20:42:12 UTC",
+      "started_at": "2021-10-04 20:42:16 UTC",
+      "finished_at": "2021-10-04 20:42:58 UTC",
+      "duration": 42.214332,
+      "queued_duration": 4.031463,
+      "when": "on_success",
+      "manual": false,
+      "allow_failure": false,
+      "user": {
+        "id": 17,
+        "name": "Test Guy",
+        "username": "meow",
+        "avatar_url": "https://secure.gravatar.com/avatar/af5fa6ec1610f4f170f1cad95a83aeef?s=80&d=identicon",
+        "email": "test@test.com"
+      },
+      "runner": {
+        "id": 6,
+        "description": "test",
+        "runner_type": "instance_type",
+        "active": true,
+        "is_shared": true,
+        "tags": [
+
+        ]
+      },
+      "artifacts_file": {
+        "filename": null,
+        "size": null
+      },
+      "environment": null
+    }
+  ]
+}
