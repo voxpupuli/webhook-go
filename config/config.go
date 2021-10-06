@@ -34,7 +34,6 @@ type Config struct {
 
 func Init(path string) {
 	var err error
-	var config Config
 
 	v := viper.New()
 	v.SetConfigType("yml")
