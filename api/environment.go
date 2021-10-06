@@ -20,9 +20,6 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	cmd := exec.Command("r10k", "deploy", "environment")
 	conf := config.GetConfig().R10k
 	pipelineConf := config.GetConfig().Pipeline
-	prefix := h.GetPrefix(data, conf.Prefix)
-	branch := h.GetBranch(data, conf.DefaultBranch)
-	env := h.GetEnvironment(branch, prefix, conf.AllowUppercase)
 
 	err := data.ParseData(c)
 	if err != nil {
@@ -31,6 +28,9 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		c.Abort()
 		return
 	}
+	prefix := h.GetPrefix(data, conf.Prefix)
+	branch := h.GetBranch(data, conf.DefaultBranch)
+	env := h.GetEnvironment(branch, prefix, conf.AllowUppercase)
 
 	if pipelineConf.Enabled {
 		if err := h.CheckPipelineStatus(data, pipelineConf.DeployOnError); err != nil {
