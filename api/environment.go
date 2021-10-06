@@ -42,8 +42,7 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	}
 
 	cmd.Args = append(cmd.Args, env)
-
-	cmd.Args = append(cmd.Args, fmt.Sprintf("-c %s", h.GetR10kConfig()))
+	cmd.Args = append(cmd.Args, fmt.Sprintf("--config=%s", h.GetR10kConfig()))
 
 	if conf.Verbose {
 		cmd.Args = append(cmd.Args, "-v")
