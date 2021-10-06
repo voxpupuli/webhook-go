@@ -38,8 +38,7 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 	}
 
 	cmd.Args = append(cmd.Args, data.ModuleName)
-
-	cmd.Args = append(cmd.Args, fmt.Sprintf("-c %s", h.GetR10kConfig()))
+	cmd.Args = append(cmd.Args, fmt.Sprintf("--config=%s", h.GetR10kConfig()))
 
 	if conf.Verbose {
 		cmd.Args = append(cmd.Args, "-v")
