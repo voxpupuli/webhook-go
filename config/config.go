@@ -13,7 +13,7 @@ type Config struct {
 	Server struct {
 		Protected bool   `yaml:"protected"`
 		User      string `yaml:"user"`
-		Passsword string `yaml:"password"`
+		Password  string `yaml:"password"`
 		Port      string `yaml:"port,int"`
 	} `yaml:"server"`
 	ChatOps struct {
@@ -39,7 +39,7 @@ func Init(path string) {
 	v.SetConfigType("yml")
 	v.SetConfigName("webhook")
 	v.AddConfigPath(path)
-	v.AddConfigPath("/etc/voxpupupli/webhook/")
+	v.AddConfigPath("/etc/voxpupuli/webhook/")
 	v.AddConfigPath("../config/")
 	v.AddConfigPath("config/")
 	err = v.ReadInConfig()
