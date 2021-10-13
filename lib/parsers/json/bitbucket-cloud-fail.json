@@ -1,0 +1,50 @@
+{
+  "actor": "user",
+  "repository": "respository",
+  "changes": {
+    "name": {
+      "new": "repository",
+      "old": "repository_name"
+    },
+    "website": {
+      "new": "http://www.example.com/",
+      "old": ""
+    },
+    "language": {
+      "new": "java",
+      "old": ""
+    },
+    "links": {
+      "new": {
+        "avatar": {
+          "href": "https://bitbucket.org/teamawesome/repository/avatar/32/"
+        },
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/repositories/teamawesome/repository"
+        },
+        "html": {
+          "href": "https://bitbucket.org/teamawesome/repository"
+        }
+      },
+      "old": {
+        "avatar": {
+          "href": "https://bitbucket.org/teamawesome/repository_name/avatar/32/"
+        },
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/repositories/teamawesome/repository_name"
+        },
+        "html": {
+          "href": "https://bitbucket.org/teamawesome/repository_name"
+        }
+      }
+    },
+    "description": {
+      "new": "This is a better description.",
+      "old": "This is a description."
+    },
+    "full_name": {
+      "new": "teamawesome/repository",
+      "old": "teamawesome/repository_name"
+    }
+  }
+}
