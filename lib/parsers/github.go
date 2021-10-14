@@ -9,7 +9,7 @@ import (
 	"github.com/google/go-github/v39/github"
 )
 
-func (d *Data) ParseGithub(c *gin.Context) error {
+func (d *Data) parseGithub(c *gin.Context) error {
 	payload, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		return err

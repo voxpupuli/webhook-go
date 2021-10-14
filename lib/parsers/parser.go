@@ -28,27 +28,27 @@ func (d *Data) ParseData(c *gin.Context) error {
 
 	switch vcs {
 	case "github":
-		err = d.ParseGithub(c)
+		err = d.parseGithub(c)
 		if err != nil {
 			return err
 		}
 	case "gitlab":
-		err = d.ParseGitlab(c)
+		err = d.parseGitlab(c)
 		if err != nil {
 			return err
 		}
 	case "bitbucket-cloud":
-		err = d.ParseBitbucket(c)
+		err = d.parseBitbucket(c)
 		if err != nil {
 			return err
 		}
 	case "bitbucket-server":
-		err = d.ParseBitbucketServer(c)
+		err = d.parseBitbucketServer(c)
 		if err != nil {
 			return err
 		}
 	case "azuredevops":
-		err = d.ParseAzureDevops(c)
+		err = d.parseAzureDevops(c)
 		if err != nil {
 			return err
 		}
