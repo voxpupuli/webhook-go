@@ -7,7 +7,7 @@ import (
 	"github.com/go-playground/webhooks/v6/bitbucket"
 )
 
-func (d *Data) ParseBitbucket(c *gin.Context) error {
+func (d *Data) parseBitbucket(c *gin.Context) error {
 	bh, err := bitbucket.New()
 	if err != nil {
 		return err
@@ -21,7 +21,7 @@ func (d *Data) ParseBitbucket(c *gin.Context) error {
 
 	switch p := payload.(type) {
 	case bitbucket.RepoPushPayload:
-		d.Deleted = d.BitbucketDeleted(p)
+		d.Deleted = d.bitbucketDeleted(p)
 
 		if d.Deleted {
 			d.Branch = p.Push.Changes[0].Old.Name
@@ -41,6 +41,6 @@ func (d *Data) ParseBitbucket(c *gin.Context) error {
 	return nil
 }
 
-func (d *Data) BitbucketDeleted(b bitbucket.RepoPushPayload) bool {
+func (d *Data) bitbucketDeleted(b bitbucket.RepoPushPayload) bool {
 	return b.Push.Changes[0].Closed
 }

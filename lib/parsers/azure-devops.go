@@ -10,7 +10,7 @@ import (
 	"github.com/mcdafydd/go-azuredevops/azuredevops"
 )
 
-func (d *Data) ParseAzureDevops(c *gin.Context) error {
+func (d *Data) parseAzureDevops(c *gin.Context) error {
 	payload, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		return err
@@ -24,12 +24,12 @@ func (d *Data) ParseAzureDevops(c *gin.Context) error {
 
 	switch event.PayloadType {
 	case azuredevops.PushEvent:
-		parsed, err := d.ParseRawResource(event)
+		parsed, err := d.parseRawResource(event)
 		if err != nil {
 			return err
 		}
-		d.Branch = d.ParseBranch(parsed)
-		d.Deleted = d.AzureDevopsDeleted(parsed)
+		d.Branch = d.parseBranch(parsed)
+		d.Deleted = d.azureDevopsDeleted(parsed)
 		d.ModuleName = *parsed.Repository.Name
 		d.RepoName = *parsed.Repository.Name
 		d.RepoUser = *parsed.Repository.ID
@@ -42,7 +42,7 @@ func (d *Data) ParseAzureDevops(c *gin.Context) error {
 	return nil
 }
 
-func (d *Data) ParseRawResource(e *azuredevops.Event) (payload *azuredevops.GitPush, err error) {
+func (d *Data) parseRawResource(e *azuredevops.Event) (payload *azuredevops.GitPush, err error) {
 	payload = &azuredevops.GitPush{}
 
 	err = json.Unmarshal(e.RawPayload, &payload)
@@ -54,10 +54,10 @@ func (d *Data) ParseRawResource(e *azuredevops.Event) (payload *azuredevops.GitP
 	return payload, nil
 }
 
-func (d *Data) AzureDevopsDeleted(e *azuredevops.GitPush) bool {
+func (d *Data) azureDevopsDeleted(e *azuredevops.GitPush) bool {
 	return *e.RefUpdates[0].NewObjectID == "0000000000000000000000000000000000000000"
 }
 
-func (d *Data) ParseBranch(e *azuredevops.GitPush) string {
+func (d *Data) parseBranch(e *azuredevops.GitPush) string {
 	return path.Base(*e.RefUpdates[0].Name)
 }

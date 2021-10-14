@@ -9,7 +9,7 @@ import (
 	"github.com/xanzy/go-gitlab"
 )
 
-func (d *Data) ParseGitlab(c *gin.Context) error {
+func (d *Data) parseGitlab(c *gin.Context) error {
 	payload, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		return err
@@ -23,7 +23,7 @@ func (d *Data) ParseGitlab(c *gin.Context) error {
 	switch e := event.(type) {
 	case *gitlab.PushEvent:
 		d.Branch = path.Base(e.Ref)
-		d.Deleted = d.GitlabDeleted(e.After)
+		d.Deleted = d.gitlabDeleted(e.After)
 		d.ModuleName = e.Project.Name
 		d.RepoName = e.Project.PathWithNamespace
 		d.RepoUser = e.Project.Namespace
@@ -31,7 +31,7 @@ func (d *Data) ParseGitlab(c *gin.Context) error {
 		d.Succeed = true
 	case *gitlab.PipelineEvent:
 		d.Branch = e.ObjectAttributes.Ref
-		d.Deleted = d.GitlabDeleted(e.ObjectAttributes.SHA)
+		d.Deleted = d.gitlabDeleted(e.ObjectAttributes.SHA)
 		d.ModuleName = e.Project.Name
 		d.RepoName = e.Project.PathWithNamespace
 		d.RepoUser = e.Project.Namespace
@@ -44,6 +44,6 @@ func (d *Data) ParseGitlab(c *gin.Context) error {
 	return nil
 }
 
-func (d *Data) GitlabDeleted(after string) bool {
+func (d *Data) gitlabDeleted(after string) bool {
 	return after == "0000000000000000000000000000000000000000"
 }

@@ -1,12 +1,13 @@
 package parsers
 
 import (
-	"gotest.tools/assert"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"os"
 	"testing"
+
+	"gotest.tools/assert"
 
 	"github.com/gin-gonic/gin"
 )
@@ -404,6 +405,25 @@ func Test_ParseData(t *testing.T) {
 			}
 			assert.NilError(t, err)
 			assert.Equal(t, d, d_base)
+		})
+		t.Run("Failed to parse", func(t *testing.T) {
+			d := Data{}
+
+			header := []Header{
+				{
+					Name:  "X-Github-Event",
+					Value: "fork",
+				},
+			}
+
+			c, _, err := getGinContext("./json/github/fork.json", header)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			err = d.ParseData(c)
+			assert.Error(t, err, "unknown event type fork")
+
 		})
 	})
 }

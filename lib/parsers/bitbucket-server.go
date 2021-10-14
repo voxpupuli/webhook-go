@@ -8,7 +8,7 @@ import (
 	bitbucketserver "github.com/go-playground/webhooks/v6/bitbucket-server"
 )
 
-func (d *Data) ParseBitbucketServer(c *gin.Context) error {
+func (d *Data) parseBitbucketServer(c *gin.Context) error {
 	bh, err := bitbucketserver.New()
 	if err != nil {
 		return err
@@ -21,8 +21,8 @@ func (d *Data) ParseBitbucketServer(c *gin.Context) error {
 
 	switch p := payload.(type) {
 	case bitbucketserver.RepositoryReferenceChangedPayload:
-		d.Branch = d.BsParseBranch(p)
-		d.Deleted = d.BitbucketServerDeleted(p)
+		d.Branch = d.bsParseBranch(p)
+		d.Deleted = d.bitbucketServerDeleted(p)
 		d.ModuleName = p.Repository.Name
 		d.RepoName = p.Repository.Project.Name + "/" + p.Repository.Name
 		d.RepoUser = p.Repository.Project.Name
@@ -35,10 +35,10 @@ func (d *Data) ParseBitbucketServer(c *gin.Context) error {
 	return nil
 }
 
-func (d *Data) BitbucketServerDeleted(c bitbucketserver.RepositoryReferenceChangedPayload) bool {
+func (d *Data) bitbucketServerDeleted(c bitbucketserver.RepositoryReferenceChangedPayload) bool {
 	return c.Changes[0].Type == "DELETE"
 }
 
-func (d *Data) BsParseBranch(e bitbucketserver.RepositoryReferenceChangedPayload) string {
+func (d *Data) bsParseBranch(e bitbucketserver.RepositoryReferenceChangedPayload) string {
 	return path.Base(e.Changes[0].ReferenceID)
 }
