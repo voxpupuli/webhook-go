@@ -69,6 +69,24 @@ Type: int64
 Description: Port to run the server on. Optional.
 Default: `4000`
 
+#### `tls_enabled`
+
+Type: bool
+Description: Enforces TLS with http server
+Default: `false`
+
+#### `tls_certificate`
+
+Type: string
+Description: Full path to certificate file. Optional.
+Default: `nil`
+
+#### `tls_key`
+
+Type: string
+Description: Full path to key file. Optional.
+Default: `nil`
+
 ### ChatOps options
 
 Currently not used.

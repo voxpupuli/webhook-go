@@ -11,10 +11,13 @@ var config Config
 
 type Config struct {
 	Server struct {
-		Protected bool   `yaml:"protected"`
-		User      string `yaml:"user"`
-		Password  string `yaml:"password"`
-		Port      string `yaml:"port,int"`
+		Protected  bool   `yaml:"protected"`
+		User       string `yaml:"user"`
+		Password   string `yaml:"password"`
+		Port       string `yaml:"port,int"`
+		TLSEnabled bool   `mapstructure:"tls_enabled"`
+		TLSCert    string `mapstructure:"tls_certificate"`
+		TLSKey     string `mapstructure:"tls_key"`
 	} `yaml:"server"`
 	ChatOps struct {
 		Enabled bool `yaml:"enabled"`
@@ -58,6 +61,7 @@ func Init(path string) {
 func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("server.port", 4000)
 	v.SetDefault("server.protected", false)
+	v.SetDefault("server.tls_enabled", false)
 	v.SetDefault("chatops.enabled", false)
 	v.SetDefault("r10k.config_path", "/etc/puppetlabs/r10k/r10k.yaml")
 	v.SetDefault("r10k.default_branch", "master")
