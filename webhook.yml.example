@@ -3,6 +3,10 @@ server:
   user: puppet
   password: puppet
   port: 4000
+  tls:
+    enabled: false
+    certificate: ""
+    key: ""
 chatops:
   enabled: false
 r10k:

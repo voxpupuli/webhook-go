@@ -31,6 +31,10 @@ server:
   user: puppet
   password: puppet
   port: 4000
+  tls:
+    enabled: false
+    certificate: "/path/to/tls/certificate"
+    key: "/path/to/tls/key"
 chatops:
   enabled: false
 r10k:
@@ -69,19 +73,24 @@ Type: int64
 Description: Port to run the server on. Optional.
 Default: `4000`
 
-#### `tls_enabled`
+#### `tls`
+
+Type: struct
+Description: Struct containing server TLS options
+
+##### `enabled`
 
 Type: bool
 Description: Enforces TLS with http server
 Default: `false`
 
-#### `tls_certificate`
+##### `certificate`
 
 Type: string
 Description: Full path to certificate file. Optional.
 Default: `nil`
 
-#### `tls_key`
+##### `key`
 
 Type: string
 Description: Full path to key file. Optional.

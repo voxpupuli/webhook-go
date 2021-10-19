@@ -11,13 +11,15 @@ var config Config
 
 type Config struct {
 	Server struct {
-		Protected  bool   `yaml:"protected"`
-		User       string `yaml:"user"`
-		Password   string `yaml:"password"`
-		Port       string `yaml:"port,int"`
-		TLSEnabled bool   `mapstructure:"tls_enabled"`
-		TLSCert    string `mapstructure:"tls_certificate"`
-		TLSKey     string `mapstructure:"tls_key"`
+		Protected bool   `yaml:"protected"`
+		User      string `yaml:"user"`
+		Password  string `yaml:"password"`
+		Port      string `yaml:"port,int"`
+		TLS       struct {
+			Enabled     bool   `yaml:"enabled"`
+			Certificate string `yaml:"certificate"`
+			Key         string `yaml:"key"`
+		} `yaml:"tls"`
 	} `yaml:"server"`
 	ChatOps struct {
 		Enabled bool `yaml:"enabled"`
