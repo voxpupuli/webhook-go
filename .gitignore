@@ -8,3 +8,4 @@ config.yml
 *.exe
 *.bin
 webhook-go
+webhook.yml

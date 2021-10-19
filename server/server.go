@@ -8,8 +8,8 @@ import (
 func Init() {
 	config := config.GetConfig().Server
 	r := NewRouter()
-	if config.TLSEnabled {
-		r.RunTLS(":" + config.Port, config.TLSCert, config.TLSKey)
+	if config.TLS.Enabled {
+		r.RunTLS(":"+config.Port, config.TLS.Certificate, config.TLS.Key)
 	} else {
 		r.Run(":" + config.Port)
 	}
