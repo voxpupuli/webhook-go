@@ -8,5 +8,9 @@ import (
 func Init() {
 	config := config.GetConfig().Server
 	r := NewRouter()
-	r.Run(":" + config.Port)
+	if config.TLSEnabled {
+		r.RunTLS(":" + config.Port, config.TLSCert, config.TLSKey)
+	} else {
+		r.Run(":" + config.Port)
+	}
 }
