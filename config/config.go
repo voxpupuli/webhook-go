@@ -11,30 +11,30 @@ var config Config
 
 type Config struct {
 	Server struct {
-		Protected bool   `yaml:"protected"`
-		User      string `yaml:"user"`
-		Password  string `yaml:"password"`
-		Port      string `yaml:"port,int"`
+		Protected bool   `mapstructure:"protected"`
+		User      string `mapstructure:"user"`
+		Password  string `mapstructure:"password"`
+		Port      string `mapstructure:"port,int"`
 		TLS       struct {
-			Enabled     bool   `yaml:"enabled"`
-			Certificate string `yaml:"certificate"`
-			Key         string `yaml:"key"`
-		} `yaml:"tls"`
-	} `yaml:"server"`
+			Enabled     bool   `mapstructure:"enabled"`
+			Certificate string `mapstructure:"certificate"`
+			Key         string `mapstructure:"key"`
+		} `mapstructure:"tls"`
+	} `mapstructure:"server"`
 	ChatOps struct {
-		Enabled bool `yaml:"enabled"`
-	} `yaml:"chatops"`
+		Enabled bool `mapstructure:"enabled"`
+	} `mapstructure:"chatops"`
 	R10k struct {
-		ConfigPath     string `yaml:"config_path"`
-		DefaultBranch  string `yaml:"default_branch"`
-		Prefix         string `yaml:"prefix"`
-		AllowUppercase bool   `yaml:"allow_uppercase"`
-		Verbose        bool   `yaml:"verbose"`
-	} `yaml:"r10k"`
+		ConfigPath     string `mapstructure:"config_path"`
+		DefaultBranch  string `mapstructure:"default_branch"`
+		Prefix         string `mapstructure:"prefix"`
+		AllowUppercase bool   `mapstructure:"allow_uppercase"`
+		Verbose        bool   `mapstructure:"verbose"`
+	} `mapstructure:"r10k"`
 	Pipeline struct {
-		Enabled       bool `yaml:"enabled"`
-		DeployOnError bool `yaml:"deploy_on_error"`
-	} `yaml:"pipeline"`
+		Enabled       bool `mapstructure:"enabled"`
+		DeployOnError bool `mapstructure:"deploy_on_error"`
+	} `mapstructure:"pipeline"`
 }
 
 func Init(path string) {
