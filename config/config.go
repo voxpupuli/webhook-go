@@ -22,7 +22,12 @@ type Config struct {
 		} `mapstructure:"tls"`
 	} `mapstructure:"server"`
 	ChatOps struct {
-		Enabled bool `mapstructure:"enabled"`
+		Enabled   bool   `mapstructure:"enabled"`
+		Service   string `mapstructure:"service"`
+		Channel   string `mapstructure:"channel"`
+		User      string `mapstructure:"user"`
+		AuthToken string `mapstructure:"auth_token"`
+		ServerUri string `mapstructure:"server_uri"`
 	} `mapstructure:"chatops"`
 	R10k struct {
 		ConfigPath     string `mapstructure:"config_path"`
