@@ -37,6 +37,11 @@ server:
     key: "/path/to/tls/key"
 chatops:
   enabled: false
+  service: slack
+  channel: "#general"
+  user: r10kbot
+  auth_token: 12345
+  server_uri: "https://rocketchat.local"
 r10k:
   config_path: /etc/puppetlabs/r10k/r10k.yaml
   default_branch: main
@@ -98,7 +103,7 @@ Default: `nil`
 
 ### ChatOps options
 
-Currently not used.
+API exists, but is not implemented yet
 
 ### r10k options
 
