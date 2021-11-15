@@ -4,7 +4,7 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func (c *ChatOps) slack(code, target string) (*string, *string, error) {
+func (c *ChatOps) slack(code int, target string) (*string, *string, error) {
 	sapi := slack.New(c.AuthToken)
 
 	msg := c.formatMessage(code, target)
