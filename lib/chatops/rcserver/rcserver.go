@@ -1,4 +1,4 @@
-package server
+package rcserver
 
 import (
 	"encoding/json"
@@ -31,7 +31,7 @@ func New() *MockRocketChat {
 
 func mockServer() *httptest.Server {
 	handler := http.NewServeMux()
-	handler.HandleFunc("/chat.postMessage", handlePostMessage)
+	handler.HandleFunc("api/v1/chat.postMessage", handlePostMessage)
 
 	return httptest.NewServer(handler)
 }

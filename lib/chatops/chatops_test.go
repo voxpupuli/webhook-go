@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/proclaim/mock-slack/server"
-	// rcserver "github.com/voxpupuli/webhook-go/lib/chatops/rocketchat-mock/server"
 )
 
 func Test_PostMessage(t *testing.T) {
@@ -40,8 +39,19 @@ func Test_PostMessage(t *testing.T) {
 			assert.Equal(t, mockServer.Received.Attachment[0].Color, "red")
 			assert.Equal(t, mockServer.Received.Attachment[0].Text, "Failed to deploy main")
 		})
-		// t.Run("RocketChat", func(t *testing.T) {
-		// 	mockServer := rcserver.New()
-		// })
+		t.Run("RocketChat", func(t *testing.T) {
+			c := ChatOps{
+				Service:   "rocketchat",
+				Channel:   "#general",
+				User:      "echo1",
+				AuthToken: "12345",
+				TestMode:  true,
+			}
+
+			_, err := c.PostMessage(202, "main")
+
+			assert.Error(t, err, "A ServerURI must be specified to use RocketChat")
+
+		})
 	})
 }
