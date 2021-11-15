@@ -5,7 +5,12 @@ import (
 )
 
 func (c *ChatOps) slack(code int, target string) (*string, *string, error) {
-	sapi := slack.New(c.AuthToken)
+	var sapi *slack.Client
+	if c.TestMode {
+		sapi = slack.New(c.AuthToken, slack.OptionAPIURL(*c.TestURL+"/"))
+	} else {
+		sapi = slack.New(c.AuthToken)
+	}
 
 	msg := c.formatMessage(code, target)
 	attachment := slack.Attachment{
