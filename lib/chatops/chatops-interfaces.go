@@ -5,7 +5,7 @@ import (
 )
 
 type ChatOpsInterface interface {
-	PostMessage(code, target string) (*ChatOpsResponse, error)
-	slack(code, target string) (*string, *string, error)
-	rocketChat(code, target string) (*chat.PostMessageResponse, error)
+	PostMessage(code int, target string) (*ChatOpsResponse, error)
+	slack(code int, target string) (*string, *string, error)
+	rocketChat(code int, target string) (*chat.PostMessageResponse, error)
 }

@@ -2,28 +2,42 @@ package chatops
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/proclaim/mock-slack/server"
 )
 
 func Test_PostMessage(t *testing.T) {
-	// t.Run("ChatOps Message Post", func(t *testing.T) {
-	// 	t.Run("Slack", func(t *testing.T) {
-	// 		s := slacktest.NewTestServer()
+	t.Run("ChatOps Message Post", func(t *testing.T) {
+		t.Run("Slack", func(t *testing.T) {
+			mockServer := server.New()
+			c := ChatOps{
+				Service:   "slack",
+				Channel:   "#general",
+				User:      "echo1",
+				AuthToken: "12345",
+				TestMode:  true,
+				TestURL:   &mockServer.Server.URL,
+			}
 
-	// 		c := ChatOps{
-	// 			Service:   "slack",
-	// 			Channel:   "#general",
-	// 			User:      "r10kbot",
-	// 			AuthToken: "12345",
-	// 		}
+			resp, err := c.PostMessage(202, "main")
 
-	// 		s.SetBotName(c.User)
-	// 		s.Start()
+			assert.NoError(t, err, "should not error")
+			assert.Equal(t, resp.Channel, c.Channel, "channel should be correct")
+			assert.NotEmpty(t, resp.Timestamp, "timestamp should not be empty")
 
-	// 		slack.OptionAPIURL(fmt.Sprintf("http://%s/", s.ServerAddr))
-	//
-	// 		msgChan := make(chan (*slack.Message), 1)
+			assert.Equal(t, len(mockServer.Received.Attachment), 1)
+			assert.Equal(t, mockServer.Received.Attachment[0].Color, "green")
+			assert.Equal(t, mockServer.Received.Attachment[0].Text, "Successfully started deployment of main")
 
-	//
-	// 	})
-	// })
+			resp, err = c.PostMessage(500, "main")
+
+			assert.NoError(t, err, "should not error")
+
+			assert.Equal(t, len(mockServer.Received.Attachment), 1)
+			assert.Equal(t, mockServer.Received.Attachment[0].Color, "red")
+			assert.Equal(t, mockServer.Received.Attachment[0].Text, "Failed to deploy main")
+		})
+	})
 }

@@ -11,6 +11,8 @@ type ChatOps struct {
 	User      string
 	AuthToken string
 	ServerURI *string
+	TestMode  bool
+	TestURL   *string
 }
 
 type ChatOpsResponse struct {
@@ -62,7 +64,7 @@ func (c *ChatOps) formatMessage(code int, target string) ChatAttachment {
 		message.Text = fmt.Sprintf("Failed to deploy %s", target)
 		message.Color = "red"
 	} else {
-		message.Text = fmt.Sprintf("Unknown HTTP code: %s", code)
+		message.Text = fmt.Sprintf("Unknown HTTP code: %d", code)
 		message.Color = "yellow"
 	}
 
