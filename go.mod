@@ -9,7 +9,7 @@ require (
 	github.com/mcdafydd/go-azuredevops v0.12.0
 	github.com/pandatix/gocket-chat v0.1.0-alpha
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/proclaim/mock-slack v0.0.0-20201019114328-0aae156a5005 // indirect
+	github.com/proclaim/mock-slack v0.0.0-20201019114328-0aae156a5005
 	github.com/sirupsen/logrus v1.8.1
 	github.com/slack-go/slack v0.9.5
 	github.com/spf13/viper v1.8.1
