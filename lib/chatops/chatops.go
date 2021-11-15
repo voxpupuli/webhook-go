@@ -25,7 +25,7 @@ type ChatAttachment struct {
 	Color      string
 }
 
-func (c *ChatOps) PostMessage(code, target string) (*ChatOpsResponse, error) {
+func (c *ChatOps) PostMessage(code int, target string) (*ChatOpsResponse, error) {
 	var resp ChatOpsResponse
 
 	switch c.Service {
@@ -49,16 +49,16 @@ func (c *ChatOps) PostMessage(code, target string) (*ChatOpsResponse, error) {
 	return &resp, nil
 }
 
-func (c *ChatOps) formatMessage(code, target string) ChatAttachment {
+func (c *ChatOps) formatMessage(code int, target string) ChatAttachment {
 	var message ChatAttachment
 
 	message.AuthorName = "r10k for Puppet"
 	message.Title = fmt.Sprintf("r10k deployment of Puppet environment %s", target)
 
-	if code == "202" {
+	if code == 202 {
 		message.Text = fmt.Sprintf("Successfully started deployment of %s", target)
 		message.Color = "green"
-	} else if code == "500" {
+	} else if code == 500 {
 		message.Text = fmt.Sprintf("Failed to deploy %s", target)
 		message.Color = "red"
 	} else {

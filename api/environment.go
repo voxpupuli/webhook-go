@@ -20,6 +20,8 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	cmd := exec.Command("r10k", "deploy", "environment")
 	conf := config.GetConfig().R10k
 	pipelineConf := config.GetConfig().Pipeline
+	notify := config.GetConfig().ChatOps.Enabled
+	conn := chatopsSetup()
 
 	err := data.ParseData(c)
 	if err != nil {
@@ -53,9 +55,15 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		log.Errorf("cmd.Run() failed with error %s", string(res))
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "error executing command", "error": string(res)})
 		c.Abort()
+		if notify {
+			conn.PostMessage(http.StatusInternalServerError, env)
+		}
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": string(res)})
+	c.JSON(http.StatusAccepted, gin.H{"message": string(res)})
 	log.Info(fmt.Sprintf("\n%s", string(res)))
+	if notify {
+		conn.PostMessage(http.StatusAccepted, env)
+	}
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/pandatix/gocket-chat/api/chat"
 )
 
-func (c *ChatOps) rocketChat(code, target string) (*chat.PostMessageResponse, error) {
+func (c *ChatOps) rocketChat(code int, target string) (*chat.PostMessageResponse, error) {
 	if c.ServerURI == nil {
 		return nil, fmt.Errorf("A ServerURI must be specified to use RocketChat")
 	}

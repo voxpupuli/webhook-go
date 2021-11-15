@@ -20,11 +20,16 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 	cmd := exec.Command("r10k", "deploy", "module")
 	conf := config.GetConfig().R10k
 	pipelineConf := config.GetConfig().Pipeline
+	notify := config.GetConfig().ChatOps.Enabled
+	conn := chatopsSetup()
 
 	err := data.ParseData(c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error Parsing Webhook", "error": err})
 		c.Abort()
+		if notify {
+			conn.PostMessage(http.StatusInternalServerError, "Error Parsing Webhook")
+		}
 		return
 	}
 
@@ -49,9 +54,15 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 		log.Errorf("cmd.Run() failed with error %s", string(res))
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "error executing command", "error": string(res)})
 		c.Abort()
+		if notify {
+			conn.PostMessage(http.StatusInternalServerError, data.ModuleName)
+		}
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": string(res)})
+	c.JSON(http.StatusAccepted, gin.H{"message": string(res)})
 	log.Info(fmt.Sprintf("\n%s", string(res)))
+	if notify {
+		conn.PostMessage(http.StatusAccepted, data.ModuleName)
+	}
 }
