@@ -13,16 +13,22 @@ func NewRouter() *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
-	user := users.Users{
-		User:     config.GetConfig().Server.User,
-		Password: config.GetConfig().Server.Password,
+
+	var apiHandlerFuncs []gin.HandlerFunc
+	if config.GetConfig().Server.Protected {
+		user := users.Users{
+			User:     config.GetConfig().Server.User,
+			Password: config.GetConfig().Server.Password,
+		}
+
+		apiHandlerFuncs = append(apiHandlerFuncs, gin.BasicAuth(gin.Accounts{user.User: user.Password}))
 	}
 
 	health := new(wapi.HealthController)
 
 	router.GET("/health", health.Status)
 
-	api := router.Group("api", gin.BasicAuth(gin.Accounts{user.User: user.Password}))
+	api := router.Group("api", apiHandlerFuncs...)
 	{
 		v1 := api.Group("v1")
 		{
