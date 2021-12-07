@@ -35,6 +35,7 @@ type Config struct {
 		Prefix         string `mapstructure:"prefix"`
 		AllowUppercase bool   `mapstructure:"allow_uppercase"`
 		Verbose        bool   `mapstructure:"verbose"`
+		DeployModules  bool   `mapstructure:"deploy_modules"`
 	} `mapstructure:"r10k"`
 	Pipeline struct {
 		Enabled       bool `mapstructure:"enabled"`
@@ -75,6 +76,7 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("r10k.allow_uppercase", false)
 	v.SetDefault("r10k.prefix", "")
 	v.SetDefault("r10k.verbose", true)
+	v.SetDefault("r10k.deploy_modules", true)
 	v.SetDefault("pipeline.enabled", false)
 	v.SetDefault("pipeline.deploy_on_error", false)
 

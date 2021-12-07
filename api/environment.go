@@ -49,6 +49,9 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	if conf.Verbose {
 		cmd.Args = append(cmd.Args, "-v")
 	}
+	if conf.DeployModules {
+		cmd.Args = append(cmd.Args, "-m")
+	}
 
 	res, err := cmd.CombinedOutput()
 	if err != nil {
