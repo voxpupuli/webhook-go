@@ -52,6 +52,9 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	if conf.DeployModules {
 		cmd.Args = append(cmd.Args, "-m")
 	}
+	if conf.GenerateTypes {
+		cmd.Args = append(cmd.Args, "--generate-types")
+	}
 
 	res, err := cmd.CombinedOutput()
 	if err != nil {

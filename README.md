@@ -137,6 +137,18 @@ Type: bool
 Description: Log verbose output when running the r10k command
 Default: `true`
 
+### `deploy_modules`
+
+Type: bool
+Description: Deploy modules in environments.
+Default: `true`
+
+### `generate_types`
+
+Type: bool
+Description: Run `puppet generate types` after updating an environment
+Default: `true`
+
 ### Pipeline Options
 
 #### `enabled`
