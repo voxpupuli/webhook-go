@@ -29,6 +29,13 @@ type Config struct {
 		AuthToken string `mapstructure:"auth_token"`
 		ServerUri string `mapstructure:"server_uri"`
 	} `mapstructure:"chatops"`
+	Orchestration struct {
+		Enabled  bool     `mapstructure:"enabled"`
+		Type     string   `mapstructure:"type"`
+		Nodes    []string `mapstructure:"nodes"`
+		User     string   `mapstructure:"user"`
+		Protocol string   `mapstructure:"protocol"`
+	} `mapstructure:"orchestration"`
 	R10k struct {
 		ConfigPath     string `mapstructure:"config_path"`
 		DefaultBranch  string `mapstructure:"default_branch"`
