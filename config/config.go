@@ -30,11 +30,18 @@ type Config struct {
 		ServerUri string `mapstructure:"server_uri"`
 	} `mapstructure:"chatops"`
 	Orchestration struct {
-		Enabled  bool     `mapstructure:"enabled"`
-		Type     string   `mapstructure:"type"`
-		Nodes    []string `mapstructure:"nodes"`
-		User     string   `mapstructure:"user"`
-		Protocol string   `mapstructure:"protocol"`
+		Enabled  bool    `mapstructure:"enabled"`
+		Type     *string `mapstructure:"type"`
+		User     *string `mapstructure:"user"`
+		Password *string `mapstructure:"password"`
+		Bolt     *struct {
+			Transport    *string  `mapstructure:"transport"`
+			Targets      []string `mapstructure:"targets"`
+			Concurrency  *int64   `mapstructure:"concurrency"`
+			RunAs        *string  `mapstructure:"run_as"`
+			SudoPassword *string  `mapstructure:"sudo_password"`
+			HostKeyCheck bool     `mapstructure:"host_key_check"`
+		} `mapstructure:"bolt"`
 	} `mapstructure:"orchestration"`
 	R10k struct {
 		ConfigPath     string `mapstructure:"config_path"`
@@ -82,6 +89,8 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("r10k.verbose", true)
 	v.SetDefault("r10k.deploy_modules", true)
 	v.SetDefault("r10k.generate_types", true)
+	v.SetDefault("orchestration.enabled", false)
+	v.SetDefault("orchestration.bolt.host_key_check", false)
 
 	return v
 }
