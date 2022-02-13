@@ -32,10 +32,13 @@ func NewRouter() *gin.Engine {
 	{
 		v1 := api.Group("v1")
 		{
-			module := new(wapi.ModuleController)
-			v1.POST("/module", module.DeployModule)
-			environment := new(wapi.EnvironmentController)
-			v1.POST("/environment", environment.DeployEnvironment)
+			r10k := v1.Group("r10k")
+			{
+				module := new(wapi.ModuleController)
+				r10k.POST("/module", module.DeployModule)
+				environment := new(wapi.EnvironmentController)
+				r10k.POST("/environment", environment.DeployEnvironment)
+			}
 		}
 	}
 
