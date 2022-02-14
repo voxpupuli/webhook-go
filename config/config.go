@@ -44,6 +44,7 @@ type Config struct {
 		} `mapstructure:"bolt"`
 	} `mapstructure:"orchestration"`
 	R10k struct {
+		CommandPath    string `mapstructure:"command_path"`
 		ConfigPath     string `mapstructure:"config_path"`
 		DefaultBranch  string `mapstructure:"default_branch"`
 		Prefix         string `mapstructure:"prefix"`
@@ -82,6 +83,7 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("server.protected", false)
 	v.SetDefault("server.tls_enabled", false)
 	v.SetDefault("chatops.enabled", false)
+	v.SetDefault("r10k.command_path", "/opt/puppetlabs/puppetserver/bin/r10k")
 	v.SetDefault("r10k.config_path", "/etc/puppetlabs/r10k/r10k.yaml")
 	v.SetDefault("r10k.default_branch", "master")
 	v.SetDefault("r10k.allow_uppercase", false)

@@ -31,7 +31,7 @@ func Deploy(cmd string) (*Result, error) {
 			HostKeyCheck: &orch.Bolt.HostKeyCheck,
 			Concurrency:  orch.Bolt.Concurrency,
 		}
-		res, err := boltRunner.boltCommand(1000, cmd)
+		res, err := boltRunner.boltCommand(20000, cmd)
 		if err != nil {
 			return nil, err
 		}
