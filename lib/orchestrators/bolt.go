@@ -1,7 +1,6 @@
 package orchestrators
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"os/exec"
@@ -9,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Bolt struct {
@@ -30,6 +31,7 @@ func (b *Bolt) boltCommand(timeout time.Duration, command string) (*Result, erro
 		targets = targets + b.Targets[i] + ","
 	}
 	targets = strings.TrimSuffix(targets, ",")
+	cmd = append(cmd, targets)
 
 	if b.User != nil {
 		userArgs := []string{"-u", *b.User}
@@ -67,9 +69,13 @@ func (b *Bolt) boltCommand(timeout time.Duration, command string) (*Result, erro
 
 	cmd = append(cmd, "--format", "json", "--connect-timeout", "120", command)
 
+	logrus.Infof("%v", cmd)
+
 	out, err := runCommand(strings.Join(cmd, " "), timeout)
 	if err != nil {
-		return nil, fmt.Errorf("Bolt: \"%s\": %s: %s", strings.Join(cmd, " "), out, err)
+		logrus.Errorln(err)
+		logrus.Errorln(string(out))
+		return nil, fmt.Errorf("Bolt: \"%s\": %s: %s", strings.Join(cmd, " "), string(out), err)
 	}
 
 	result := new(Result)
@@ -90,9 +96,9 @@ func runCommand(command string, timeout time.Duration) ([]byte, error) {
 	}
 	args = append(args, command)
 
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
+	// ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	// defer cancel()
 
-	cmd := exec.CommandContext(ctx, args[0], args[1:]...)
-	return cmd.Output()
+	cmd := exec.Command(args[0], args[1:]...)
+	return cmd.CombinedOutput()
 }

@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"os/exec"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -15,13 +14,14 @@ import (
 type EnvironmentController struct{}
 
 func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
+	var res []byte
 	data := parsers.Data{}
 	h := helpers.Helper{}
-	cmd := exec.Command("r10k", "deploy", "environment")
-	conf := config.GetConfig().R10k
-	notify := config.GetConfig().ChatOps.Enabled
+	cmd := []string{"r10k", "deploy", "environment"}
+	conf := config.GetConfig()
 	conn := chatopsSetup()
 
+	// Parse the data from the request and error if the parsing fails
 	err := data.ParseData(c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error Parsing Webhook", "error": err})
@@ -29,37 +29,57 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	prefix := h.GetPrefix(data, conf.Prefix)
-	branch := h.GetBranch(data, conf.DefaultBranch)
-	env := h.GetEnvironment(branch, prefix, conf.AllowUppercase)
 
-	cmd.Args = append(cmd.Args, env)
-	cmd.Args = append(cmd.Args, fmt.Sprintf("--config=%s", h.GetR10kConfig()))
+	// Setup the environment for r10k from the configuration
+	env := h.GetEnvironment(conf.R10k.DefaultBranch, conf.R10k.Prefix, conf.R10k.AllowUppercase)
 
-	if conf.Verbose {
-		cmd.Args = append(cmd.Args, "-v")
+	cmd = append(cmd, env)
+	cmd = append(cmd, fmt.Sprintf("--config=%s", h.GetR10kConfig()))
+
+	if conf.R10k.Verbose {
+		cmd = append(cmd, "-v")
 	}
-	if conf.DeployModules {
-		cmd.Args = append(cmd.Args, "-m")
+	if conf.R10k.DeployModules {
+		cmd = append(cmd, "-m")
 	}
-	if conf.GenerateTypes {
-		cmd.Args = append(cmd.Args, "--generate-types")
+	if conf.R10k.GenerateTypes {
+		cmd = append(cmd, "--generate-types")
 	}
 
-	res, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Errorf("cmd.Run() failed with error %s", string(res))
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "error executing command", "error": string(res)})
-		c.Abort()
-		if notify {
-			conn.PostMessage(http.StatusInternalServerError, env)
+	if conf.Orchestration.Enabled {
+		if res, err := orchestrationExec(cmd); err != nil {
+			log.Errorf("orchestrator `%s` failed to execute command `%v` with error: `%v`", *conf.Orchestration.Type, cmd, res)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "`%s` failed to execute command",
+				"command": fmt.Sprintf("%v", cmd),
+				"result":  res,
+				"error":   err,
+			})
+			c.Abort()
+			if conf.ChatOps.Enabled {
+				conn.PostMessage(http.StatusInternalServerError, env)
+			}
+			return
 		}
-		return
-	}
-
-	c.JSON(http.StatusAccepted, gin.H{"message": string(res)})
-	log.Info(fmt.Sprintf("\n%s", string(res)))
-	if notify {
-		conn.PostMessage(http.StatusAccepted, env)
+		c.JSON(http.StatusAccepted, gin.H{
+			"message": fmt.Sprintf("`%s` completed executing command", *conf.Orchestration.Type),
+			"command": fmt.Sprintf("%v", cmd),
+			"result":  res,
+		})
+	} else {
+		if res, err := localExec(cmd); err != nil {
+			log.Errorf("cmd.Run() failed with error %s", string(res))
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "error executing command", "error": string(res)})
+			c.Abort()
+			if conf.ChatOps.Enabled {
+				conn.PostMessage(http.StatusInternalServerError, env)
+			}
+			return
+		}
+		c.JSON(http.StatusAccepted, gin.H{"message": string(res)})
+		log.Info(fmt.Sprintf("\n%s", string(res)))
+		if conf.ChatOps.Enabled {
+			conn.PostMessage(http.StatusAccepted, env)
+		}
 	}
 }
