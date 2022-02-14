@@ -10,5 +10,4 @@ type Helpers interface {
 	GetBranch(data parsers.Data, defaultBranch string) string
 	GetEnvironment(branch, prefix string, allowUppercase bool) string
 	GetR10kConfig() string
-	CheckPipelineStatus() error
 }
