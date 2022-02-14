@@ -19,7 +19,6 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	h := helpers.Helper{}
 	cmd := exec.Command("r10k", "deploy", "environment")
 	conf := config.GetConfig().R10k
-	pipelineConf := config.GetConfig().Pipeline
 	notify := config.GetConfig().ChatOps.Enabled
 	conn := chatopsSetup()
 
@@ -33,15 +32,6 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	prefix := h.GetPrefix(data, conf.Prefix)
 	branch := h.GetBranch(data, conf.DefaultBranch)
 	env := h.GetEnvironment(branch, prefix, conf.AllowUppercase)
-
-	if pipelineConf.Enabled {
-		if err := h.CheckPipelineStatus(data, pipelineConf.DeployOnError); err != nil {
-			c.JSON(http.StatusAccepted, gin.H{"message": fmt.Sprintf("%v", err)})
-			log.Debug(fmt.Sprintf("%v", err))
-			c.Abort()
-			return
-		}
-	}
 
 	cmd.Args = append(cmd.Args, env)
 	cmd.Args = append(cmd.Args, fmt.Sprintf("--config=%s", h.GetR10kConfig()))

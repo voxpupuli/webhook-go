@@ -45,10 +45,6 @@ type Config struct {
 		DeployModules  bool   `mapstructure:"deploy_modules"`
 		GenerateTypes  bool   `mapstructure:"generate_types"`
 	} `mapstructure:"r10k"`
-	Pipeline struct {
-		Enabled       bool `mapstructure:"enabled"`
-		DeployOnError bool `mapstructure:"deploy_on_error"`
-	} `mapstructure:"pipeline"`
 }
 
 func Init(path string) {
@@ -86,8 +82,6 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("r10k.verbose", true)
 	v.SetDefault("r10k.deploy_modules", true)
 	v.SetDefault("r10k.generate_types", true)
-	v.SetDefault("pipeline.enabled", false)
-	v.SetDefault("pipeline.deploy_on_error", false)
 
 	return v
 }
