@@ -8,10 +8,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/sirupsen/logrus"
 )
 
+// The Bolt contains the command arguments for running a Bolt Command
 type Bolt struct {
 	Transport    *string
 	Targets      []string
@@ -23,9 +22,33 @@ type Bolt struct {
 	HostKeyCheck *bool
 }
 
-func (b *Bolt) boltCommand(timeout time.Duration, command string) (*Result, error) {
+// A BoltResult returns the JSON result from a Bolt Command Run as a struct
+type BoltResult struct {
+	Items []struct {
+		Target  string `json:"target"`
+		Action  string `json:"action"`
+		Command string `json:"object"`
+		Status  string `json:"status"`
+		Value   struct {
+			ExitCode     int64  `json:"exit_code"`
+			MergedOutput string `json:"merged_output"`
+			Stderr       string `json:"stderr"`
+			Stdout       string `json:"stdout"`
+		} `json:"value"`
+	} `json:"items"`
+	TargetCount int `json:"target_count"`
+	ElapsedTime int `json:"elapsed_time"`
+}
+
+// boltCommand assembles the `bolt command run` command and arguments then passes it
+// to the runCommand function to execute the command through os/exec as an exec.Command.
+// Then it returns the pointer to a BoltResult and an error
+func (b *Bolt) boltCommand(timeout time.Duration, command string) (*BoltResult, error) {
+	// Create the baseline bolt command for the `command` sub-command
 	cmd := []string{"bolt", "command", "run", "--targets"}
 
+	// Convert the targets from a slice of strings to a string with
+	// targets delimited by a comma
 	var targets string
 	for i := range b.Targets {
 		targets = targets + b.Targets[i] + ","
@@ -33,52 +56,65 @@ func (b *Bolt) boltCommand(timeout time.Duration, command string) (*Result, erro
 	targets = strings.TrimSuffix(targets, ",")
 	cmd = append(cmd, targets)
 
+	// If the Bolt User is set add the user option to command run
 	if b.User != nil {
 		userArgs := []string{"-u", *b.User}
 		cmd = append(cmd, userArgs...)
 	}
 
+	// If the Bolt User's Password is set, then add the user password
+	// option to command run
 	if b.Password != nil {
 		passArgs := []string{"--password", *b.Password}
 		cmd = append(cmd, passArgs...)
 	}
 
+	// If the Bolt Transport is set, then add the bolt transport option
+	// to the bolt command
 	if b.Transport != nil {
 		transArgs := []string{"--transport", *b.Transport}
 		cmd = append(cmd, transArgs...)
 	}
 
+	// If Concurrency is set, then add the bolt concurrency option to
+	// the bolt command
 	if b.Concurrency != nil {
 		concurrency := []string{"--concurrency", strconv.FormatInt(*b.Concurrency, 10)}
 		cmd = append(cmd, concurrency...)
 	}
 
+	// If the Bolt RunAs option is set, then add the --run-as option to
+	// the bolt command
 	if b.RunAs != nil {
 		runAs := []string{"--run-as", *b.RunAs}
 		cmd = append(cmd, runAs...)
 	}
 
+	// If Bolt SudoPassword is set, then add the --sudoe-password option to
+	// the bolt command
 	if b.SudoPassword != nil {
 		sudoPass := []string{"--sudo-password", *b.SudoPassword}
 		cmd = append(cmd, sudoPass...)
 	}
 
-	if *b.HostKeyCheck {
+	// If the Bolt HostKeyCheck is set to false, then disable the host key check
+	if *b.HostKeyCheck == false {
 		cmd = append(cmd, "--no-host-key-check")
 	}
 
+	// Format the bolt output as JSON and add a connection timeout
 	cmd = append(cmd, "--format", "json", "--connect-timeout", "120", command)
 
-	logrus.Infof("%v", cmd)
-
+	// Send the command to runCommand and store the returned output and error
+	//
+	// If the runCommand function fails, then return an error without a result
 	out, err := runCommand(strings.Join(cmd, " "), timeout)
 	if err != nil {
-		logrus.Errorln(err)
-		logrus.Errorln(string(out))
 		return nil, fmt.Errorf("Bolt: \"%s\": %s: %s", strings.Join(cmd, " "), string(out), err)
 	}
 
-	result := new(Result)
+	// Parse the output into a BoltResult
+	result := new(BoltResult)
 	if err = json.Unmarshal(out, result); err != nil {
 		return nil, err
 	}
@@ -86,9 +122,11 @@ func (b *Bolt) boltCommand(timeout time.Duration, command string) (*Result, erro
 	return result, nil
 }
 
+// runCommand executes any bolt sub-commands passed to it.
 func runCommand(command string, timeout time.Duration) ([]byte, error) {
 	var args []string
 
+	// Currently the Windows option is not used
 	if runtime.GOOS == "windows" {
 		args = []string{"cmd", "/C"}
 	} else {
@@ -96,9 +134,11 @@ func runCommand(command string, timeout time.Duration) ([]byte, error) {
 	}
 	args = append(args, command)
 
+	// TODO: Configure context to work correctly
 	// ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	// defer cancel()
 
+	// Create a new exec.Command from the passed in command and return the CombinedOutput
 	cmd := exec.Command(args[0], args[1:]...)
 	return cmd.CombinedOutput()
 }

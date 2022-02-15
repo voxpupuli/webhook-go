@@ -6,17 +6,17 @@ import (
 	"github.com/voxpupuli/webhook-go/config"
 )
 
-type Result struct {
-	Items []struct {
-		Node   string            `json:"node"`
-		Status string            `json:"status"`
-		Result map[string]string `json:"result"`
-	} `json:"items"`
-	NodeCount   int `json:"node_count"`
-	ElapsedTime int `json:"elapsed_time"`
-}
-
-func Deploy(cmd string) (*Result, error) {
+// Deploy reads in a command string and then passes the command
+// to the appropriate orchestration tool based on the application
+// settings.
+//
+// A different type is associated with each orchestration tool and
+// that type is initialized into a variable based on what is set in
+// the configuration file.
+//
+// Deploy returns an interface of whatever custom result type is returned
+// from an orchestration tool, as well as an error
+func Deploy(cmd string) (interface{}, error) {
 	orch := config.GetConfig().Orchestration
 
 	switch *orch.Type {
@@ -35,6 +35,7 @@ func Deploy(cmd string) (*Result, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		return res, nil
 	case "choria":
 	case "mcollective":
@@ -43,5 +44,5 @@ func Deploy(cmd string) (*Result, error) {
 	default:
 		return nil, fmt.Errorf("orchestration tool `%s` is not supported at this time", *orch.Type)
 	}
-	return &Result{}, nil
+	return nil, nil
 }
