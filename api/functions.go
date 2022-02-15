@@ -22,7 +22,7 @@ func chatopsSetup() *chatops.ChatOps {
 	return &c
 }
 
-func orchestrationExec(cmd []string) (*orchestrators.Result, error) {
+func orchestrationExec(cmd []string) (interface{}, error) {
 	command := "\""
 	for i := range cmd {
 		command = command + cmd[i] + " "

@@ -14,7 +14,6 @@ import (
 type EnvironmentController struct{}
 
 func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
-	var res []byte
 	data := parsers.Data{}
 	h := helpers.Helper{}
 	cmd := []string{"r10k", "deploy", "environment"}
@@ -47,27 +46,21 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	}
 
 	if conf.Orchestration.Enabled {
-		if res, err := orchestrationExec(cmd); err != nil {
-			log.Errorf("orchestrator `%s` failed to execute command `%v` with error: `%v`", *conf.Orchestration.Type, cmd, res)
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "`%s` failed to execute command",
-				"command": fmt.Sprintf("%v", cmd),
-				"result":  res,
-				"error":   err,
-			})
+		res, err := orchestrationExec(cmd)
+		if err != nil {
+			// TODO: Replace with proper custom error types
+			log.Errorf("orchestrator `%s` failed to execute command `%s` with error: `%s`", *conf.Orchestration.Type, cmd, err)
+			c.JSON(http.StatusInternalServerError, res)
 			c.Abort()
 			if conf.ChatOps.Enabled {
 				conn.PostMessage(http.StatusInternalServerError, env)
 			}
 			return
 		}
-		c.JSON(http.StatusAccepted, gin.H{
-			"message": fmt.Sprintf("`%s` completed executing command", *conf.Orchestration.Type),
-			"command": fmt.Sprintf("%v", cmd),
-			"result":  res,
-		})
+		c.JSON(http.StatusAccepted, res)
 	} else {
-		if res, err := localExec(cmd); err != nil {
+		res, err := localExec(cmd)
+		if err != nil {
 			log.Errorf("cmd.Run() failed with error %s", string(res))
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "error executing command", "error": string(res)})
 			c.Abort()
