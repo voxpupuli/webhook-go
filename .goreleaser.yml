@@ -1,0 +1,39 @@
+before:
+  hooks:
+    - go mod download
+archives:
+  - id: webhook-go
+builds:
+  - id: webhook-go
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm
+      - arm64
+    goarm:
+      - 6
+      - 7
+    ignore:
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
+release:
+  github:
+    owner: voxpupuli
+    name: webhook-go
+  prerelease: true
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'

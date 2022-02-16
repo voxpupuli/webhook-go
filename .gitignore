@@ -11,4 +11,4 @@ webhook-go*
 webhook.yml
 
 bin/
-build/
+dist/
