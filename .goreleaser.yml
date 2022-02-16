@@ -26,6 +26,7 @@ release:
   github:
     owner: voxpupuli
     name: webhook-go
+  name_template: "Pre-Release v{{.Version}}"
   prerelease: true
 checksum:
   name_template: 'checksums.txt'
