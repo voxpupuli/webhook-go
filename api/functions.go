@@ -60,14 +60,14 @@ func orchestrationExec(cmd []string) (interface{}, error) {
 	return res, nil
 }
 
-func localExec(cmd []string) ([]byte, error) {
+func localExec(cmd []string) (string, error) {
 	args := cmd[1:]
 	command := exec.Command(cmd[0], args...)
 
 	res, err := command.CombinedOutput()
 	if err != nil {
-		return res, err
+		return string(res), err
 	}
 
-	return res, nil
+	return string(res), nil
 }

@@ -20,7 +20,7 @@ r10k:
   allow_uppercase: false
   verbose: true
 orchestration:
-  enabled: true
+  enabled: false 
   type: bolt
   user: dhollinger
   bolt:
