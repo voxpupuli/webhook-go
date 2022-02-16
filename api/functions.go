@@ -22,6 +22,28 @@ func chatopsSetup() *chatops.ChatOps {
 	return &c
 }
 
+// Determine if orchestration is enabled and either pass the cmd string slice to a
+// the orchestrationExec function or localExec function.
+//
+// This returns an interface of the result of the execution and an error
+func execute(cmd []string) (interface{}, error) {
+	conf := config.GetConfig()
+	var res interface{}
+	var err error
+	if conf.Orchestration.Enabled {
+		res, err = orchestrationExec(cmd)
+		if err != nil {
+			return res, err
+		}
+	} else {
+		res, err = localExec(cmd)
+		if err != nil {
+			return res, err
+		}
+	}
+	return res, nil
+}
+
 func orchestrationExec(cmd []string) (interface{}, error) {
 	command := "\""
 	for i := range cmd {
