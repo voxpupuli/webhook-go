@@ -28,9 +28,9 @@ clean: ## Clean up build
 	@echo "Cleaning local bin directory..."
 	@rm -rf bin/
 
+compile: ## Build for all supported OSes
+	goreleaser build --snapshot --rm-dist
 snapshot: ## Build artifacts without releasing
 	goreleaser release --snapshot --rm-dist
-
-compile: release ## Alias for release
-release: ## Build for all supported OSes
+release: ## Build release for all supported OSes
 	goreleaser release
