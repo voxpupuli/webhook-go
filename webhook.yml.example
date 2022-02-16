@@ -16,6 +16,15 @@ chatops:
   server_uri: "https://rocketchat.local"
 r10k:
   config_path: /etc/puppetlabs/r10k/r10k.yaml
-  default_branch: main
+  default_branch: webhook_test
   allow_uppercase: false
   verbose: true
+orchestration:
+  enabled: true
+  type: bolt
+  user: dhollinger
+  bolt:
+    transport: local
+    targets:
+      - localhost
+    host_key_check: false

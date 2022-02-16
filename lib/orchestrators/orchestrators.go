@@ -3,40 +3,46 @@ package orchestrators
 import (
 	"fmt"
 
-	"github.com/voxpupuli/webhook-go/lib/orchestrators/bolt"
+	"github.com/voxpupuli/webhook-go/config"
 )
 
-type Orchestrator struct {
-	Name     string
-	Nodes    []string
-	Protocol *string
-	User     string
-}
+// Deploy reads in a command string and then passes the command
+// to the appropriate orchestration tool based on the application
+// settings.
+//
+// A different type is associated with each orchestration tool and
+// that type is initialized into a variable based on what is set in
+// the configuration file.
+//
+// Deploy returns an interface of whatever custom result type is returned
+// from an orchestration tool, as well as an error
+func Deploy(cmd string) (interface{}, error) {
+	orch := config.GetConfig().Orchestration
 
-var (
-	connInfo map[string]string
-	admin    bool
-)
-
-func (o *Orchestrator) Deploy(cmd string) error {
-
-	switch o.Name {
+	switch *orch.Type {
 	case "bolt":
-		connInfo["type"] = *o.Protocol
-		connInfo["user"] = o.User
-		if o.User == "root" {
-			admin = true
+		boltRunner := Bolt{
+			Transport:    orch.Bolt.Transport,
+			Targets:      orch.Bolt.Targets,
+			RunAs:        orch.Bolt.RunAs,
+			SudoPassword: orch.Bolt.SudoPassword,
+			User:         orch.User,
+			Password:     orch.Password,
+			HostKeyCheck: &orch.Bolt.HostKeyCheck,
+			Concurrency:  orch.Bolt.Concurrency,
 		}
-		for _, node := range o.Nodes {
-			connInfo["host"] = node
-			_, err := bolt.Command(connInfo, 120, admin, cmd)
-			if err != nil {
-				return err
-			}
+		res, err := boltRunner.boltCommand(20000, cmd)
+		if err != nil {
+			return nil, err
 		}
+
+		return res, nil
 	case "choria":
+	case "mcollective":
+	case "":
+		return nil, fmt.Errorf("orchestration tool must be specified, but was nil")
 	default:
-		return fmt.Errorf("Orchestration tool `%s` is not supported at this time", o.Name)
+		return nil, fmt.Errorf("orchestration tool `%s` is not supported at this time", *orch.Type)
 	}
-	return nil
+	return nil, nil
 }

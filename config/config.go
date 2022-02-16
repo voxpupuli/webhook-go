@@ -30,13 +30,21 @@ type Config struct {
 		ServerUri string `mapstructure:"server_uri"`
 	} `mapstructure:"chatops"`
 	Orchestration struct {
-		Enabled  bool     `mapstructure:"enabled"`
-		Type     string   `mapstructure:"type"`
-		Nodes    []string `mapstructure:"nodes"`
-		User     string   `mapstructure:"user"`
-		Protocol string   `mapstructure:"protocol"`
+		Enabled  bool    `mapstructure:"enabled"`
+		Type     *string `mapstructure:"type"`
+		User     *string `mapstructure:"user"`
+		Password *string `mapstructure:"password"`
+		Bolt     *struct {
+			Transport    *string  `mapstructure:"transport"`
+			Targets      []string `mapstructure:"targets"`
+			Concurrency  *int64   `mapstructure:"concurrency"`
+			RunAs        *string  `mapstructure:"run_as"`
+			SudoPassword *string  `mapstructure:"sudo_password"`
+			HostKeyCheck bool     `mapstructure:"host_key_check"`
+		} `mapstructure:"bolt"`
 	} `mapstructure:"orchestration"`
 	R10k struct {
+		CommandPath    string `mapstructure:"command_path"`
 		ConfigPath     string `mapstructure:"config_path"`
 		DefaultBranch  string `mapstructure:"default_branch"`
 		Prefix         string `mapstructure:"prefix"`
@@ -75,6 +83,7 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("server.protected", false)
 	v.SetDefault("server.tls_enabled", false)
 	v.SetDefault("chatops.enabled", false)
+	v.SetDefault("r10k.command_path", "/opt/puppetlabs/puppetserver/bin/r10k")
 	v.SetDefault("r10k.config_path", "/etc/puppetlabs/r10k/r10k.yaml")
 	v.SetDefault("r10k.default_branch", "master")
 	v.SetDefault("r10k.allow_uppercase", false)
@@ -82,6 +91,8 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("r10k.verbose", true)
 	v.SetDefault("r10k.deploy_modules", true)
 	v.SetDefault("r10k.generate_types", true)
+	v.SetDefault("orchestration.enabled", false)
+	v.SetDefault("orchestration.bolt.host_key_check", false)
 
 	return v
 }
