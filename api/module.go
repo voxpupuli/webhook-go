@@ -51,8 +51,9 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 		cmd = append(cmd, "-v")
 	}
 
-	// Determine if orchestration is enabled and either pass the cmd string slice to a
-	// the orchestrationExec function or localExec function.
+	// Pass the command to the execute function and act on the result and any error
+	// that is returned
+	//
 	// On an error this will:
 	//		* Log the error, orchestration type, and command
 	//		* Respond with an HTTP 500 error and return the command result in JSON format
@@ -61,39 +62,18 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 	//
 	// On success this will:
 	//		* Respond with an HTTP 202 and the result in JSON format
-	if conf.Orchestration.Enabled {
-		res, err := orchestrationExec(cmd)
-		if err != nil {
-			// TODO: Replace with proper custom error types
-			log.Errorf("orchestrator `%s` failed to execute command `%s` with error: `%s`", *conf.Orchestration.Type, cmd, err)
-			c.JSON(http.StatusInternalServerError, res)
-			c.Abort()
-			if conf.ChatOps.Enabled {
-				conn.PostMessage(http.StatusInternalServerError, data.ModuleName)
-			}
-			return
-		}
-		c.JSON(http.StatusAccepted, res)
+	res, err := execute(cmd)
+	if err != nil {
+		log.Errorf("orchestrator `%s` failed to execute command `%s` with error: `%s`", *conf.Orchestration.Type, cmd, err)
+		c.JSON(http.StatusInternalServerError, res)
+		c.Abort()
 		if conf.ChatOps.Enabled {
-			conn.PostMessage(http.StatusAccepted, data.ModuleName)
+			conn.PostMessage(http.StatusInternalServerError, data.ModuleName)
 		}
-	} else {
-		res, err := localExec(cmd)
-		if err != nil {
-			log.Errorf("cmd.Run() failed with error %s", string(res))
-			c.JSON(http.StatusInternalServerError, gin.H{"message": "error executing command", "error": string(res)})
-			c.Abort()
-			if conf.ChatOps.Enabled {
-				conn.PostMessage(http.StatusInternalServerError, data.ModuleName)
-			}
-			return
-		}
-
-		c.JSON(http.StatusAccepted, gin.H{"message": string(res)})
-		log.Info(fmt.Sprintf("\n%s", string(res)))
-		if conf.ChatOps.Enabled {
-			conn.PostMessage(http.StatusAccepted, data.ModuleName)
-		}
-
+		return
+	}
+	c.JSON(http.StatusAccepted, res)
+	if conf.ChatOps.Enabled {
+		conn.PostMessage(http.StatusAccepted, data.ModuleName)
 	}
 }
