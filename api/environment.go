@@ -11,13 +11,24 @@ import (
 	"github.com/voxpupuli/webhook-go/lib/parsers"
 )
 
+// Environment Controller
 type EnvironmentController struct{}
 
+// DeployEnvironment takes in the current Gin context and parses the request
+// data into a variable then executes the r10k environment deploy either through
+// an orchestrator defined in the Orchestration library or a direct local execution
+// of the r10k deploy environment command
 func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
-	data := parsers.Data{}
-	h := helpers.Helper{}
+	var data parsers.Data
+	var h helpers.Helper
+
+	// Set the base r10k command into a slice of strings
 	cmd := []string{"r10k", "deploy", "environment"}
+
+	// Get the configuration
 	conf := config.GetConfig()
+
+	// Setup chatops connection so we don't have to repeat the process
 	conn := chatopsSetup()
 
 	// Parse the data from the request and error if the parsing fails
@@ -32,9 +43,11 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	// Setup the environment for r10k from the configuration
 	env := h.GetEnvironment(conf.R10k.DefaultBranch, conf.R10k.Prefix, conf.R10k.AllowUppercase)
 
+	// Append the environment and r10k configuration into the string slice `cmd`
 	cmd = append(cmd, env)
 	cmd = append(cmd, fmt.Sprintf("--config=%s", h.GetR10kConfig()))
 
+	// Set additional optional r10k options if they are set
 	if conf.R10k.Verbose {
 		cmd = append(cmd, "-v")
 	}
@@ -45,6 +58,16 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		cmd = append(cmd, "--generate-types")
 	}
 
+	// Determine if orchestration is enabled and either pass the cmd string slice to a
+	// the orchestrationExec function or localExec function.
+	// On an error this will:
+	//		* Log the error, orchestration type, and command
+	//		* Respond with an HTTP 500 error and return the command result in JSON format
+	//		* Abort the request
+	//		* Notify ChatOps service if enabled
+	//
+	// On success this will:
+	//		* Respond with an HTTP 202 and the result in JSON format
 	if conf.Orchestration.Enabled {
 		res, err := orchestrationExec(cmd)
 		if err != nil {
@@ -58,6 +81,9 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusAccepted, res)
+		if conf.ChatOps.Enabled {
+			conn.PostMessage(http.StatusAccepted, env)
+		}
 	} else {
 		res, err := localExec(cmd)
 		if err != nil {
@@ -70,7 +96,6 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusAccepted, gin.H{"message": string(res)})
-		log.Info(fmt.Sprintf("\n%s", string(res)))
 		if conf.ChatOps.Enabled {
 			conn.PostMessage(http.StatusAccepted, env)
 		}
