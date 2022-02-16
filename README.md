@@ -14,6 +14,7 @@ While there are no prerequisites for running the webhook server itself, for it t
 
 * Puppet Server
 * [r10k](https://github.com/puppetlabs/r10k)
+* Puppet Bolt (optional)
 * Windows or Linux server to run the server on. MacOS is not supported.
 
 ## Installation
@@ -42,11 +43,21 @@ chatops:
   user: r10kbot
   auth_token: 12345
   server_uri: "https://rocketchat.local"
+orchestration:
+  enabled: true
+  type: bolt
+  user: webhook
+  password: password
+  bolt:
+    transport: local
+    targets:
+      - localhost
 r10k:
   config_path: /etc/puppetlabs/r10k/r10k.yaml
   default_branch: main
   allow_uppercase: false
   verbose: true
+   
 ```
 
 ### Server options
@@ -100,7 +111,109 @@ Default: `nil`
 
 ### ChatOps options
 
-API exists, but is not implemented yet
+#### `enabled`
+
+Type: boolean
+Description: Enable/Disable chatops support
+Default: false
+
+#### `service`
+
+Type: string
+Description: Which service to use. Supported options: [`slack`, `rocketchat`]
+Default: nil
+
+#### `channel`
+
+Type: string
+Description: ChatOps communication channel to post to.
+Default: nil
+
+#### `user`
+
+Type: string
+Description: ChatOps user to post as
+Default: nil
+
+#### `auth_token`
+
+Type: string
+Description: The authentication token needed to post as the ChatOps user in the chosen, supported ChatOps service
+Default: nil
+
+#### `server_uri`
+
+Type: string
+Description: The ChatOps service API URI to send the message to.
+Default: nil
+
+### Orchestration
+
+#### `enabled`
+
+Type: boolean
+Description: Enable/Disable orchestration support
+Default: false
+
+#### `type`
+
+Type: string
+Description: Which orchestration tool to use. Currently only supports `bolt`.
+Default: nil
+
+#### `user`
+
+Type: string
+Description: User to authenticate to the target as.
+Default: nil
+
+#### `password`
+
+Type: string
+Description: Password for authentication use.
+Default: nil
+
+#### `bolt`
+
+Type: hash
+Description: Hash of Puppet Bolt specific settings.
+Default: `nil`
+
+##### `transport`
+
+Type: string
+Description: What kind of bolt network transport protocol to use. Supported types: [`local`, `ssh`] with more coming soon.
+Default: `nil`
+
+##### `targets`
+
+Type: array
+Description: A list of target nodes that Bolt will attempt to run `r10k` on.
+Default: []
+
+##### `concurrency`
+
+Type: integer
+Description: Maximum number of simultaneous connections.
+Default: 100
+
+##### `run_as`
+
+Type: string
+Description: User to run the `r10k` command as.
+Default: nil
+
+##### `sudo_password`
+
+Type: string
+Description: The password to use when using `sudo` to run `r10k` as the `run_as` user.
+Default: nil
+
+##### `HostKeyCheck`
+
+Type: boolean
+Description: Enable/Disable SSH host key checking
+Default: false
 
 ### r10k options
 
