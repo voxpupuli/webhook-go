@@ -3,6 +3,9 @@ before:
     - go mod download
 archives:
   - id: webhook-go
+    format_overrides:
+      - goos: windows
+        format: zip
 builds:
   - id: webhook-go
     env:
