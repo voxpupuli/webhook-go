@@ -21,6 +21,7 @@ type EnvironmentController struct{}
 func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	var data parsers.Data
 	var h helpers.Helper
+	var branch string
 
 	// Set the base r10k command into a slice of strings
 	cmd := []string{"r10k", "deploy", "environment"}
@@ -41,10 +42,17 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	}
 
 	// Setup the environment for r10k from the configuration
-	env := h.GetEnvironment(conf.R10k.DefaultBranch, conf.R10k.Prefix, conf.R10k.AllowUppercase)
+	if data.Branch == "" {
+		branch = conf.R10k.DefaultBranch
+	} else {
+		branch = data.Branch
+	}
+
+	env := h.GetEnvironment(branch, conf.R10k.Prefix, conf.R10k.AllowUppercase)
 
 	// Append the environment and r10k configuration into the string slice `cmd`
 	cmd = append(cmd, env)
+
 	cmd = append(cmd, fmt.Sprintf("--config=%s", h.GetR10kConfig()))
 
 	// Set additional optional r10k options if they are set
