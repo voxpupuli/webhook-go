@@ -1,7 +1,7 @@
 # Webhook Go
 
 Webhook Go is a port of the [puppet_webhook](https://github.com/voxpupuli/puppet_webhook) Sinatra API server to Go.
-This is designed to be more streamlined, performant, and easier to ship for users than the Sinatra/Ruby API server. 
+This is designed to be more streamlined, performant, and easier to ship for users than the Sinatra/Ruby API server.
 
 This server is a REST API server designed to accept Webhooks from version control systems, such as GitHub or GitLab, and execute actions based on those webhooks. Specifically, the following tasks:
 
@@ -19,7 +19,7 @@ While there are no prerequisites for running the webhook server itself, for it t
 
 ## Installation
 
-Download a Pre-release Binary from the Releases page, make it executable, and run the server.
+Download a Pre-release Binary from the [Releases](https://github.com/voxpupuli/webhook-go/releases) page, make it executable, and run the server.
 
 ## Configuration
 
@@ -57,7 +57,7 @@ r10k:
   default_branch: main
   allow_uppercase: false
   verbose: true
-   
+
 ```
 
 ### Server options
