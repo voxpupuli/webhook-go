@@ -13,7 +13,7 @@ This server is a REST API server designed to accept Webhooks from version contro
 While there are no prerequisites for running the webhook server itself, for it to be useful, you will need the following installed on the same server or another server for this tool to be useful:
 
 * Puppet Server
-* [r10k](https://github.com/puppetlabs/r10k)
+* [r10k](https://github.com/puppetlabs/r10k) >= 3.9.0
 * Puppet Bolt (optional)
 * Windows or Linux server to run the server on. MacOS is not supported.
 
