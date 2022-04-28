@@ -79,7 +79,12 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	//		* Respond with an HTTP 202 and the result in JSON format
 	res, err := execute(cmd)
 	if err != nil {
-		log.Errorf("orchestrator `%s` failed to execute command `%s` with error: `%s`", *conf.Orchestration.Type, cmd, err)
+		if conf.Orchestration.Enabled {
+			log.Errorf("orchestrator `%s` failed to execute command `%s` with error: `%s` `%s`", *conf.Orchestration.Type, cmd, err, res)
+		} else {
+			log.Errorf("failed to execute local command `%s` with error: `%s` `%s`", cmd, err, res)
+		}
+
 		c.JSON(http.StatusInternalServerError, res)
 		c.Abort()
 		if conf.ChatOps.Enabled {
