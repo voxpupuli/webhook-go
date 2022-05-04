@@ -65,8 +65,8 @@ func (b *Bolt) boltCommand(timeout time.Duration, command string) (*BoltResult, 
 	// If the Bolt User's Password is set, then add the user password
 	// option to command run
 	if b.Password != nil {
-		passArgs := []string{"--password", *b.Password}
-		cmd = append(cmd, passArgs...)
+		passArgs := fmt.Sprintf("--password=%s", *b.Password)
+		cmd = append(cmd, passArgs)
 	}
 
 	// If the Bolt Transport is set, then add the bolt transport option
@@ -93,8 +93,8 @@ func (b *Bolt) boltCommand(timeout time.Duration, command string) (*BoltResult, 
 	// If Bolt SudoPassword is set, then add the --sudoe-password option to
 	// the bolt command
 	if b.SudoPassword != nil {
-		sudoPass := []string{"--sudo-password", *b.SudoPassword}
-		cmd = append(cmd, sudoPass...)
+		sudoPass := fmt.Sprintf("--sudo-password=%s", *b.SudoPassword)
+		cmd = append(cmd, sudoPass)
 	}
 
 	// If the Bolt HostKeyCheck is set to false, then disable the host key check
@@ -110,6 +110,7 @@ func (b *Bolt) boltCommand(timeout time.Duration, command string) (*BoltResult, 
 	// If the runCommand function fails, then return an error without a result
 	out, err := runCommand(strings.Join(cmd, " "), timeout)
 	if err != nil {
+		cmd = sanitizeOutput(cmd)
 		return nil, fmt.Errorf("Bolt: \"%s\": %s: %s", strings.Join(cmd, " "), string(out), err)
 	}
 
@@ -141,4 +142,15 @@ func runCommand(command string, timeout time.Duration) ([]byte, error) {
 	// Create a new exec.Command from the passed in command and return the CombinedOutput
 	cmd := exec.Command(args[0], args[1:]...)
 	return cmd.CombinedOutput()
+}
+
+func sanitizeOutput(cmd []string) []string {
+	var sanitized []string
+	for _, v := range cmd {
+		if strings.HasPrefix(v, "--password") || strings.HasPrefix(v, "--sudo-password") {
+			continue
+		}
+		sanitized = append(sanitized, v)
+	}
+	return sanitized
 }
