@@ -18,8 +18,8 @@ builds:
       - arm
       - arm64
     goarm:
-      - 6
-      - 7
+      - "6"
+      - "7"
     ignore:
       - goos: windows
         goarch: arm
@@ -29,8 +29,8 @@ release:
   github:
     owner: voxpupuli
     name: webhook-go
-  name_template: "Pre-Release v{{.Version}}"
-  prerelease: true
+  name_template: "Release v{{.Version}}"
+  prerelease: false
 checksum:
   name_template: 'checksums.txt'
 snapshot:
