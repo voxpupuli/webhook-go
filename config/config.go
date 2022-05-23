@@ -62,6 +62,7 @@ func Init(path string) {
 	v.SetConfigType("yml")
 	v.SetConfigName("webhook")
 	v.AddConfigPath(path)
+	v.AddConfigPath(".")
 	v.AddConfigPath("/etc/voxpupuli/webhook/")
 	v.AddConfigPath("../config/")
 	v.AddConfigPath("config/")
