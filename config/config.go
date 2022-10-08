@@ -55,17 +55,20 @@ type Config struct {
 	} `mapstructure:"r10k"`
 }
 
-func Init(path string) {
+func Init(path *string) {
 	var err error
-
 	v := viper.New()
-	v.SetConfigType("yml")
-	v.SetConfigName("webhook")
-	v.AddConfigPath(path)
-	v.AddConfigPath(".")
-	v.AddConfigPath("/etc/voxpupuli/webhook/")
-	v.AddConfigPath("../config/")
-	v.AddConfigPath("config/")
+
+	if path != nil {
+		v.SetConfigFile(*path)
+	} else {
+		v.SetConfigType("yml")
+		v.SetConfigName("webhook")
+		v.AddConfigPath(".")
+		v.AddConfigPath("/etc/voxpupuli/webhook/")
+		v.AddConfigPath("../config/")
+		v.AddConfigPath("config/")
+	}
 	err = v.ReadInConfig()
 	if err != nil {
 		log.Fatalf("error on parsing config file: %v", err)

@@ -12,6 +12,7 @@ require (
 	github.com/proclaim/mock-slack v0.0.0-20201019114328-0aae156a5005
 	github.com/sirupsen/logrus v1.8.1
 	github.com/slack-go/slack v0.9.5
+	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
 	github.com/xanzy/go-gitlab v0.50.1
