@@ -8,6 +8,7 @@ archives:
         format: zip
 builds:
   - id: webhook-go
+    ldflags: -s -w -X 'github.com/voxpupuli/webhook-go/cmd.version={{.Version}}'
     env:
       - CGO_ENABLED=0
     goos:
@@ -30,7 +31,7 @@ release:
     owner: voxpupuli
     name: webhook-go
   name_template: "Release v{{.Version}}"
-  prerelease: false
+  prerelease: auto
 checksum:
   name_template: 'checksums.txt'
 snapshot:
