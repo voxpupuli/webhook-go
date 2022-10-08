@@ -9,7 +9,8 @@ import (
 
 func Test_GetR10kConfig(t *testing.T) {
 	h := Helper{}
-	config.Init("./yaml")
+	mCfg := "./yaml/webhook.yaml"
+	config.Init(&mCfg)
 
 	conf := h.GetR10kConfig()
 	assert.Equal(t, ConfigFile, conf)
