@@ -7,8 +7,8 @@ config.yml
 *.7z
 *.exe
 *.bin
-webhook-go*
-webhook.yml
 
 bin/
 dist/
+
+
