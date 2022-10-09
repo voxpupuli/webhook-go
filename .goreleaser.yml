@@ -26,6 +26,28 @@ builds:
         goarch: arm
       - goos: windows
         goarch: arm64
+nfpms:
+    - vendor: Vox Pupuli
+      homepage: https://github.com/voxpupuli/webhook-go
+      maintainer: Vox Pupuli <voxpupuli@groups.io>
+      description: |-
+          Puppet Webhook API server written in Go.
+          Designed to provide a web api that can receive
+          webhooks from VCS services such as GitHub, GitLab, etc
+          and execute r10k deployments
+      license: Apache 2.0
+      formats:
+          - deb
+          - rpm
+      contents:
+        - src: build/webhook.yml
+          dst: /etc/voxpupuli/webhook.yml
+          type: "config|noreplace"
+        - src: build/webhook-go.service
+          dst: /etc/systemd/system/webhook-go.service
+      scripts:
+          postinstall: "build/post-install.sh"
+          postremove: "build/post-remove.sh"
 release:
   github:
     owner: voxpupuli

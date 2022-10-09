@@ -1,0 +1,14 @@
+[Unit]
+Description=Puppet Deployment API Server
+After=network.target
+Documentation=https://github.com/voxpupuli/webhook-go
+
+[Service]
+Environment=GIN_MODE=release
+ExecStart=/usr/bin/webhook-go server --config /etc/voxpupuli/webhook.yml
+ExecReload=/bin/kill -HUP $PID
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+Alias=webhook-go.service
