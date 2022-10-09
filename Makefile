@@ -4,7 +4,7 @@ help: ## Print this message
 GOARCH := $(shell go env GOARCH)
 GOOS := $(shell go env GOOS)
 NAME := webhook-go
-#VERSION := $(shell date +'v%y%m.%-d.%-H%M%S')
+VERSION := $(shell git describe --tags | cut -d"." -f1)
 #DATE := $(shell date +'%y.%m.%d-%H:%M:%S')
 #SHA := $(shell git rev-parse HEAD)
 
@@ -12,9 +12,14 @@ test: ## Run go tests
 	@go test ./...
 
 build: ## Build a local binary
+	@goreleaser build --single-target --rm-dist
+	@mkdir -p bin
+	@cp dist/$(NAME)_$(GOOS)_$(GOARCH)_$(VERSION)/$(NAME) bin/
+
+build-snapshot:
 	@goreleaser build --single-target --snapshot --rm-dist
 	@mkdir -p bin
-	@cp dist/$(NAME)_$(GOOS)_$(GOARCH)/$(NAME) bin/
+	@cp dist/$(NAME)_$(GOOS)_$(GOARCH)_$(VERSION)/$(NAME) bin/
 
 run: ## Run webhook-go
 	@cp webhook.yml.example webhook.yml
