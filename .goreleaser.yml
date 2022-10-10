@@ -52,6 +52,9 @@ dockers:
     - image_templates:
         - "ghcr.io/voxpupuli/{{ .ProjectName }}:{{ .Version }}"
       dockerfile: Dockerfile
+      use: buildx
+      build_flag_templates:
+        - --platform=linux/amd64
 release:
   github:
     owner: voxpupuli
