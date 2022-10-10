@@ -55,6 +55,8 @@ dockers:
       use: buildx
       build_flag_templates:
         - --platform=linux/amd64
+      extra_files:
+        - "build/webhook.yml"
 release:
   github:
     owner: voxpupuli
