@@ -11,13 +11,8 @@ VERSION := $(shell git describe --tags | cut -d"." -f1)
 test: ## Run go tests
 	@go test ./...
 
-build: ## Build a local binary
+binary: ## Build a local binary
 	@goreleaser build --single-target --rm-dist
-	@mkdir -p bin
-	@cp dist/$(NAME)_$(GOOS)_$(GOARCH)_$(VERSION)/$(NAME) bin/
-
-build-snapshot:
-	@goreleaser build --single-target --snapshot --rm-dist
 	@mkdir -p bin
 	@cp dist/$(NAME)_$(GOOS)_$(GOARCH)_$(VERSION)/$(NAME) bin/
 

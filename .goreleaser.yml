@@ -48,6 +48,10 @@ nfpms:
       scripts:
           postinstall: "build/post-install.sh"
           postremove: "build/post-remove.sh"
+dockers:
+    - image_templates:
+        - "ghcr.io/voxpupuli/{{ .ProjectName }}:{{ .Version }}"
+      dockerfile: Dockerfile
 release:
   github:
     owner: voxpupuli
