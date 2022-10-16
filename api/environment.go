@@ -9,6 +9,7 @@ import (
 	"github.com/voxpupuli/webhook-go/config"
 	"github.com/voxpupuli/webhook-go/lib/helpers"
 	"github.com/voxpupuli/webhook-go/lib/parsers"
+	"github.com/voxpupuli/webhook-go/lib/queue"
 )
 
 // Environment Controller
@@ -29,7 +30,7 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	conf := config.GetConfig()
 
 	// Setup chatops connection so we don't have to repeat the process
-	conn := chatopsSetup()
+	conn := helpers.ChatopsSetup()
 
 	// Parse the data from the request and error if the parsing fails
 	err := data.ParseData(c)
@@ -76,10 +77,19 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	//
 	// On success this will:
 	//		* Respond with an HTTP 202 and the result in JSON format
-	res, err := execute(cmd)
-	if err != nil {
-		log.Errorf("failed to execute local command `%s` with error: `%s` `%s`", cmd, err, res)
 
+	var res interface{}
+	if conf.Server.Queue.Enabled {
+		res, err = queue.AddToQueue("env", env, cmd)
+	} else {
+		res, err = helpers.Execute(cmd)
+
+		if err != nil {
+			log.Errorf("failed to execute local command `%s` with error: `%s` `%s`", cmd, err, res)
+		}
+	}
+
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, res)
 		c.Abort()
 		if conf.ChatOps.Enabled {
@@ -87,8 +97,10 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		}
 		return
 	}
+
 	c.JSON(http.StatusAccepted, res)
 	if conf.ChatOps.Enabled {
 		conn.PostMessage(http.StatusAccepted, env)
 	}
+
 }

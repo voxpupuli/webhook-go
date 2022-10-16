@@ -1,4 +1,4 @@
-package api
+package helpers
 
 import (
 	"os/exec"
@@ -7,7 +7,7 @@ import (
 	"github.com/voxpupuli/webhook-go/lib/chatops"
 )
 
-func chatopsSetup() *chatops.ChatOps {
+func ChatopsSetup() *chatops.ChatOps {
 	conf := config.GetConfig().ChatOps
 	c := chatops.ChatOps{
 		Service:   conf.Service,
@@ -21,7 +21,15 @@ func chatopsSetup() *chatops.ChatOps {
 }
 
 // This returns an interface of the result of the execution and an error
-func execute(cmd []string) (interface{}, error) {
+func Execute(cmd []string) (interface{}, error) {
+	var res interface{}
+	var err error
+
+	res, err = localExec(cmd)
+	return res, err
+}
+
+func localExec(cmd []string) (string, error) {
 	args := cmd[1:]
 	command := exec.Command(cmd[0], args...)
 
@@ -30,5 +38,5 @@ func execute(cmd []string) (interface{}, error) {
 		return string(res), err
 	}
 
-	return res, nil
+	return string(res), nil
 }

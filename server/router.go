@@ -39,6 +39,12 @@ func NewRouter() *gin.Engine {
 				environment := new(wapi.EnvironmentController)
 				r10k.POST("/environment", environment.DeployEnvironment)
 			}
+
+			queue := v1.Group("queue")
+			{
+				q := new(wapi.QueueController)
+				queue.GET("", q.QueueStatus)
+			}
 		}
 	}
 

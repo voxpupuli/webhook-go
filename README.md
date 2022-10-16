@@ -36,6 +36,10 @@ server:
     enabled: false
     certificate: "/path/to/tls/certificate"
     key: "/path/to/tls/key"
+  queue:
+    enabled: true
+    max_concurrent_jobs: 10
+    max_history_items: 20
 chatops:
   enabled: false
   service: slack
@@ -106,6 +110,28 @@ Default: `nil`
 Type: string
 Description: Full path to key file. Optional.
 Default: `nil`
+
+#### `queue`
+
+Type: struct
+Description: Struct containing Queue options
+
+##### `enabled`
+
+Type: bool
+Description: Should queuing be used
+Default: `false`
+
+##### `max_concurrent_jobs`
+
+Type: int
+Description: How many jobs could be stored in queue
+Default: `10`
+
+##### `max_history_items`
+Type: int
+Description: How many queue items should be stored in the history
+Default: `50`
 
 ### ChatOps options
 
@@ -188,4 +214,3 @@ Default: `true`
 Type: bool
 Description: Run `puppet generate types` after updating an environment
 Default: `true`
-
