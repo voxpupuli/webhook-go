@@ -20,6 +20,11 @@ type Config struct {
 			Certificate string `mapstructure:"certificate"`
 			Key         string `mapstructure:"key"`
 		} `mapstructure:"tls"`
+		Queue struct {
+			Enabled           bool `mapstructure:"enabled"`
+			MaxConcurrentJobs int  `mapstructure:"max_concurrent_jobs"`
+			MaxHistoryItems   int  `mapstructure:"max_history_items"`
+		} `mapstructure:"queue"`
 	} `mapstructure:"server"`
 	ChatOps struct {
 		Enabled   bool   `mapstructure:"enabled"`
@@ -72,6 +77,8 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("server.port", 4000)
 	v.SetDefault("server.protected", false)
 	v.SetDefault("server.tls_enabled", false)
+	v.SetDefault("server.queue.max_concurrent_jobs", 10)
+	v.SetDefault("server.queue.max_history_items", 50)
 	v.SetDefault("chatops.enabled", false)
 	v.SetDefault("r10k.command_path", "/opt/puppetlabs/puppetserver/bin/r10k")
 	v.SetDefault("r10k.config_path", "/etc/puppetlabs/r10k/r10k.yaml")
