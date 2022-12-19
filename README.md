@@ -47,7 +47,6 @@ orchestration:
   enabled: true
   type: bolt
   user: webhook
-  password: password
   bolt:
     transport: local
     targets:
@@ -57,8 +56,15 @@ r10k:
   default_branch: main
   allow_uppercase: false
   verbose: true
-
 ```
+
+#### Bolt authentication
+
+Due to the inherent security risk associated with passing plain text passwords to the Bolt CLI tool, all ability to set it within the application have been removed.
+
+Instead, it is recommended to instead utilize the Bolt [Transport configuration options](https://puppet.com/docs/bolt/latest/bolt_transports_reference.html) and place them within the `bolt-defaults.yaml` file.
+
+If you want to utilize an `inventory.yaml` and place the targets and auth config within that file, you can. Just be sure to remember to add the target name containing the nodes you need to the `webhook.yml` file
 
 ### Server options
 

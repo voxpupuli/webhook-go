@@ -24,10 +24,6 @@ func Deploy(cmd string) (interface{}, error) {
 		boltRunner := Bolt{
 			Transport:    orch.Bolt.Transport,
 			Targets:      orch.Bolt.Targets,
-			RunAs:        orch.Bolt.RunAs,
-			SudoPassword: orch.Bolt.SudoPassword,
-			User:         orch.User,
-			Password:     orch.Password,
 			HostKeyCheck: &orch.Bolt.HostKeyCheck,
 			Concurrency:  orch.Bolt.Concurrency,
 		}

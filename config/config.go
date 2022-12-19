@@ -30,16 +30,12 @@ type Config struct {
 		ServerUri string `mapstructure:"server_uri"`
 	} `mapstructure:"chatops"`
 	Orchestration struct {
-		Enabled  bool    `mapstructure:"enabled"`
-		Type     *string `mapstructure:"type"`
-		User     *string `mapstructure:"user"`
-		Password *string `mapstructure:"password"`
-		Bolt     *struct {
+		Enabled bool    `mapstructure:"enabled"`
+		Type    *string `mapstructure:"type"`
+		Bolt    *struct {
 			Transport    *string  `mapstructure:"transport"`
 			Targets      []string `mapstructure:"targets"`
 			Concurrency  *int64   `mapstructure:"concurrency"`
-			RunAs        *string  `mapstructure:"run_as"`
-			SudoPassword *string  `mapstructure:"sudo_password"`
 			HostKeyCheck bool     `mapstructure:"host_key_check"`
 		} `mapstructure:"bolt"`
 	} `mapstructure:"orchestration"`
