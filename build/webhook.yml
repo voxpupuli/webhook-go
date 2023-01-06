@@ -7,24 +7,16 @@ server:
     enabled: false
     certificate: ""
     key: ""
-# chatops:
-#   enabled: false
-#   service: slack
-#   channel: "#general"
-#   user: r10kbot
-#   auth_token: 12345
-#   server_uri: "https://rocketchat.local"
+chatops:
+  enabled: false
+  service: slack
+  channel: "#general"
+  user: r10kbot
+  auth_token: 12345
+  server_uri: "https://rocketchat.local"
 r10k:
   config_path: /etc/puppetlabs/r10k/r10k.yaml
-  # default_branch: webhook_test
+  default_branch: webhook_test
   allow_uppercase: false
   verbose: true
-# orchestration:
-#   enabled: false
-#   type: bolt
-#   user: dhollinger
-#   bolt:
-#     transport: local
-#     targets:
-#       - localhost
-#     host_key_check: false
+  generate_types: false

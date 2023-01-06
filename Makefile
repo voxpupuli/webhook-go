@@ -17,8 +17,7 @@ binary: ## Build a local binary
 	@cp dist/$(NAME)_$(GOOS)_$(GOARCH)_$(VERSION)/$(NAME) bin/
 
 run: ## Run webhook-go
-	@cp webhook.yml.example webhook.yml
-	@go run main.go
+	@go run main.go --config ./webhook.yml
 
 clean: ## Clean up build
 	@echo "Cleaning Go environment..."

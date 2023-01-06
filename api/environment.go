@@ -15,9 +15,8 @@ import (
 type EnvironmentController struct{}
 
 // DeployEnvironment takes in the current Gin context and parses the request
-// data into a variable then executes the r10k environment deploy either through
-// an orchestrator defined in the Orchestration library or a direct local execution
-// of the r10k deploy environment command
+// data into a variable then executes the r10k environment deploy as direct
+// local execution of the r10k deploy environment command
 func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	var data parsers.Data
 	var h helpers.Helper
@@ -57,20 +56,20 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 
 	// Set additional optional r10k options if they are set
 	if conf.R10k.Verbose {
-		cmd = append(cmd, "-v")
-	}
-	if conf.R10k.DeployModules {
-		cmd = append(cmd, "-m")
+		cmd = append(cmd, "--verbose")
 	}
 	if conf.R10k.GenerateTypes {
 		cmd = append(cmd, "--generate-types")
+	}
+	if conf.R10k.DeployModules {
+		cmd = append(cmd, "--modules")
 	}
 
 	// Pass the command to the execute function and act on the result and any error
 	// that is returned
 	//
 	// On an error this will:
-	//		* Log the error, orchestration type, and command
+	//		* Log the error and command
 	//		* Respond with an HTTP 500 error and return the command result in JSON format
 	//		* Abort the request
 	//		* Notify ChatOps service if enabled
@@ -79,11 +78,7 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	//		* Respond with an HTTP 202 and the result in JSON format
 	res, err := execute(cmd)
 	if err != nil {
-		if conf.Orchestration.Enabled {
-			log.Errorf("orchestrator `%s` failed to execute command `%s` with error: `%s` `%s`", *conf.Orchestration.Type, cmd, err, res)
-		} else {
-			log.Errorf("failed to execute local command `%s` with error: `%s` `%s`", cmd, err, res)
-		}
+		log.Errorf("failed to execute local command `%s` with error: `%s` `%s`", cmd, err, res)
 
 		c.JSON(http.StatusInternalServerError, res)
 		c.Abort()

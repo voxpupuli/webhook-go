@@ -16,8 +16,7 @@ type ModuleController struct{}
 
 // DeployModule takes int the current Gin context and parses the request
 // data into a variable then executes the r10k module deploy either through
-// an orchestrator defined in the orchestration library or a direct local execution
-// of the r10k deploy module command
+// a direct local execution of the r10k deploy module command
 func (m ModuleController) DeployModule(c *gin.Context) {
 	var data parsers.Data
 	var h helpers.Helper
@@ -55,7 +54,7 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 	// that is returned
 	//
 	// On an error this will:
-	//		* Log the error, orchestration type, and command
+	//		* Log the error and command
 	//		* Respond with an HTTP 500 error and return the command result in JSON format
 	//		* Abort the request
 	//		* Notify ChatOps service if enabled
@@ -64,11 +63,7 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 	//		* Respond with an HTTP 202 and the result in JSON format
 	res, err := execute(cmd)
 	if err != nil {
-		if conf.Orchestration.Enabled {
-			log.Errorf("orchestrator `%s` failed to execute command `%s` with error: `%s` `%s`", *conf.Orchestration.Type, cmd, err, res)
-		} else {
-			log.Errorf("failed to execute local command `%s` with error: `%s` `%s`", cmd, err, res)
-		}
+		log.Errorf("failed to execute local command `%s` with error: `%s` `%s`", cmd, err, res)
 
 		c.JSON(http.StatusInternalServerError, res)
 		c.Abort()
