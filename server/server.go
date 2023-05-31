@@ -1,6 +1,8 @@
 package server
 
 import (
+	"fmt"
+
 	"github.com/voxpupuli/webhook-go/config"
 )
 
@@ -9,8 +11,8 @@ func Init() {
 	config := config.GetConfig().Server
 	r := NewRouter()
 	if config.TLS.Enabled {
-		r.RunTLS(":"+config.Port, config.TLS.Certificate, config.TLS.Key)
+		r.RunTLS(":"+fmt.Sprint(config.Port), config.TLS.Certificate, config.TLS.Key)
 	} else {
-		r.Run(":" + config.Port)
+		r.Run(":" + fmt.Sprint(config.Port))
 	}
 }
