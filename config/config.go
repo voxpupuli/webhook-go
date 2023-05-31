@@ -14,7 +14,7 @@ type Config struct {
 		Protected bool   `mapstructure:"protected"`
 		User      string `mapstructure:"user"`
 		Password  string `mapstructure:"password"`
-		Port      string `mapstructure:"port,int"`
+		Port      int    `mapstructure:"port,int"`
 		TLS       struct {
 			Enabled     bool   `mapstructure:"enabled"`
 			Certificate string `mapstructure:"certificate"`
