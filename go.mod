@@ -13,7 +13,7 @@ require (
 	github.com/slack-go/slack v0.9.5
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.8.1
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.4
 	github.com/xanzy/go-gitlab v0.84.0
 	gotest.tools v2.2.0+incompatible
 )
