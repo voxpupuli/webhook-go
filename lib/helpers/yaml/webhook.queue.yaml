@@ -1,0 +1,6 @@
+---
+server:
+  queue:
+    enabled: true
+    max_concurrent_jobs: 10
+    max_history_items: 20
