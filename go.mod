@@ -3,6 +3,7 @@ module github.com/voxpupuli/webhook-go
 go 1.19
 
 require (
+	code.gitea.io/gitea/modules/structs v0.0.0-20190610152049-835b53fc259c
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/webhooks/v6 v6.2.0
 	github.com/google/go-github/v39 v39.2.0

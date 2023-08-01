@@ -426,6 +426,58 @@ func Test_ParseData(t *testing.T) {
 
 		})
 	})
+
+	t.Run("Gitea", func(t *testing.T) {
+		t.Run("Successfully Parsed Push", func(t *testing.T) {
+			d := Data{}
+
+			header := []Header{
+				{
+					Name:  "X-Gitea-Event",
+					Value: "push",
+				},
+			}
+
+			c, _, err := getGinContext("./json/gitea/push.json", header)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			err = d.ParseData(c)
+
+			d_base := Data{
+				Branch:     "simple-tag",
+				Deleted:    false,
+				ModuleName: "Hello-World",
+				RepoName:   "Codertocat/Hello-World",
+				RepoUser:   "Codertocat",
+				Completed:  true,
+				Succeed:    true,
+			}
+			assert.NilError(t, err)
+			assert.Equal(t, d, d_base)
+		})
+
+		t.Run("Failed to parse", func(t *testing.T) {
+			d := Data{}
+
+			header := []Header{
+				{
+					Name:  "X-Gitea-Event",
+					Value: "fork",
+				},
+			}
+
+			c, _, err := getGinContext("./json/gitea/fork.json", header)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			err = d.ParseData(c)
+
+			assert.Error(t, err, "unknown event type fork")
+		})
+	})
 }
 
 func getGinContext(filename string, headers []Header) (*gin.Context, *httptest.ResponseRecorder, error) {
