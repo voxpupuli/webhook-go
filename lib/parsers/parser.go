@@ -52,6 +52,11 @@ func (d *Data) ParseData(c *gin.Context) error {
 		if err != nil {
 			return err
 		}
+	case "gitea":
+		err = d.parseGitea(c)
+		if err != nil {
+			return err
+		}
 	default:
 		return fmt.Errorf("unsupported version control systems: %s", vcs)
 	}
@@ -62,7 +67,11 @@ func (d *Data) ParseData(c *gin.Context) error {
 // ParseHeaders parses the headers and returns a string containing the VCS tool that is making the request.
 // If an unsupported VCS tool makes a request, then an error is returned.
 func (d *Data) ParseHeaders(headers *http.Header) (string, error) {
-	if headers.Get("X-Github-Event") != "" {
+	// Gitea adds  the X-Github-Event header but is not 100% compatable
+	// Check for it first to prevent sending Gitea events to the Github parser
+	if headers.Get("X-Gitea-Event") != "" {
+		return "gitea", nil
+	} else if headers.Get("X-Github-Event") != "" {
 		return "github", nil
 	} else if headers.Get("X-Gitlab-Event") != "" {
 		return "gitlab", nil
