@@ -1,17 +1,24 @@
 version: 2
 updates:
-# raise PRs for go updates
-- package-ecosystem: gomod
-  directory: "/"
-  schedule:
-    interval: daily
-    time: "13:00"
-  open-pull-requests-limit: 10
+  # raise PRs for go updates
+  - package-ecosystem: gomod
+    directory: "/"
+    schedule:
+      interval: daily
+      time: "13:00"
+    open-pull-requests-limit: 10
 
-# Maintain dependencies for GitHub Actions
-- package-ecosystem: github-actions
-  directory: "/"
-  schedule:
-    interval: daily
-    time: "13:00"
-  open-pull-requests-limit: 10
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: daily
+      time: "13:00"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "13:00"
+    open-pull-requests-limit: 10
