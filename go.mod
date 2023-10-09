@@ -16,7 +16,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.17.0
 	github.com/stretchr/testify v1.8.4
-	github.com/xanzy/go-gitlab v0.93.0
+	github.com/xanzy/go-gitlab v0.93.1
 	gotest.tools v2.2.0+incompatible
 )
 
