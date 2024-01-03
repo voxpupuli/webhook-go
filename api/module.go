@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -54,8 +55,21 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 		cmd = append(cmd, branch)
 	}
 
+	module := data.ModuleName
+	overrideModule := c.Query("module_name")
+	// Restrictions to Puppet module names are: 1) begin with lowercase letter, 2) contain lowercase, digits or underscores
+	match, _ := regexp.MatchString("^[a-z][a-z0-9_]*$", overrideModule)
+	if !match {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Invalid module name"})
+		c.Abort()
+		return
+	}
+	if overrideModule != "" {
+		module = overrideModule
+	}
+
 	// Append module name and r10k configuration to the cmd string slice
-	cmd = append(cmd, data.ModuleName)
+	cmd = append(cmd, module)
 	cmd = append(cmd, fmt.Sprintf("--config=%s", h.GetR10kConfig()))
 
 	// Set additional optional r10k flags if they are set
