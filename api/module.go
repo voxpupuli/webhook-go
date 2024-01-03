@@ -42,6 +42,18 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 		return
 	}
 
+	useBranch := c.Query("branch_only")
+	if useBranch != "" {
+		branch := ""
+		if data.Branch == "" {
+			branch = conf.R10k.DefaultBranch
+		} else {
+			branch = data.Branch
+		}
+		cmd = append(cmd, "-e")
+		cmd = append(cmd, branch)
+	}
+
 	// Append module name and r10k configuration to the cmd string slice
 	cmd = append(cmd, data.ModuleName)
 	cmd = append(cmd, fmt.Sprintf("--config=%s", h.GetR10kConfig()))
