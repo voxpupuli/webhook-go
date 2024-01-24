@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/webhooks/v6 v6.3.0
 	github.com/google/go-github/v39 v39.2.0
-	github.com/google/uuid v1.5.0
+	github.com/google/uuid v1.6.0
 	github.com/mcdafydd/go-azuredevops v0.12.1
 	github.com/pandatix/gocket-chat v0.1.0-alpha
 	github.com/proclaim/mock-slack v0.0.0-20201019114328-0aae156a5005
