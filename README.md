@@ -214,3 +214,27 @@ Default: `true`
 Type: bool
 Description: Run `puppet generate types` after updating an environment
 Default: `true`
+
+## Usage
+
+Webhook API provides following paths
+
+### GET /health
+
+Get health assessment about the Webhook API server
+
+### GET /api/v1/queue
+
+Get current queue status of the Webhook API server
+
+### POST /api/v1/r10k/environment
+
+Updates a given puppet environment, ie. `r10k deploy environment`. This only updates a specific environment governed by the branch name.
+
+### POST /api/v1/r10k/module
+
+Updates a puppet module, ie. `r10k deploy module`. The default behaviour of r10k is to update the module in all environments that have it. Module name defaults to the git repository name.
+
+Available URL arguments (`?argument=value`):
+* branch_only - If set, this will only update the module in an environment set by the branch, as opposed to all environments. This is equivalent to the `--environment` r10k option.
+* module_name - Sometimes git repository and module name cannot have the same name due to arbitrary naming restrictions. This option forces the module name to be the given value instead of repository name.
