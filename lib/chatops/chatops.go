@@ -27,7 +27,7 @@ type ChatAttachment struct {
 	Color      string
 }
 
-func (c *ChatOps) PostMessage(code int, target string) (*ChatOpsResponse, error) {
+func (c *ChatOps) PostMessage(code int, target string, output interface{}) (*ChatOpsResponse, error) {
 	var resp ChatOpsResponse
 
 	switch c.Service {
@@ -45,6 +45,11 @@ func (c *ChatOps) PostMessage(code int, target string) (*ChatOpsResponse, error)
 		}
 		resp.Channel = res.Channel
 		resp.Timestamp = strconv.FormatInt(res.Ts, 10)
+	case "teams":
+		_, err := c.teams(code, target, output)
+		if err != nil {
+			return nil, err
+		}
 	default:
 		return nil, fmt.Errorf("ChatOps tools `%s` is not supported at this time", c.Service)
 	}

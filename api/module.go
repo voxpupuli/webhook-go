@@ -38,7 +38,7 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error Parsing Webhook", "error": err})
 		c.Abort()
 		if conf.ChatOps.Enabled {
-			conn.PostMessage(http.StatusInternalServerError, "Error Parsing Webhook")
+			conn.PostMessage(http.StatusInternalServerError, "Error Parsing Webhook", err)
 		}
 		return
 	}
@@ -63,6 +63,10 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 		if !match {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Invalid module name"})
 			c.Abort()
+			err = fmt.Errorf("invalid module name: module name does not match the expected pattern; got: %s, pattern: ^[a-z][a-z0-9_]*$", overrideModule)
+			if conf.ChatOps.Enabled {
+				conn.PostMessage(http.StatusInternalServerError, "Invalid module name", err)
+			}
 			return
 		}
 		module = overrideModule
@@ -103,13 +107,13 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, res)
 		c.Abort()
 		if conf.ChatOps.Enabled {
-			conn.PostMessage(http.StatusInternalServerError, data.ModuleName)
+			conn.PostMessage(http.StatusInternalServerError, data.ModuleName, err)
 		}
 		return
 	}
 
 	c.JSON(http.StatusAccepted, res)
 	if conf.ChatOps.Enabled {
-		conn.PostMessage(http.StatusAccepted, data.ModuleName)
+		conn.PostMessage(http.StatusAccepted, data.ModuleName, res)
 	}
 }

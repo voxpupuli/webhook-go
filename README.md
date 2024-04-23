@@ -145,7 +145,7 @@ Default: false
 #### `service`
 
 Type: string
-Description: Which service to use. Supported options: [`slack`, `rocketchat`]  
+Description: Which service to use. Supported options: [`slack`, `rocketchat`, `teams`]  
 Default: nil
 
 #### `channel`

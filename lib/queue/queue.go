@@ -121,12 +121,13 @@ func worker() {
 			log.Errorf("failed to execute local command `%s` with error: `%s` `%s`", job.Command, err, res)
 
 			if conf.ChatOps.Enabled {
-				conn.PostMessage(http.StatusInternalServerError, job.Name)
+				conn.PostMessage(http.StatusInternalServerError, job.Name, res)
 			}
 			job.State = "failed"
 			continue
 		}
 
+		conn.PostMessage(http.StatusAccepted, job.Name, res)
 		job.State = "success"
 	}
 }

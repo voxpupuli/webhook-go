@@ -97,14 +97,14 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, res)
 		c.Abort()
 		if conf.ChatOps.Enabled {
-			conn.PostMessage(http.StatusInternalServerError, env)
+			conn.PostMessage(http.StatusInternalServerError, env, res)
 		}
 		return
 	}
 
 	c.JSON(http.StatusAccepted, res)
 	if conf.ChatOps.Enabled {
-		conn.PostMessage(http.StatusAccepted, env)
+		conn.PostMessage(http.StatusAccepted, env, res)
 	}
 
 }
