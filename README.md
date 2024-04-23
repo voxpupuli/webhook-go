@@ -55,6 +55,27 @@ r10k:
   verbose: true
 ```
 
+### Microsoft Teams notifications
+
+Create an "Incoming Webhook" connector in Teams at the designated channel as described in the documentation: [Create Incoming Webhooks at learn.microsoft.com](https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook). Keep the URL confidential!
+
+Configure the service in the `webhook.yaml`:
+```yaml
+chatops:
+  enabled: true
+  service: teams
+  server_uri: "<Teams Webhook URI>"
+```
+
+Notifications are colored, according to their status.
+green: Success
+red: Failure
+orange: Warning
+
+Press the `Details` button to get more information.
+
+If the queue is enabled in the `server` part of `webhook.yaml`, then two notifications are emitted: First, when the request is added to the queue and second, when the request was processed.
+
 ### Bolt authentication
 
 Due to the inherent security risk associated with passing plain text passwords to the Bolt CLI tool, all ability to set it within the application have been removed.
@@ -169,7 +190,7 @@ Default: nil
 #### `server_uri`
 
 Type: string  
-Description: The ChatOps service API URI to send the message to.  
+Description: The ChatOps service API URI to send the message to. For MS Teams, this is the Webhook URL created at the channel connectors.
 Default: nil
 
 ### r10k options
