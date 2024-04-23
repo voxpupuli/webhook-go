@@ -1,6 +1,7 @@
 package chatops
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -21,7 +22,7 @@ func Test_PostMessage(t *testing.T) {
 				TestURL:   &mockServer.Server.URL,
 			}
 
-			resp, err := c.PostMessage(202, "main")
+			resp, err := c.PostMessage(202, "main", "output")
 
 			assert.NoError(t, err, "should not error")
 			assert.Equal(t, resp.Channel, c.Channel, "channel should be correct")
@@ -31,7 +32,7 @@ func Test_PostMessage(t *testing.T) {
 			assert.Equal(t, mockServer.Received.Attachment[0].Color, "green")
 			assert.Equal(t, mockServer.Received.Attachment[0].Text, "Successfully started deployment of main")
 
-			resp, err = c.PostMessage(500, "main")
+			resp, err = c.PostMessage(500, "main", "output")
 
 			assert.NoError(t, err, "should not error")
 
@@ -48,9 +49,37 @@ func Test_PostMessage(t *testing.T) {
 				TestMode:  true,
 			}
 
-			_, err := c.PostMessage(202, "main")
+			_, err := c.PostMessage(202, "main", "output")
 
 			assert.Error(t, err, "A ServerURI must be specified to use RocketChat")
+
+		})
+		t.Run("Teams", func(t *testing.T) {
+			serverURI := "https://example.webhook.office.com/webhook/xxx"
+			c := ChatOps{
+				Service:   "teams",
+				TestMode:  true,
+				ServerURI: &serverURI,
+			}
+
+			_, err := c.PostMessage(202, "main", "output")
+
+			assert.NoError(t, err, "should not error")
+
+			_, err = c.PostMessage(500, "main", "output")
+
+			assert.NoError(t, err, "should not error")
+
+			_, err = c.PostMessage(500, "main", fmt.Errorf("error"))
+
+			assert.NoError(t, err, "should not error")
+
+			serverURI = "https://doesnotexist.at"
+			c.TestMode = false
+			_, err = c.PostMessage(202, "main", "output")
+			assert.Error(t, err, "should error")
+			errorMessage := err.Error()
+			assert.Contains(t, errorMessage, "failed to validate webhook URL", "The error message should contain the specific substring")
 
 		})
 	})

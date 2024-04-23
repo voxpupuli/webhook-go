@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	code.gitea.io/gitea/modules/structs v0.0.0-20190610152049-835b53fc259c
+	github.com/atc0005/go-teams-notify/v2 v2.10.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/webhooks/v6 v6.3.0
 	github.com/google/go-github/v39 v39.2.0
