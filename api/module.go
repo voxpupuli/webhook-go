@@ -24,7 +24,7 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 	var h helpers.Helper
 
 	// Set the base r10k command into a string slice
-	cmd := []string{"r10k", "deploy", "module"}
+	cmd := []string{h.GetR10kCommand(), "deploy", "module"}
 
 	// Get the configuration
 	conf := config.GetConfig()
