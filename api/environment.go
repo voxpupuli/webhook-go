@@ -24,7 +24,7 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	var branch string
 
 	// Set the base r10k command into a slice of strings
-	cmd := []string{"r10k", "deploy", "environment"}
+	cmd := []string{h.GetR10kCommand(), "deploy", "environment"}
 
 	// Get the configuration
 	conf := config.GetConfig()

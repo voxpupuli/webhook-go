@@ -215,6 +215,12 @@ Type: bool
 Description: Run `puppet generate types` after updating an environment
 Default: `true`
 
+### `command_path`
+
+Type: `string`
+Description: Allow overriding the default path to r10k.
+Default: `/opt/puppetlabs/puppetserver/bin/r10k`
+
 ## Usage
 
 Webhook API provides following paths
