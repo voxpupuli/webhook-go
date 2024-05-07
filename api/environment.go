@@ -63,7 +63,11 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		cmd = append(cmd, "--generate-types")
 	}
 	if conf.R10k.DeployModules {
-		cmd = append(cmd, "--modules")
+		if conf.R10k.UseLegacyPuppetfileFlag {
+			cmd = append(cmd, "--puppetfile")
+		} else {
+			cmd = append(cmd, "--modules")
+		}
 	}
 
 	// Pass the command to the execute function and act on the result and any error
