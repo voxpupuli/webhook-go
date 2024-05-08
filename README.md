@@ -209,11 +209,23 @@ Type: bool
 Description: Deploy modules in environments.
 Default: `true`
 
+### `use_legacy_puppetfile_flag`
+
+Type: bool
+Description: Use the legacy `--puppetfile` flag instead of `--modules`. This should only be used when your version of r10k doesn't support the newer flag.
+Default: `false`
+
 ### `generate_types`
 
 Type: bool
 Description: Run `puppet generate types` after updating an environment
 Default: `true`
+
+### `command_path`
+
+Type: `string`
+Description: Allow overriding the default path to r10k.
+Default: `/opt/puppetlabs/puppetserver/bin/r10k`
 
 ## Usage
 

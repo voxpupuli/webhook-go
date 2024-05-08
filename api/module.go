@@ -24,7 +24,7 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 	var h helpers.Helper
 
 	// Set the base r10k command into a string slice
-	cmd := []string{"r10k", "deploy", "module"}
+	cmd := []string{h.GetR10kCommand(), "deploy", "module"}
 
 	// Get the configuration
 	conf := config.GetConfig()
@@ -58,13 +58,13 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 	module := data.ModuleName
 	overrideModule := c.Query("module_name")
 	// Restrictions to Puppet module names are: 1) begin with lowercase letter, 2) contain lowercase, digits or underscores
-	match, _ := regexp.MatchString("^[a-z][a-z0-9_]*$", overrideModule)
-	if !match {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Invalid module name"})
-		c.Abort()
-		return
-	}
 	if overrideModule != "" {
+		match, _ := regexp.MatchString("^[a-z][a-z0-9_]*$", overrideModule)
+		if !match {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "Invalid module name"})
+			c.Abort()
+			return
+		}
 		module = overrideModule
 	}
 
