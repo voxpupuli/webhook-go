@@ -26,6 +26,7 @@ Download a Pre-release Binary from the [Releases](https://github.com/voxpupuli/w
 The Webhook API server uses a configuration file called `webhook.yml` to configure the server. Several of the required options have defaults pre-defined so that a configuration file isn't needed for basic function.
 
 `webhook.yaml.example`:
+
 ```yaml
 server:
   protected: false
@@ -54,7 +55,7 @@ r10k:
   verbose: true
 ```
 
-#### Bolt authentication
+### Bolt authentication
 
 Due to the inherent security risk associated with passing plain text passwords to the Bolt CLI tool, all ability to set it within the application have been removed.
 
@@ -66,165 +67,165 @@ If you want to utilize an `inventory.yaml` and place the targets and auth config
 
 #### `protected`
 
-Type: bool
-Description: Enforces authetication via basic Authentication
+Type: bool  
+Description: Enforces authentication via basic Authentication  
 Default: `false`
 
 #### `user`
 
-Type: string
-Description: Username to use for Basic Authentication. Optional.
+Type: string  
+Description: Username to use for Basic Authentication. Optional.  
 Default: `nil`
 
 #### `password`
 
-Type: string
-Description: Password to use for Basic Authentication. Optional.
+Type: string  
+Description: Password to use for Basic Authentication. Optional.  
 Default: `nil`
 
 #### `port`
 
-Type: int64
-Description: Port to run the server on. Optional.
+Type: int64  
+Description: Port to run the server on. Optional.  
 Default: `4000`
 
 #### `tls`
 
-Type: struct
-Description: Struct containing server TLS options
+Type: struct  
+Description: Struct containing server TLS options  
 
 ##### `enabled`
 
-Type: bool
-Description: Enforces TLS with http server
+Type: bool  
+Description: Enforces TLS with http server  
 Default: `false`
 
 ##### `certificate`
 
-Type: string
-Description: Full path to certificate file. Optional.
+Type: string  
+Description: Full path to certificate file. Optional.  
 Default: `nil`
 
 ##### `key`
 
-Type: string
-Description: Full path to key file. Optional.
+Type: string  
+Description: Full path to key file. Optional.  
 Default: `nil`
 
 #### `queue`
 
-Type: struct
-Description: Struct containing Queue options
+Type: struct  
+Description: Struct containing Queue options  
 
 ##### `enabled`
 
-Type: bool
-Description: Should queuing be used
+Type: bool  
+Description: Should queuing be used  
 Default: `false`
 
 ##### `max_concurrent_jobs`
 
-Type: int
-Description: How many jobs could be stored in queue
+Type: int  
+Description: How many jobs could be stored in queue  
 Default: `10`
 
 ##### `max_history_items`
-Type: int
-Description: How many queue items should be stored in the history
+Type: int  
+Description: How many queue items should be stored in the history  
 Default: `50`
 
 ### ChatOps options
 
 #### `enabled`
 
-Type: boolean
-Description: Enable/Disable chatops support
+Type: boolean  
+Description: Enable/Disable chatops support  
 Default: false
 
 #### `service`
 
 Type: string
-Description: Which service to use. Supported options: [`slack`, `rocketchat`]
+Description: Which service to use. Supported options: [`slack`, `rocketchat`]  
 Default: nil
 
 #### `channel`
 
-Type: string
-Description: ChatOps communication channel to post to.
+Type: string  
+Description: ChatOps communication channel to post to.  
 Default: nil
 
 #### `user`
 
-Type: string
-Description: ChatOps user to post as
+Type: string  
+Description: ChatOps user to post as  
 Default: nil
 
 #### `auth_token`
 
-Type: string
-Description: The authentication token needed to post as the ChatOps user in the chosen, supported ChatOps service
+Type: string  
+Description: The authentication token needed to post as the ChatOps user in the chosen, supported ChatOps service  
 Default: nil
 
 #### `server_uri`
 
-Type: string
-Description: The ChatOps service API URI to send the message to.
+Type: string  
+Description: The ChatOps service API URI to send the message to.  
 Default: nil
 
 ### r10k options
 
 #### `config_path`
 
-Type: string
-Description: Full path to the r10k configuration file. Optional.
+Type: string  
+Description: Full path to the r10k configuration file. Optional.  
 Default: `/etc/puppetlabs/r10k/r10k.yaml`
 
 #### `default_branch`
 
-Type: string
-Description: Name of the default branch for r10k to pull from. Optional.
+Type: string  
+Description: Name of the default branch for r10k to pull from. Optional.  
 Default: `main`
 
 #### `prefix`
 
-Type: string
-Description: An r10k prefix to apply to the module or environment being deployed. Optional.
+Type: string  
+Description: An r10k prefix to apply to the module or environment being deployed. Optional.  
 Default: `nil`
 
 #### `allow_uppercase`
 
-Type: bool
-Description: Allow Uppercase letters in the module, branch, or environment name. Optional.
+Type: bool  
+Description: Allow Uppercase letters in the module, branch, or environment name. Optional.  
 Default: `false`
 
 #### `verbose`
 
-Type: bool
-Description: Log verbose output when running the r10k command
+Type: bool  
+Description: Log verbose output when running the r10k command  
 Default: `true`
 
 ### `deploy_modules`
 
-Type: bool
-Description: Deploy modules in environments.
+Type: bool  
+Description: Deploy modules in environments.  
 Default: `true`
 
 ### `use_legacy_puppetfile_flag`
 
-Type: bool
-Description: Use the legacy `--puppetfile` flag instead of `--modules`. This should only be used when your version of r10k doesn't support the newer flag.
+Type: bool  
+Description: Use the legacy `--puppetfile` flag instead of `--modules`. This should only be used when your version of r10k doesn't support the newer flag.  
 Default: `false`
 
 ### `generate_types`
 
-Type: bool
-Description: Run `puppet generate types` after updating an environment
+Type: bool  
+Description: Run `puppet generate types` after updating an environment  
 Default: `true`
 
 ### `command_path`
 
-Type: `string`
-Description: Allow overriding the default path to r10k.
+Type: `string`  
+Description: Allow overriding the default path to r10k.  
 Default: `/opt/puppetlabs/puppetserver/bin/r10k`
 
 ## Usage
@@ -245,8 +246,9 @@ Updates a given puppet environment, ie. `r10k deploy environment`. This only upd
 
 ### POST /api/v1/r10k/module
 
-Updates a puppet module, ie. `r10k deploy module`. The default behaviour of r10k is to update the module in all environments that have it. Module name defaults to the git repository name.
+Updates a puppet module, ie. `r10k deploy module`. The default behavior of r10k is to update the module in all environments that have it. Module name defaults to the git repository name.
 
 Available URL arguments (`?argument=value`):
+
 * branch_only - If set, this will only update the module in an environment set by the branch, as opposed to all environments. This is equivalent to the `--environment` r10k option.
 * module_name - Sometimes git repository and module name cannot have the same name due to arbitrary naming restrictions. This option forces the module name to be the given value instead of repository name.
