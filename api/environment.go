@@ -24,7 +24,7 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	var branch string
 
 	// Set the base r10k command into a slice of strings
-	cmd := []string{"r10k", "deploy", "environment"}
+	cmd := []string{h.GetR10kCommand(), "deploy", "environment"}
 
 	// Get the configuration
 	conf := config.GetConfig()
@@ -63,7 +63,11 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		cmd = append(cmd, "--generate-types")
 	}
 	if conf.R10k.DeployModules {
-		cmd = append(cmd, "--modules")
+		if conf.R10k.UseLegacyPuppetfileFlag {
+			cmd = append(cmd, "--puppetfile")
+		} else {
+			cmd = append(cmd, "--modules")
+		}
 	}
 
 	// Pass the command to the execute function and act on the result and any error
