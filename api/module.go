@@ -107,7 +107,7 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, res)
 		c.Abort()
 		if conf.ChatOps.Enabled {
-			conn.PostMessage(http.StatusInternalServerError, data.ModuleName, err)
+			conn.PostMessage(http.StatusInternalServerError, data.ModuleName, res)
 		}
 		return
 	}
