@@ -55,7 +55,7 @@ func (c *ChatOps) teams(code int, target string, output interface{}) (*adaptivec
 
 	// Change texts and add details button, depending on type of output (error, QueueItem, any)
 	switch fmt.Sprintf("%T", output) {
-	case "error":
+	case "*errors.errorString":
 		messageTextBlock = NewTextBlock(fmt.Sprintf("Error: %s", output), color)
 		details = false
 	case "*queue.QueueItem":
@@ -132,6 +132,7 @@ func ScanforWarn(output interface{}) bool {
 func getCaller() string {
 	var callerFunction string
 
+	// ignoring return values 'file name' and 'line number in that file', because those values are not needed
 	pc, _, _, ok := runtime.Caller(3)
 	runtimedetails := runtime.FuncForPC(pc)
 	if ok && runtimedetails != nil {
