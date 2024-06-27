@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const prefix = "refs/heads/"
+
 type Data struct {
 	Branch     string
 	Deleted    bool

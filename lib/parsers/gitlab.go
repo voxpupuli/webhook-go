@@ -3,7 +3,7 @@ package parsers
 import (
 	"fmt"
 	"io/ioutil"
-	"path"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/xanzy/go-gitlab"
@@ -22,7 +22,7 @@ func (d *Data) parseGitlab(c *gin.Context) error {
 
 	switch e := event.(type) {
 	case *gitlab.PushEvent:
-		d.Branch = path.Base(e.Ref)
+		d.Branch = strings.TrimPrefix(e.Ref, prefix)
 		d.Deleted = d.gitlabDeleted(e.After)
 		d.ModuleName = e.Project.Name
 		d.RepoName = e.Project.PathWithNamespace
