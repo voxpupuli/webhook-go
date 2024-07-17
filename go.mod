@@ -13,11 +13,11 @@ require (
 	github.com/pandatix/gocket-chat v0.1.0-alpha
 	github.com/proclaim/mock-slack v0.0.0-20201019114328-0aae156a5005
 	github.com/sirupsen/logrus v1.9.3
-	github.com/slack-go/slack v0.13.0
+	github.com/slack-go/slack v0.13.1
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
-	github.com/xanzy/go-gitlab v0.106.0
+	github.com/xanzy/go-gitlab v0.107.0
 	gotest.tools v2.2.0+incompatible
 )
 
@@ -39,7 +39,7 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-retryablehttp v0.7.2 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
