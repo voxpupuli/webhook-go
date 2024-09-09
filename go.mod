@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	code.gitea.io/gitea/modules/structs v0.0.0-20190610152049-835b53fc259c
-	github.com/atc0005/go-teams-notify/v2 v2.12.0
+	github.com/atc0005/go-teams-notify/v2 v2.13.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/webhooks/v6 v6.4.0
 	github.com/google/go-github/v39 v39.2.0
@@ -17,7 +17,7 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
-	github.com/xanzy/go-gitlab v0.108.0
+	github.com/xanzy/go-gitlab v0.109.0
 	gotest.tools v2.2.0+incompatible
 )
 
