@@ -7,6 +7,8 @@ import (
 	"github.com/go-playground/webhooks/v6/bitbucket"
 )
 
+// parseBitbucket processes a Bitbucket webhook, extracting branch, repository, and user information.
+// Handles RepoPushEvent to set relevant fields based on the payload.
 func (d *Data) parseBitbucket(c *gin.Context) error {
 	bh, err := bitbucket.New()
 	if err != nil {
@@ -41,6 +43,7 @@ func (d *Data) parseBitbucket(c *gin.Context) error {
 	return nil
 }
 
+// bitbucketDeleted checks if the repository changes indicate a deletion.
 func (d *Data) bitbucketDeleted(b bitbucket.RepoPushPayload) bool {
 	return b.Push.Changes[0].Closed
 }
