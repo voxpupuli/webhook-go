@@ -9,6 +9,7 @@ import (
 
 var config Config
 
+// Config is a struct that holds the configuration for the application
 type Config struct {
 	Server struct {
 		Protected bool   `mapstructure:"protected"`
@@ -47,10 +48,12 @@ type Config struct {
 	} `mapstructure:"r10k"`
 }
 
+// Init reads in the configuration file and populates the Config struct
 func Init(path *string) {
 	var err error
-	v := viper.New()
+	v := viper.New() // creates a new Viper instance
 
+	// If a path is given, use it, otherwise, use the default
 	if path != nil {
 		v.SetConfigFile(*path)
 	} else {
@@ -61,19 +64,20 @@ func Init(path *string) {
 		v.AddConfigPath("../config/")
 		v.AddConfigPath("config/")
 	}
-	err = v.ReadInConfig()
+	err = v.ReadInConfig() // reads the configuration file
 	if err != nil {
 		log.Fatalf("error on parsing config file: %v", err)
 	}
 
-	v = setDefaults(v)
+	v = setDefaults(v) // sets the default values for the configuration
 
-	err = v.Unmarshal(&config)
+	err = v.Unmarshal(&config) // converts the configuration into the Config struct
 	if err != nil {
 		log.Fatalf("Unable to read config file: %v", err)
 	}
 }
 
+// Provides defualt values in case of config file doesn't define some fields
 func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("server.port", 4000)
 	v.SetDefault("server.protected", false)
@@ -94,6 +98,8 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	return v
 }
 
+// This utility function adjusts relative paths.
+// If a path doesn't start with / (indicating it’s not an absolute path), it prepends the basedir to make it a proper path.
 func relativePath(basedir string, path *string) {
 	p := *path
 	if len(p) > 0 && p[0] != '/' {
@@ -101,6 +107,7 @@ func relativePath(basedir string, path *string) {
 	}
 }
 
+// This function simply returns the currently loaded configuration
 func GetConfig() Config {
 	return config
 }

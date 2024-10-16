@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -9,17 +8,16 @@ import (
 	"github.com/voxpupuli/webhook-go/server"
 )
 
-// serverCmd represents the server command
+// serverCmd starts the Webhook-go server, allowing it to process webhook requests.
 var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Start the Webhook-go server",
-	Long:  ``,
 	Run:   startServer,
 }
 
+// init adds serverCmd to the root command.
 func init() {
 	rootCmd.AddCommand(serverCmd)
-
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
@@ -31,6 +29,7 @@ func init() {
 	// serverCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
+// startServer initializes and starts the server.
 func startServer(cmd *cobra.Command, args []string) {
 	server.Init()
 }

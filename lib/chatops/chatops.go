@@ -5,28 +5,34 @@ import (
 	"strconv"
 )
 
+// ChatOps defines the configuration for interacting with various chat services.
 type ChatOps struct {
-	Service   string
-	Channel   string
-	User      string
-	AuthToken string
-	ServerURI *string
-	TestMode  bool
-	TestURL   *string
+	Service   string  // Chat service (e.g., "slack", "rocketchat", "teams").
+	Channel   string  // Target channel or room.
+	User      string  // User initiating the action.
+	AuthToken string  // Authentication token for the chat service.
+	ServerURI *string // Optional server URI for self-hosted services.
+	TestMode  bool    // Indicates if the operation is in test mode.
+	TestURL   *string // URL for testing purposes, if applicable.
 }
 
+// ChatOpsResponse captures the response details from a chat service after a message is posted.
 type ChatOpsResponse struct {
 	Timestamp string
 	Channel   string
 }
 
+// ChatAttachment represents the structure of a message attachment in chat services like Slack.
 type ChatAttachment struct {
 	AuthorName string
 	Title      string
 	Text       string
-	Color      string
+	Color      string // Color to indicate status (e.g., success, failure).
 }
 
+// PostMessage sends a formatted message to the configured chat service based on the HTTP status code
+// and target environment. It returns a ChatOpsResponse or an error if posting fails.
+// Supports Slack, Rocket.Chat, and Microsoft Teams.
 func (c *ChatOps) PostMessage(code int, target string, output interface{}) (*ChatOpsResponse, error) {
 	var resp ChatOpsResponse
 
@@ -56,6 +62,8 @@ func (c *ChatOps) PostMessage(code int, target string, output interface{}) (*Cha
 	return &resp, nil
 }
 
+// formatMessage generates a ChatAttachment based on the HTTP status code and target environment.
+// The message is used to notify the result of a Puppet environment deployment.
 func (c *ChatOps) formatMessage(code int, target string) ChatAttachment {
 	var message ChatAttachment
 
