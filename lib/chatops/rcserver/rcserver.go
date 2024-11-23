@@ -3,7 +3,7 @@ package rcserver
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -44,7 +44,7 @@ func parseAttachment(data string) []Attachment {
 }
 
 func handlePostMessage(w http.ResponseWriter, r *http.Request) {
-	body, _ := ioutil.ReadAll(r.Body)
+	body, _ := io.ReadAll(r.Body)
 	kvs := strings.Split(string(body), "&")
 
 	m := make(map[string]string)
