@@ -9,6 +9,8 @@ import (
 	"github.com/google/go-github/v39/github"
 )
 
+// parseGithub processes a GitHub webhook, extracting branch, repository, and user information.
+// Handles both "push" and "workflow_run" events to set relevant fields based on the payload.
 func (d *Data) parseGithub(c *gin.Context) error {
 	payload, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
@@ -44,14 +46,15 @@ func (d *Data) parseGithub(c *gin.Context) error {
 	return nil
 }
 
+// isSucceed checks if the conclusion of a workflow run is "success".
 func (d Data) isSucceed(conclusion *string) bool {
 	if conclusion == nil {
 		return false
 	}
-
 	return *conclusion == "success"
 }
 
+// githubDeleted checks if the specified SHA represents a deleted commit.
 func (d *Data) githubDeleted(after string) bool {
 	return after == "0000000000000000000000000000000000000000"
 }

@@ -10,6 +10,8 @@ import (
 	"github.com/mcdafydd/go-azuredevops/azuredevops"
 )
 
+// parseAzureDevops processes an Azure DevOps webhook, extracting event details such as branch, module name, and repository info.
+// It handles the PushEvent type and marks the data as completed and successful upon successful parsing.
 func (d *Data) parseAzureDevops(c *gin.Context) error {
 	payload, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
@@ -42,6 +44,7 @@ func (d *Data) parseAzureDevops(c *gin.Context) error {
 	return nil
 }
 
+// parseRawResource unmarshals the raw payload of a Git push event from Azure DevOps.
 func (d *Data) parseRawResource(e *azuredevops.Event) (payload *azuredevops.GitPush, err error) {
 	payload = &azuredevops.GitPush{}
 
@@ -54,10 +57,12 @@ func (d *Data) parseRawResource(e *azuredevops.Event) (payload *azuredevops.GitP
 	return payload, nil
 }
 
+// azureDevopsDeleted checks if the push event represents a branch deletion in Azure DevOps.
 func (d *Data) azureDevopsDeleted(e *azuredevops.GitPush) bool {
 	return *e.RefUpdates[0].NewObjectID == "0000000000000000000000000000000000000000"
 }
 
+// parseBranch extracts the branch name from the push event, removing the ref prefix.
 func (d *Data) parseBranch(e *azuredevops.GitPush) string {
 	return strings.TrimPrefix(*e.RefUpdates[0].Name, prefix)
 }

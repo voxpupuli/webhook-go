@@ -16,6 +16,7 @@ import (
 // 	server.Init()
 // }
 
+// Main function that starts the application
 func main() {
 	cmd.Execute()
 }

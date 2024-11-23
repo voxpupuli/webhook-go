@@ -7,18 +7,22 @@ import (
 	"github.com/voxpupuli/webhook-go/lib/queue"
 )
 
-// The Init function starts the Server on a specific port
+// Init initializes and starts the server on the configured port.
+// If queue functionality is enabled in the config, it starts the job queue processing.
+// The server can run with or without TLS, depending on the configuration.
 func Init() {
 	config := config.GetConfig().Server
 
 	if config.Queue.Enabled {
-		queue.Work()
+		queue.Work() // Start the job queue if enabled.
 	}
 
-	r := NewRouter()
+	r := NewRouter() // Initialize the router.
 	if config.TLS.Enabled {
+		// Start the server with TLS (HTTPS) using the provided certificate and key.
 		r.RunTLS(":"+fmt.Sprint(config.Port), config.TLS.Certificate, config.TLS.Key)
 	} else {
+		// Start the server without TLS (HTTP).
 		r.Run(":" + fmt.Sprint(config.Port))
 	}
 }

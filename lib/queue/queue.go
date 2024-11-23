@@ -13,30 +13,37 @@ import (
 	"github.com/voxpupuli/webhook-go/lib/helpers"
 )
 
+// Queue holds the items to be processed and manages job concurrency.
+
 type Queue struct {
-	Items   []*QueueItem
-	wg      sync.WaitGroup
-	jobChan chan *QueueItem
+	Items   []*QueueItem    // List of items in the queue
+	wg      sync.WaitGroup  // WaitGroup to synchronize goroutines
+	jobChan chan *QueueItem // Channel for jobs to be processed
 }
 
+// QueueItem represents a task to be executed, with metadata like ID, command, and state.
+
 type QueueItem struct {
-	Id          uuid.UUID
-	Name        string
-	CommandType string
-	AddedAt     time.Time
-	StartedAt   time.Time
-	FinishedAt  time.Time
-	Command     []string
-	Response    interface{}
-	State       string
+	Id          uuid.UUID   // Unique identifier for the job
+	Name        string      // Descriptive name of the job
+	CommandType string      // Type of command being executed
+	AddedAt     time.Time   // Timestamp when the job was added to the queue
+	StartedAt   time.Time   // Timestamp when the job execution started
+	FinishedAt  time.Time   // Timestamp when the job execution finished
+	Command     []string    // Command to be executed
+	Response    interface{} // Response from the executed command
+	State       string      // Current state of the job (e.g., added, success, failed)
 }
 
 var queue = &Queue{}
 
+// GetQueueItems returns all items currently in the queue.
 func GetQueueItems() []*QueueItem {
 	return queue.Items
 }
 
+// AddToQueue adds a new command to the queue and triggers job processing.
+// Returns the newly created QueueItem or an error if the job cannot be queued.
 func AddToQueue(commandType string, name string, command []string) (*QueueItem, error) {
 	id, err := uuid.NewUUID()
 	if err != nil {
@@ -64,6 +71,7 @@ func AddToQueue(commandType string, name string, command []string) (*QueueItem, 
 	return &queueItem, nil
 }
 
+// trimItems ensures the queue doesn't exceed the configured maximum history size.
 func trimItems() {
 	conf := config.GetConfig()
 
@@ -76,6 +84,7 @@ func trimItems() {
 	}
 }
 
+// Work initializes the job queue and starts the worker process.
 func Work() error {
 	conf := config.GetConfig()
 	log.Printf("start queue with %d jobs", conf.Server.Queue.MaxConcurrentJobs)
@@ -88,10 +97,13 @@ func Work() error {
 	return nil
 }
 
+// Dispose shuts down the job channel and signals the worker to stop.
 func Dispose() {
 	close(queue.jobChan)
 }
 
+// queueJob attempts to add a job to the queue.
+// Returns true if the job was successfully queued, false otherwise.
 func queueJob(command *QueueItem) bool {
 	select {
 	case queue.jobChan <- command:
@@ -101,6 +113,7 @@ func queueJob(command *QueueItem) bool {
 	}
 }
 
+// worker processes jobs from the queue and executes the associated commands.
 func worker() {
 	defer queue.wg.Done()
 

@@ -8,6 +8,8 @@ import (
 	bitbucketserver "github.com/go-playground/webhooks/v6/bitbucket-server"
 )
 
+// parseBitbucketServer processes a Bitbucket Server webhook, extracting details such as branch, repository, and project info.
+// Handles RepositoryReferenceChangedEvent to set branch-related fields.
 func (d *Data) parseBitbucketServer(c *gin.Context) error {
 	bh, err := bitbucketserver.New()
 	if err != nil {
@@ -35,10 +37,12 @@ func (d *Data) parseBitbucketServer(c *gin.Context) error {
 	return nil
 }
 
+// bitbucketServerDeleted checks if the branch was deleted in the reference change event.
 func (d *Data) bitbucketServerDeleted(c bitbucketserver.RepositoryReferenceChangedPayload) bool {
 	return c.Changes[0].Type == "DELETE"
 }
 
+// bsParseBranch extracts the branch name from the reference change event, removing the ref prefix.
 func (d *Data) bsParseBranch(e bitbucketserver.RepositoryReferenceChangedPayload) string {
 	return strings.TrimPrefix(e.Changes[0].ReferenceID, prefix)
 }
