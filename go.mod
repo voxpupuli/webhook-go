@@ -1,6 +1,6 @@
 module github.com/voxpupuli/webhook-go
 
-go 1.19
+go 1.23
 
 require (
 	code.gitea.io/gitea/modules/structs v0.0.0-20190610152049-835b53fc259c
