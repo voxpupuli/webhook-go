@@ -2,7 +2,7 @@ package parsers
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	api "code.gitea.io/gitea/modules/structs"
@@ -17,7 +17,7 @@ func giteaWebhookType(r *http.Request) string {
 // parseGitea processes a Gitea webhook, extracting branch, repository, and user information.
 // Handles "push" events to set relevant fields based on the payload.
 func (d *Data) parseGitea(c *gin.Context) error {
-	payload, err := ioutil.ReadAll(c.Request.Body)
+	payload, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		return err
 	}

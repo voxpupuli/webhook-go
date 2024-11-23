@@ -2,7 +2,7 @@ package parsers
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +12,7 @@ import (
 // parseGithub processes a GitHub webhook, extracting branch, repository, and user information.
 // Handles both "push" and "workflow_run" events to set relevant fields based on the payload.
 func (d *Data) parseGithub(c *gin.Context) error {
-	payload, err := ioutil.ReadAll(c.Request.Body)
+	payload, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		return err
 	}
