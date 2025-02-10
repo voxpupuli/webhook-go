@@ -13,7 +13,7 @@ require (
 	github.com/pandatix/gocket-chat v0.1.0-alpha
 	github.com/proclaim/mock-slack v0.0.0-20201019114328-0aae156a5005
 	github.com/sirupsen/logrus v1.9.3
-	github.com/slack-go/slack v0.15.0
+	github.com/slack-go/slack v0.16.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.10.0
