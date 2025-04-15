@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"slices"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -50,6 +51,11 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 		branch := ""
 		if data.Branch == "" {
 			branch = conf.R10k.DefaultBranch
+		} else if slices.Contains(conf.R10k.BlockedBranches, data.Branch) {
+			c.JSON(http.StatusForbidden, gin.H{"message": "Branch not allowed to be deployed to.", "Branch": branch})
+			log.Errorf("branch not permitted for deployment: %s", branch)
+			c.Abort()
+			return
 		} else {
 			branch = data.Branch
 		}

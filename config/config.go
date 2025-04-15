@@ -36,15 +36,16 @@ type Config struct {
 		ServerUri string `mapstructure:"server_uri"`
 	} `mapstructure:"chatops"`
 	R10k struct {
-		CommandPath             string `mapstructure:"command_path"`
-		ConfigPath              string `mapstructure:"config_path"`
-		DefaultBranch           string `mapstructure:"default_branch"`
-		Prefix                  string `mapstructure:"prefix"`
-		AllowUppercase          bool   `mapstructure:"allow_uppercase"`
-		Verbose                 bool   `mapstructure:"verbose"`
-		DeployModules           bool   `mapstructure:"deploy_modules"`
-		UseLegacyPuppetfileFlag bool   `mapstructure:"use_legacy_puppetfile_flag"`
-		GenerateTypes           bool   `mapstructure:"generate_types"`
+		CommandPath             string   `mapstructure:"command_path"`
+		ConfigPath              string   `mapstructure:"config_path"`
+		DefaultBranch           string   `mapstructure:"default_branch"`
+		Prefix                  string   `mapstructure:"prefix"`
+		AllowUppercase          bool     `mapstructure:"allow_uppercase"`
+		Verbose                 bool     `mapstructure:"verbose"`
+		DeployModules           bool     `mapstructure:"deploy_modules"`
+		UseLegacyPuppetfileFlag bool     `mapstructure:"use_legacy_puppetfile_flag"`
+		GenerateTypes           bool     `mapstructure:"generate_types"`
+		BlockedBranches         []string `mapstructure:"blocked_branches"`
 	} `mapstructure:"r10k"`
 }
 
@@ -94,6 +95,7 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("r10k.deploy_modules", true)
 	v.SetDefault("r10k.generate_types", true)
 	v.SetDefault("r10k.use_legacy_puppetfile_flag", false)
+	v.SetDefault("r10k.blocked_branches", []string{})
 
 	return v
 }

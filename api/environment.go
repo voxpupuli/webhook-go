@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -46,6 +47,14 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		branch = conf.R10k.DefaultBranch
 	} else {
 		branch = data.Branch
+	}
+
+	// If branch is listed as a blocked branch, then log it and return.
+	if slices.Contains(conf.R10k.BlockedBranches, branch) {
+		c.JSON(http.StatusForbidden, gin.H{"message": "Branch not allowed to be deployed to.", "Branch": branch})
+		log.Errorf("branch not permitted for deployment: %s", branch)
+		c.Abort()
+		return
 	}
 
 	env := h.GetEnvironment(branch, conf.R10k.Prefix, conf.R10k.AllowUppercase)
