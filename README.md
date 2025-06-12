@@ -53,6 +53,8 @@ r10k:
   default_branch: main
   allow_uppercase: false
   verbose: true
+mappings:
+  long-repo-name: lrp
 ```
 
 ### Microsoft Teams notifications
@@ -254,6 +256,13 @@ Default: `/opt/puppetlabs/puppetserver/bin/r10k`
 Type: `array of strings`
 Description: A list of branches to not allow deployments to.
 Default: `[]`
+
+### `mappings`
+
+Type: `map`
+Description: A map of long repository names to short names. This is useful for repositories that have long names that are not suitable for use in the URL. This is useful for multi tenant environments where you also want to use a shorter prefix for the environment.
+Default: `{}`
+
 
 ## Usage
 
