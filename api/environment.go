@@ -57,7 +57,22 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		return
 	}
 
-	env := h.GetEnvironment(branch, conf.R10k.Prefix, conf.R10k.AllowUppercase)
+	prefix := ""
+	switch conf.R10k.Prefix {
+	case "mapping":
+		prefix = h.GetPrefixFromMapping(conf.RepoMapping, data.RepoName)
+
+		if prefix == "" {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "Error getting prefix from mapping", "error": "Prefix not found"})
+			log.Errorf("error getting prefix from mapping, prefix not found %s for repo %s", prefix, data.RepoName)
+			c.Abort()
+			return
+		}
+	default:
+		prefix = conf.R10k.Prefix
+	}
+
+	env := h.GetEnvironment(branch, prefix, conf.R10k.AllowUppercase)
 
 	// Append the environment and r10k configuration into the string slice `cmd`
 	cmd = append(cmd, env)
