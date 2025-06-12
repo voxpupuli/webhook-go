@@ -47,6 +47,10 @@ type Config struct {
 		GenerateTypes           bool     `mapstructure:"generate_types"`
 		BlockedBranches         []string `mapstructure:"blocked_branches"`
 	} `mapstructure:"r10k"`
+	// A list of repositoriries names and their corresponding prefix
+	// e.g.: my-puppet-repo: puppet_repo
+	// The key is the repository name, and the value is the prefix to use
+	RepoMapping map[string]string `mapstructure:"mappings"`
 }
 
 // Init reads in the configuration file and populates the Config struct
@@ -96,6 +100,7 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("r10k.generate_types", true)
 	v.SetDefault("r10k.use_legacy_puppetfile_flag", false)
 	v.SetDefault("r10k.blocked_branches", []string{})
+	v.SetDefault("mappings", map[string]string{})
 
 	return v
 }
