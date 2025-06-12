@@ -20,3 +20,4 @@ r10k:
   allow_uppercase: false
   verbose: true
   generate_types: false
+mappings: []
