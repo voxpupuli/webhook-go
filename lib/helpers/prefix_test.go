@@ -33,16 +33,20 @@ func Test_GetPrefixFromMapping(t *testing.T) {
 	h := Helper{}
 	mapping := map[string]string{
 		"testrepo":  "testprefix",
-		"otherrepo": "otherprefix",
+		"otherrepo": "",
 	}
 
-	prefix := h.GetPrefixFromMapping(mapping, "testrepo")
-	assert.Equal(t, "testprefix", prefix)
+	prefix, err := h.GetPrefixFromMapping(mapping, "testrepo")
+  assert.NilError(t, err)
+  assert.Equal(t, "testprefix", prefix)
 
-	prefix = h.GetPrefixFromMapping(mapping, "otherrepo")
-	assert.Equal(t, "otherprefix", prefix)
+  prefix, err = h.GetPrefixFromMapping(mapping, "otherrepo")
+  assert.NilError(t, err)
+  assert.Equal(t, "", prefix)
 
 	// Test with a repo not in the mapping
-	emptyPrefix := h.GetPrefixFromMapping(mapping, "nonexistentrepo")
-	assert.Equal(t, "", emptyPrefix)
+	prefix, err = h.GetPrefixFromMapping(mapping, "nonexistentrepo")
+  assert.Error(t, err, "Prefix not found in mapping for repo 'nonexistentrepo'")
+  assert.Equal(t, "", prefix)
+
 }
