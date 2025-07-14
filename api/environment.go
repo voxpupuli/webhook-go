@@ -60,12 +60,11 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	prefix := ""
 	switch conf.R10k.Prefix {
 	case "mapping":
-    var err error
-    prefix, err = h.GetPrefixFromMapping(conf.RepoMapping, data.RepoName)
+		prefix, err = h.GetPrefixFromMapping(conf.RepoMapping, data.RepoName)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Error getting Prefix", "error": err})
-      log.Errorf("error getting prefix from mapping: %s", err)
+			log.Errorf("error getting prefix from mapping: %s", err)
 			c.Abort()
 			return
 		}
