@@ -12,11 +12,12 @@ var config Config
 // Config is a struct that holds the configuration for the application
 type Config struct {
 	Server struct {
-		Protected bool   `mapstructure:"protected"`
-		User      string `mapstructure:"user"`
-		Password  string `mapstructure:"password"`
-		Port      int    `mapstructure:"port,int"`
-		TLS       struct {
+		Protected           bool   `mapstructure:"protected"`
+		User                string `mapstructure:"user"`
+		Password            string `mapstructure:"password"`
+		Port                int    `mapstructure:"port,int"`
+		DeployOnSuccessOnly bool   `mapstructure:"deploy_on_success_only"`
+		TLS                 struct {
 			Enabled     bool   `mapstructure:"enabled"`
 			Certificate string `mapstructure:"certificate"`
 			Key         string `mapstructure:"key"`
@@ -89,6 +90,7 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("server.tls_enabled", false)
 	v.SetDefault("server.queue.max_concurrent_jobs", 10)
 	v.SetDefault("server.queue.max_history_items", 50)
+	v.SetDefault("server.deploy_on_success_only", false)
 	v.SetDefault("chatops.enabled", false)
 	v.SetDefault("r10k.command_path", "/opt/puppetlabs/puppetserver/bin/r10k")
 	v.SetDefault("r10k.config_path", "/etc/puppetlabs/r10k/r10k.yaml")
