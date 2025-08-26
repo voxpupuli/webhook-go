@@ -16,8 +16,8 @@ require (
 	github.com/slack-go/slack v0.17.3
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
-	github.com/stretchr/testify v1.10.0
-	gitlab.com/gitlab-org/api/client-go v0.138.0
+	github.com/stretchr/testify v1.11.0
+	gitlab.com/gitlab-org/api/client-go v0.142.1
 	gotest.tools v2.2.0+incompatible
 )
 
@@ -68,6 +68,6 @@ require (
 	golang.org/x/sys v0.34.0 // indirect
 	golang.org/x/text v0.27.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
-	google.golang.org/protobuf v1.36.7 // indirect
+	google.golang.org/protobuf v1.36.8 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
