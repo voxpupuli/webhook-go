@@ -245,6 +245,12 @@ Type: bool
 Description: Run `puppet generate types` after updating an environment
 Default: `true`
 
+### `env_incremental`
+
+Type: bool
+Description: Use `--incremental` flag when updating an environment
+Default: `false`
+
 ### `command_path`
 
 Type: `string`
