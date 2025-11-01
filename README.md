@@ -227,31 +227,37 @@ Type: bool
 Description: Log verbose output when running the r10k command
 Default: `true`
 
-### `deploy_modules`
+#### `deploy_modules`
 
 Type: bool
 Description: Deploy modules in environments.
 Default: `true`
 
-### `use_legacy_puppetfile_flag`
+#### `use_legacy_puppetfile_flag`
 
 Type: bool
 Description: Use the legacy `--puppetfile` flag instead of `--modules`. This should only be used when your version of r10k doesn't support the newer flag.
 Default: `false`
 
-### `generate_types`
+#### `generate_types`
 
 Type: bool
 Description: Run `puppet generate types` after updating an environment
 Default: `true`
 
-### `command_path`
+#### `env_incremental`
+
+Type: bool
+Description: Use `--incremental` flag when updating an environment
+Default: `false`
+
+#### `command_path`
 
 Type: `string`
 Description: Allow overriding the default path to r10k.
 Default: `/opt/puppetlabs/puppetserver/bin/r10k`
 
-### `blocked_branches`
+#### `blocked_branches`
 
 Type: `array of strings`
 Description: A list of branches to not allow deployments to.

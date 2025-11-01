@@ -45,6 +45,7 @@ type Config struct {
 		DeployModules           bool     `mapstructure:"deploy_modules"`
 		UseLegacyPuppetfileFlag bool     `mapstructure:"use_legacy_puppetfile_flag"`
 		GenerateTypes           bool     `mapstructure:"generate_types"`
+		EnvironmentIncremental  bool     `mapstructure:"env_incremental"`
 		BlockedBranches         []string `mapstructure:"blocked_branches"`
 	} `mapstructure:"r10k"`
 	// A list of repositoriries names and their corresponding prefix
@@ -98,6 +99,7 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("r10k.verbose", true)
 	v.SetDefault("r10k.deploy_modules", true)
 	v.SetDefault("r10k.generate_types", true)
+	v.SetDefault("r10k.env_incremental", false)
 	v.SetDefault("r10k.use_legacy_puppetfile_flag", false)
 	v.SetDefault("r10k.blocked_branches", []string{})
 	v.SetDefault("mappings", map[string]string{})
