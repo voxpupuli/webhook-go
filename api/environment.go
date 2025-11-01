@@ -91,6 +91,9 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 			cmd = append(cmd, "--puppetfile")
 		} else {
 			cmd = append(cmd, "--modules")
+			if conf.R10k.EnvironmentIncremental {
+				cmd = append(cmd, "--incremental")
+			}
 		}
 	}
 
