@@ -112,6 +112,12 @@ Type: int64
 Description: Port to run the server on. Optional.
 Default: `4000`
 
+#### `deploy_on_success_only`
+
+Type: bool
+Description: Only run a deploy if checks pass
+Default: `false`
+
 #### `tls`
 
 Type: struct
