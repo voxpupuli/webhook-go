@@ -36,10 +36,27 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	// Parse the data from the request and error if the parsing fails
 	err := data.ParseData(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error Parsing Webhook", "error": err})
+		c.JSON(
+			http.StatusInternalServerError,
+			gin.H{"message": "Error Parsing Webhook", "error": err},
+		)
 		log.Errorf("error parsing webhook: %s", err)
 		c.Abort()
 		return
+	}
+
+	// Stop the deployment if a pipeline or workflow has failed to run
+	// and the DeployOnSuccessOnly setting is set.
+	if conf.Server.DeployOnSuccessOnly {
+		if err = helpers.GetPipelineStatus(data.Succeed); err != nil {
+			c.JSON(
+				http.StatusFailedDependency,
+				gin.H{"message": "Failed to deploy the environment", "error": err},
+			)
+			log.Errorf("error deploying environment: %s", err)
+			c.Abort()
+			return
+		}
 	}
 
 	// Setup the environment for r10k from the configuration
@@ -51,7 +68,10 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 
 	// If branch is listed as a blocked branch, then log it and return.
 	if slices.Contains(conf.R10k.BlockedBranches, branch) {
-		c.JSON(http.StatusForbidden, gin.H{"message": "Branch not allowed to be deployed to.", "Branch": branch})
+		c.JSON(
+			http.StatusForbidden,
+			gin.H{"message": "Branch not allowed to be deployed to.", "Branch": branch},
+		)
 		log.Errorf("branch not permitted for deployment: %s", branch)
 		c.Abort()
 		return
@@ -63,7 +83,10 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		prefix, err = h.GetPrefixFromMapping(conf.RepoMapping, data.RepoName)
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"message": "Error getting Prefix", "error": err})
+			c.JSON(
+				http.StatusInternalServerError,
+				gin.H{"message": "Error getting Prefix", "error": err},
+			)
 			log.Errorf("error getting prefix from mapping: %s", err)
 			c.Abort()
 			return

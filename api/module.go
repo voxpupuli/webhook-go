@@ -37,12 +37,29 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 	err := data.ParseData(c)
 	if err != nil {
 		// Respond with error if parsing fails, notify ChatOps if enabled.
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error Parsing Webhook", "error": err})
+		c.JSON(
+			http.StatusInternalServerError,
+			gin.H{"message": "Error Parsing Webhook", "error": err},
+		)
 		c.Abort()
 		if conf.ChatOps.Enabled {
 			conn.PostMessage(http.StatusInternalServerError, "Error Parsing Webhook", err)
 		}
 		return
+	}
+
+	// Fail deploy if workflow or pipeline status is failed AND DeployOnSuccessOnly
+	// is true
+	if conf.Server.DeployOnSuccessOnly {
+		if err = helpers.GetPipelineStatus(data.Succeed); err != nil {
+			c.JSON(
+				http.StatusFailedDependency,
+				gin.H{"message": "Failed to deploy the environment", "error": err},
+			)
+			log.Errorf("error deploying environment: %s", err)
+			c.Abort()
+			return
+		}
 	}
 
 	// Handle optional branch parameter, fallback to default branch if not provided.
@@ -72,7 +89,10 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 			// Invalid module name, respond with error and notify ChatOps.
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Invalid module name"})
 			c.Abort()
-			err = fmt.Errorf("invalid module name: module name does not match the expected pattern; got: %s, pattern: ^[a-z][a-z0-9_]*$", overrideModule)
+			err = fmt.Errorf(
+				"invalid module name: module name does not match the expected pattern; got: %s, pattern: ^[a-z][a-z0-9_]*$",
+				overrideModule,
+			)
 			if conf.ChatOps.Enabled {
 				conn.PostMessage(http.StatusInternalServerError, "Invalid module name", err)
 			}
