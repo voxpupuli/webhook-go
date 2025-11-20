@@ -292,6 +292,10 @@ Get current queue status of the Webhook API server
 
 Updates a given puppet environment, ie. `r10k deploy environment`. This only updates a specific environment governed by the branch name.
 
+Available URL arguments (`?argument=value`):
+
+* `no_mods=(true|false)` - If set, this will only update an environment with no modules (no flags `--modules` or `--puppetfile`). This option is usefull when you need to update only files (for example [separate hiera data](https://github.com/puppetlabs/r10k/blob/main/doc/dynamic-environments/configuration.mkd#separate-hiera-data))
+
 ### POST /api/v1/r10k/module
 
 Updates a puppet module, ie. `r10k deploy module`. The default behavior of r10k is to update the module in all environments that have it. Module name defaults to the git repository name.
