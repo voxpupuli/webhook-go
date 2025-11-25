@@ -1,6 +1,6 @@
 module github.com/voxpupuli/webhook-go
 
-go 1.23.0
+go 1.24
 
 require (
 	code.gitea.io/gitea/modules/structs v0.0.0-20190610152049-835b53fc259c
@@ -17,7 +17,7 @@ require (
 	github.com/spf13/cobra v1.10.1
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
-	gitlab.com/gitlab-org/api/client-go v0.160.2
+	gitlab.com/gitlab-org/api/client-go v1.0.0
 	gotest.tools v2.2.0+incompatible
 )
 
