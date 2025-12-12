@@ -109,7 +109,9 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	if conf.R10k.GenerateTypes {
 		cmd = append(cmd, "--generate-types")
 	}
-	if conf.R10k.DeployModules {
+	// Handle no_mods parameter
+	noMods := c.Query("no_mods")
+	if conf.R10k.DeployModules && (noMods != "true") {
 		if conf.R10k.UseLegacyPuppetfileFlag {
 			cmd = append(cmd, "--puppetfile")
 		} else {
