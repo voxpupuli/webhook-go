@@ -48,6 +48,7 @@ type Config struct {
 		GenerateTypes           bool     `mapstructure:"generate_types"`
 		EnvironmentIncremental  bool     `mapstructure:"env_incremental"`
 		BlockedBranches         []string `mapstructure:"blocked_branches"`
+		UseG10kCommands         bool     `mapstructure:"use_g10k_commands"`
 	} `mapstructure:"r10k"`
 	// A list of repositoriries names and their corresponding prefix
 	// e.g.: my-puppet-repo: puppet_repo

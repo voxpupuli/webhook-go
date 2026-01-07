@@ -1,9 +1,9 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"slices"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -23,9 +23,6 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	var data parsers.Data
 	var h helpers.Helper
 	var branch string
-
-	// Set the base r10k command into a slice of strings
-	cmd := []string{h.GetR10kCommand(), "deploy", "environment"}
 
 	// Get the configuration
 	conf := config.GetConfig()
@@ -96,31 +93,16 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	}
 
 	env := h.GetEnvironment(branch, prefix, conf.R10k.AllowUppercase)
+	noMods := c.Query("no_mods") != "true"
 
-	// Append the environment and r10k configuration into the string slice `cmd`
-	cmd = append(cmd, env)
+	cmd := []string{}
+	if conf.R10k.UseG10kCommands {
+		cmd = h.GetG10kDeployEnvironmentCommand(env, branch)
+	} else {
+		cmd = h.GetR10kDeployEnvironmentCommand(env, noMods)
+	}
 
-	cmd = append(cmd, fmt.Sprintf("--config=%s", h.GetR10kConfig()))
-
-	// Set additional optional r10k options if they are set
-	if conf.R10k.Verbose {
-		cmd = append(cmd, "--verbose")
-	}
-	if conf.R10k.GenerateTypes {
-		cmd = append(cmd, "--generate-types")
-	}
-	// Handle no_mods parameter
-	noMods := c.Query("no_mods")
-	if conf.R10k.DeployModules && (noMods != "true") {
-		if conf.R10k.UseLegacyPuppetfileFlag {
-			cmd = append(cmd, "--puppetfile")
-		} else {
-			cmd = append(cmd, "--modules")
-			if conf.R10k.EnvironmentIncremental {
-				cmd = append(cmd, "--incremental")
-			}
-		}
-	}
+	log.Printf("Executing Command: %s", strings.Join(cmd, " "))
 
 	// Pass the command to the execute function and act on the result and any error
 	// that is returned
@@ -158,5 +140,4 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	if conf.ChatOps.Enabled {
 		conn.PostMessage(http.StatusAccepted, env, res)
 	}
-
 }

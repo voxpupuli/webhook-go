@@ -276,6 +276,12 @@ Description: A map of long repository names to short names. This is useful for r
 Default: `{}`
 
 
+### `use_g10k_commands`
+
+Type: `boolean`
+Description: Use g10k commands instead of r10k (parameters are a little bit different)
+Default: `false`
+
 ## Usage
 
 Webhook API provides following paths
