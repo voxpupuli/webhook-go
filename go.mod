@@ -12,12 +12,12 @@ require (
 	github.com/mcdafydd/go-azuredevops v0.12.1
 	github.com/pandatix/gocket-chat v0.1.0-alpha
 	github.com/proclaim/mock-slack v0.0.0-20201019114328-0aae156a5005
-	github.com/sirupsen/logrus v1.9.3
+	github.com/sirupsen/logrus v1.9.4
 	github.com/slack-go/slack v0.17.3
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
-	gitlab.com/gitlab-org/api/client-go v1.11.0
+	gitlab.com/gitlab-org/api/client-go v1.14.0
 	gotest.tools v2.2.0+incompatible
 )
 
