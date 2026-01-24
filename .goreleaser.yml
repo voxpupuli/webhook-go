@@ -1,31 +1,32 @@
+version: 2
 before:
-  hooks:
-    - go mod download
+    hooks:
+        - go mod download
 archives:
-  - id: webhook-go
-    format_overrides:
-      - goos: windows
-        format: zip
+    - id: webhook-go
+      format_overrides:
+          - goos: windows
+            formats: ["zip"]
 builds:
-  - id: webhook-go
-    ldflags: -s -w -X 'github.com/voxpupuli/webhook-go/cmd.version={{.Version}}'
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - linux
-      - windows
-    goarch:
-      - amd64
-      - arm
-      - arm64
-    goarm:
-      - "6"
-      - "7"
-    ignore:
-      - goos: windows
-        goarch: arm
-      - goos: windows
-        goarch: arm64
+    - id: webhook-go
+      ldflags: -s -w -X 'github.com/voxpupuli/webhook-go/cmd.version={{.Version}}'
+      env:
+          - CGO_ENABLED=0
+      goos:
+          - linux
+          - windows
+      goarch:
+          - amd64
+          - arm
+          - arm64
+      goarm:
+          - "6"
+          - "7"
+      ignore:
+          - goos: windows
+            goarch: arm
+          - goos: windows
+            goarch: arm64
 nfpms:
     - vendor: Vox Pupuli
       homepage: https://github.com/voxpupuli/webhook-go
@@ -40,36 +41,35 @@ nfpms:
           - deb
           - rpm
       contents:
-        - src: build/webhook.yml
-          dst: /etc/voxpupuli/webhook.yml
-          type: "config|noreplace"
-        - src: build/webhook-go.service
-          dst: /etc/systemd/system/webhook-go.service
+          - src: build/webhook.yml
+            dst: /etc/voxpupuli/webhook.yml
+            type: "config|noreplace"
+          - src: build/webhook-go.service
+            dst: /etc/systemd/system/webhook-go.service
       scripts:
           postinstall: "build/post-install.sh"
           postremove: "build/post-remove.sh"
-dockers:
-    - image_templates:
-        - "ghcr.io/voxpupuli/{{ .ProjectName }}:{{ .Version }}"
+dockers_v2:
+    - images:
+          - "ghcr.io/voxpupuli/{{ .ProjectName }}"
+      tags:
+          - "{{ .Version }}"
       dockerfile: Dockerfile
-      use: buildx
-      build_flag_templates:
-        - --platform=linux/amd64
       extra_files:
-        - "build/webhook.yml"
+          - "build/webhook.yml"
 release:
-  github:
-    owner: voxpupuli
-    name: webhook-go
-  name_template: "Release v{{.Version}}"
-  prerelease: auto
+    github:
+        owner: voxpupuli
+        name: webhook-go
+    name_template: "Release v{{.Version}}"
+    prerelease: auto
 checksum:
-  name_template: 'checksums.txt'
+    name_template: "checksums.txt"
 snapshot:
-  name_template: "{{ .Tag }}-next"
+    version_template: "{{ .Tag }}-next"
 changelog:
-  sort: asc
-  filters:
-    exclude:
-      - '^docs:'
-      - '^test:'
+    sort: asc
+    filters:
+        exclude:
+            - "^docs:"
+            - "^test:"
