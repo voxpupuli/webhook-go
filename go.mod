@@ -17,7 +17,7 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
-	gitlab.com/gitlab-org/api/client-go v1.15.0
+	gitlab.com/gitlab-org/api/client-go v1.18.0
 	gotest.tools v2.2.0+incompatible
 )
 
@@ -67,7 +67,7 @@ require (
 	golang.org/x/crypto v0.44.0 // indirect
 	golang.org/x/mod v0.30.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
-	golang.org/x/oauth2 v0.33.0 // indirect
+	golang.org/x/oauth2 v0.34.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
