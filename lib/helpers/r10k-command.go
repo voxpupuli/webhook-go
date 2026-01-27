@@ -34,7 +34,7 @@ func (h *Helper) GetR10kDeployEnvironmentCommand(env string, noMods bool) []stri
 		cmd = append(cmd, "--generate-types")
 	}
 	// Handle no_mods parameter
-	if conf.DeployModules && (!noMods) {
+	if conf.DeployModules && (noMods) {
 		if conf.UseLegacyPuppetfileFlag {
 			cmd = append(cmd, "--puppetfile")
 		} else {
