@@ -15,6 +15,7 @@ builds:
       goos:
           - linux
           - windows
+          - freebsd
       goarch:
           - amd64
           - arm
@@ -27,6 +28,8 @@ builds:
             goarch: arm
           - goos: windows
             goarch: arm64
+          - goos: freebsd
+            goarch: arm
 nfpms:
     - vendor: Vox Pupuli
       homepage: https://github.com/voxpupuli/webhook-go
