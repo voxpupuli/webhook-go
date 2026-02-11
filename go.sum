@@ -149,8 +149,8 @@ github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
 github.com/ugorji/go/codec v1.3.0 h1:Qd2W2sQawAfG8XSvzwhBeoGq71zXOC/Q1E9y/wUcsUA=
 github.com/ugorji/go/codec v1.3.0/go.mod h1:pRBVtBSKl77K30Bv8R2P+cLSGaTtex6fsA2Wjqmfxj4=
-gitlab.com/gitlab-org/api/client-go v1.29.0 h1:3KnF6vENry/9v9eVrnLi2OfBV0m/WSrwh3RcxgH/hkA=
-gitlab.com/gitlab-org/api/client-go v1.29.0/go.mod h1:6i3EZtC6gKiTTmDwp+f6r/Yi9OY4AaYubl5B3yXEdHE=
+gitlab.com/gitlab-org/api/client-go v1.30.0 h1:VZV1Dbjr6KKWpZBs2nTgiWB11gw5dWnBweCAK0jUjNU=
+gitlab.com/gitlab-org/api/client-go v1.30.0/go.mod h1:1LZ/6Q075HHVa1u9GBQjt8StFwFTRvfjo596slHmDbo=
 go.uber.org/mock v0.6.0 h1:hyF9dfmbgIX5EfOdasqLsWD6xqpNZlXblLB/Dbnwv3Y=
 go.uber.org/mock v0.6.0/go.mod h1:KiVJ4BqZJaMj4svdfmHM0AUx4NJYO8ZNpPnZn1Z+BBU=
 go.yaml.in/yaml/v3 v3.0.4 h1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=
