@@ -47,10 +47,17 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	if conf.Server.DeployOnSuccessOnly {
 		if err = helpers.GetPipelineStatus(data.Succeed); err != nil {
 			c.JSON(
-				http.StatusFailedDependency,
-				gin.H{"message": "Failed to deploy the environment", "error": err},
+				http.StatusAccepted,
+				// GitLab disables webhooks that fail.
+				// The webhook is a notification about
+				// the status of a pipeline, not a request
+				// to deploy an environment.  We accept
+				// the notification, and our decision not
+				// to deploy on the basis of having received
+				// the notification is our own business.
+				gin.H{"message": "Declined to deploy the environment", "error": err},
 			)
-			log.Errorf("error deploying environment: %s", err)
+			log.Errorf("didn't deploy environment: %s", err)
 			c.Abort()
 			return
 		}
