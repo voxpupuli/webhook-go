@@ -1,6 +1,6 @@
 module github.com/voxpupuli/webhook-go
 
-go 1.24.0
+go 1.25
 
 require (
 	code.gitea.io/gitea/modules/structs v0.0.0-20190610152049-835b53fc259c
@@ -13,11 +13,11 @@ require (
 	github.com/pandatix/gocket-chat v0.1.0-alpha
 	github.com/proclaim/mock-slack v0.0.0-20201019114328-0aae156a5005
 	github.com/sirupsen/logrus v1.9.4
-	github.com/slack-go/slack v0.17.3
+	github.com/slack-go/slack v0.18.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
-	gitlab.com/gitlab-org/api/client-go v1.33.0
+	gitlab.com/gitlab-org/api/client-go v1.41.0
 	gotest.tools v2.2.0+incompatible
 )
 
