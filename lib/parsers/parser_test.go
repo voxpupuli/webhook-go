@@ -44,6 +44,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "278d5cd2-584d-4b63-824a-2ba458937249",
 				Completed:  true,
 				Succeed:    true,
+				Provider:   "azuredevops",
 			}
 			assert.NilError(t, err)
 			assert.Equal(t, d, d_base)
@@ -98,6 +99,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "project",
 				Completed:  true,
 				Succeed:    true,
+				Provider:   "bitbucket-server",
 			}
 			assert.NilError(t, err)
 			assert.Equal(t, d, d_base)
@@ -156,6 +158,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "dhollinger",
 				Completed:  true,
 				Succeed:    true,
+				Provider:   "bitbucket-cloud",
 			}
 
 			assert.NilError(t, err)
@@ -211,6 +214,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "Mike",
 				Completed:  true,
 				Succeed:    true,
+				Provider:   "gitlab",
 			}
 
 			assert.NilError(t, err)
@@ -242,6 +246,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "meow",
 				Completed:  false,
 				Succeed:    false,
+				Provider:   "gitlab",
 			}
 			assert.NilError(t, err)
 			assert.Equal(t, d, d_base)
@@ -262,6 +267,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "meow",
 				Completed:  true,
 				Succeed:    true,
+				Provider:   "gitlab",
 			}
 			assert.NilError(t, err)
 			assert.Equal(t, d, d_base)
@@ -282,6 +288,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "meow",
 				Completed:  true,
 				Succeed:    false,
+				Provider:   "gitlab",
 			}
 			assert.NilError(t, err)
 			assert.Equal(t, d, d_base)
@@ -332,6 +339,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "Codertocat",
 				Completed:  true,
 				Succeed:    true,
+				Provider:   "github",
 			}
 			assert.NilError(t, err)
 			assert.Equal(t, d, d_base)
@@ -362,6 +370,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "meow",
 				Completed:  false,
 				Succeed:    false,
+				Provider:   "github",
 			}
 			assert.NilError(t, err)
 			assert.Equal(t, d, d_base)
@@ -382,6 +391,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "meow",
 				Completed:  true,
 				Succeed:    true,
+				Provider:   "github",
 			}
 			assert.NilError(t, err)
 			assert.Equal(t, d, d_base)
@@ -402,6 +412,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "meow",
 				Completed:  true,
 				Succeed:    false,
+				Provider:   "github",
 			}
 			assert.NilError(t, err)
 			assert.Equal(t, d, d_base)
@@ -453,6 +464,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "Codertocat",
 				Completed:  true,
 				Succeed:    true,
+				Provider:   "gitea",
 			}
 			assert.NilError(t, err)
 			assert.Equal(t, d, d_base)
@@ -503,6 +515,7 @@ func Test_ParseData(t *testing.T) {
 				RepoUser:   "Codertocat",
 				Completed:  true,
 				Succeed:    true,
+				Provider:   "gitea",
 			}
 			assert.NilError(t, err)
 			assert.Equal(t, d, d_base)

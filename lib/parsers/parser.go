@@ -18,6 +18,7 @@ type Data struct {
 	RepoUser   string
 	Completed  bool
 	Succeed    bool
+	Provider   string
 }
 
 // ParseData will takes in a *gin.Context c and parses webhook data into a Data struct.
@@ -30,31 +31,37 @@ func (d *Data) ParseData(c *gin.Context) error {
 
 	switch vcs {
 	case "github":
+		d.Provider = "github"
 		err = d.parseGithub(c)
 		if err != nil {
 			return err
 		}
 	case "gitlab":
+		d.Provider = "gitlab"
 		err = d.parseGitlab(c)
 		if err != nil {
 			return err
 		}
 	case "bitbucket-cloud":
+		d.Provider = "bitbucket-cloud"
 		err = d.parseBitbucket(c)
 		if err != nil {
 			return err
 		}
 	case "bitbucket-server":
+		d.Provider = "bitbucket-server"
 		err = d.parseBitbucketServer(c)
 		if err != nil {
 			return err
 		}
 	case "azuredevops":
+		d.Provider = "azuredevops"
 		err = d.parseAzureDevops(c)
 		if err != nil {
 			return err
 		}
 	case "gitea":
+		d.Provider = "gitea"
 		err = d.parseGitea(c)
 		if err != nil {
 			return err
