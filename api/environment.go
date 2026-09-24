@@ -74,6 +74,20 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		return
 	}
 
+	// If the branch matches one of r10k's ignored prefixes there is no environment
+	// to deploy, so skip it and answer with a success status. Reporting an error
+	// here makes the sender record a failed delivery for a branch we deliberately
+	// do not track.
+	if h.BranchIgnored(branch, conf.R10k.IgnoreBranchPrefixes) {
+		c.JSON(
+			http.StatusOK,
+			gin.H{"message": "Branch ignored, matches an r10k ignored branch prefix.", "Branch": branch},
+		)
+		log.Infof("branch ignored, matches an ignored branch prefix: %s", branch)
+		c.Abort()
+		return
+	}
+
 	prefix := ""
 	switch conf.R10k.Prefix {
 	case "mapping":

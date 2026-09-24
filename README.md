@@ -269,6 +269,27 @@ Type: `array of strings`
 Description: A list of branches to not allow deployments to.
 Default: `[]`
 
+#### `ignore_branch_prefixes`
+
+Type: `array of strings`
+Description: A list of branch name prefixes to skip. A branch matching one of these
+is answered with `200 OK` and no r10k run, which is what you want for branches that
+are not environments at all. Set it to the same value as `ignore_branch_prefixes` in
+your `r10k.yaml`: r10k refuses to deploy those branches, so without this the webhook
+runs r10k, r10k fails with `Environment(s) '<name>' cannot be found in any source`, and
+the sender records a failed delivery. Unlike `blocked_branches`, which matches whole
+branch names and answers `403`, this matches by prefix.
+Default: `[]`
+
+Example, for a repository that has Renovate and Dependabot enabled:
+
+```yaml
+r10k:
+  ignore_branch_prefixes:
+    - renovate/
+    - dependabot/
+```
+
 ### `mappings`
 
 Type: `map`
