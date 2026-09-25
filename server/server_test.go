@@ -37,7 +37,7 @@ func TestQueue(t *testing.T) {
 	router := NewRouter()
 
 	// Open the test payload file
-	payloadFile, err := os.Open("../lib/parsers/json/github/push.json")
+	payloadFile, err := os.Open("../lib/parsers/json/github/push_not_deleted.json")
 	if err != nil {
 		t.Fatal(err) // Fail if unable to open the file
 	}
@@ -57,4 +57,28 @@ func TestQueue(t *testing.T) {
 	assert.Equal(t, 202, w.Code)                  // Ensure 202 Accepted
 	assert.Equal(t, "simple-tag", queueItem.Name) // Ensure correct queue item name
 	assert.Equal(t, "added", queueItem.State)     // Ensure correct queue item state
+}
+
+// TestDeletedRefIsSkipped verifies that a push deleting a ref is answered
+// without running r10k, since the environment it named no longer exists.
+func TestDeletedRefIsSkipped(t *testing.T) {
+	mCfg := "../lib/helpers/yaml/webhook.queue.yaml"
+	config.Init(&mCfg)
+
+	router := NewRouter()
+
+	// push.json is a branch deletion ("deleted": true).
+	payloadFile, err := os.Open("../lib/parsers/json/github/push.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/api/v1/r10k/environment", payloadFile)
+	req.Header.Add("X-GitHub-Event", "push")
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+	assert.Contains(t, w.Body.String(), "nothing to deploy")
 }
