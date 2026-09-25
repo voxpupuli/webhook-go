@@ -56,6 +56,28 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		}
 	}
 
+	// A deleted ref has no environment left to deploy. Handing its name to r10k
+	// fails with:
+	//
+	//	ERROR -> Environment(s) '<name>' cannot be found in any source and will not be deployed.
+	//
+	// r10k exits non-zero and this answers 500, so every branch removed on merge
+	// records a failed delivery for something that was deleted on purpose.
+	//
+	// Nothing is lost by skipping it. Removing the stale environment directory is
+	// r10k's deployment-level purge, which happens on any later deploy and does
+	// not depend on this request; measured on three masters, every deleted
+	// branch's environment was gone even though all of these deliveries failed.
+	if data.Deleted {
+		c.JSON(
+			http.StatusOK,
+			gin.H{"message": "Ref was deleted, nothing to deploy.", "Branch": data.Branch},
+		)
+		log.Infof("ref was deleted, nothing to deploy: %s", data.Branch)
+		c.Abort()
+		return
+	}
+
 	// Setup the environment for r10k from the configuration
 	if data.Branch == "" {
 		branch = conf.R10k.DefaultBranch
