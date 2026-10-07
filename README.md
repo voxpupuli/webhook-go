@@ -425,6 +425,76 @@ Requests from other providers, or with unsupported event types, fail with `500` 
 
 ## Development
 
+### Development dependencies
+
+Required on all platforms:
+
+* [Go](https://go.dev/dl/) >= 1.25 — to build, test, and run the server
+* `git` — the version for `make binary` is derived from `git describe --tags`
+* `make` — optional; every Makefile target wraps a command that can be run directly
+* [GoReleaser](https://goreleaser.com/) — only for the build/release targets (`make binary`, `make compile`, `make snapshot`, `make release`)
+* Docker with [Buildx](https://docs.docker.com/build/buildx/) — only for building the container image (`make snapshot`, `make release`)
+* [mockery](https://github.com/vektra/mockery) — only needed to regenerate the interface mocks in `lib/*/mocks/`
+
+#### Linux
+
+Build tools (`make` and friends):
+
+```sh
+sudo apt install build-essential           # Debian/Ubuntu
+sudo dnf groupinstall "Development Tools"  # RHEL/Fedora
+```
+
+GoReleaser:
+
+```sh
+# Debian/Ubuntu
+echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
+sudo apt update
+sudo apt install goreleaser
+
+# RHEL/Fedora
+echo '[goreleaser]
+name=GoReleaser
+baseurl=https://repo.goreleaser.com/yum/
+enabled=1
+gpgcheck=0
+exclude=goreleaser-pro' | sudo tee /etc/yum.repos.d/goreleaser.repo
+sudo yum install goreleaser
+```
+
+Install Go from your distribution's packages or the official tarballs at [go.dev/dl](https://go.dev/dl/); distribution packages often lag behind the required 1.25.
+
+#### macOS
+
+```sh
+xcode-select --install   # installs make and git
+brew install go
+brew install goreleaser
+```
+
+While macOS is not a supported platform for running the service, developing on it works fine — Go cross-compiles for all release targets.
+
+#### Windows
+
+```powershell
+winget install GoLang.Go
+winget install goreleaser
+```
+
+`make` doesn't ship with Windows. Either run the underlying commands directly (`go test ./...`, `go run main.go --config ./build/webhook.yml`, `goreleaser build --single-target --clean`, ...) or install make with Chocolatey (`choco install make`) and run the targets from an environment that provides the usual Unix tools, such as Git Bash or WSL.
+
+#### Any OS
+
+GoReleaser and mockery can also be installed with `go install`:
+
+```sh
+go install github.com/goreleaser/goreleaser/v2@latest   # requires Go 1.27+
+go install github.com/vektra/mockery/v2@latest
+```
+
+### Make targets
+
 The [Makefile](Makefile) provides the usual targets; run `make help` to list them:
 
 * `make run` - run the server from source with `./build/webhook.yml`
@@ -435,7 +505,7 @@ The [Makefile](Makefile) provides the usual targets; run `make help` to list the
 * `make release` - build and publish a release (requires a `v*` tag)
 * `make clean` - clean up build and dependency artifacts
 
-Building release artifacts requires [GoReleaser](https://goreleaser.com/). CI runs on every push/PR to `master` and builds and tests with Go 1.25.
+CI runs on every push/PR to `master` and builds and tests with Go 1.25.
 
 ## License
 
