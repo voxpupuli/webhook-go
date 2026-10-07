@@ -438,32 +438,59 @@ Required on all platforms:
 
 #### Linux
 
-Build tools (`make` and friends):
+##### Ubuntu/Debian
+
+Build tools (`make` and friends) and Go:
 
 ```sh
-sudo apt install build-essential           # Debian/Ubuntu
-sudo dnf groupinstall "Development Tools"  # RHEL/Fedora
+sudo apt install build-essential
+sudo apt install golang-go
 ```
 
 GoReleaser:
 
 ```sh
-# Debian/Ubuntu
 echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
 sudo apt update
 sudo apt install goreleaser
+```
 
-# RHEL/Fedora
+##### Arch Linux
+
+Build tools (`make` and friends) and Go:
+
+```sh
+sudo pacman -S base-devel go
+```
+
+GoReleaser (from the [AUR](https://aur.archlinux.org/packages/goreleaser-bin), with an AUR helper such as yay):
+
+```sh
+yay -S goreleaser-bin
+```
+
+##### Fedora-based
+
+Build tools (`make` and friends) and Go:
+
+```sh
+sudo dnf groupinstall "Development Tools"
+sudo dnf install golang
+```
+
+GoReleaser (the same repo also works on RHEL/CentOS with `yum`):
+
+```sh
 echo '[goreleaser]
 name=GoReleaser
 baseurl=https://repo.goreleaser.com/yum/
 enabled=1
 gpgcheck=0
 exclude=goreleaser-pro' | sudo tee /etc/yum.repos.d/goreleaser.repo
-sudo yum install goreleaser
+sudo dnf install goreleaser
 ```
 
-Install Go from your distribution's packages or the official tarballs at [go.dev/dl](https://go.dev/dl/); distribution packages often lag behind the required 1.25.
+Distribution Go packages often lag behind the required 1.25; if yours is older, install an official tarball from [go.dev/dl](https://go.dev/dl/).
 
 #### macOS
 
