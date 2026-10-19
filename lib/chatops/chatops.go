@@ -2,6 +2,7 @@ package chatops
 
 import (
 	"fmt"
+        "os"
 	"strconv"
 )
 
@@ -67,11 +68,19 @@ func (c *ChatOps) PostMessage(code int, target string, output interface{}) (*Cha
 func (c *ChatOps) formatMessage(code int, target string) ChatAttachment {
 	var message ChatAttachment
 
-	message.AuthorName = "r10k for Puppet"
+	hostname, hostname_err := os.Hostname()
+	if hostname_err != nil {
+		hostname = "unknown"
+	}
+
+	message.AuthorName = fmt.Sprintf("r10k for Puppet on %s", hostname)
 	message.Title = fmt.Sprintf("r10k deployment of Puppet environment %s", target)
 
 	if code == 202 {
 		message.Text = fmt.Sprintf("Successfully started deployment of %s", target)
+		message.Color = "green"
+	} else if code == 201 {
+		message.Text = fmt.Sprintf("Successfully deployed %s", target)
 		message.Color = "green"
 	} else if code == 500 {
 		message.Text = fmt.Sprintf("Failed to deploy %s", target)
