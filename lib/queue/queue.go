@@ -274,7 +274,9 @@ func worker(jobChan chan *QueueItem) {
 			continue
 		}
 
-		conn.PostMessage(http.StatusAccepted, job.Name, res)
+		if conf.ChatOps.Enabled {
+			conn.PostMessage(http.StatusCreated, job.Name, res)
+		}
 		markFinished(job, res, "success")
 	}
 }
