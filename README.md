@@ -49,7 +49,7 @@ Note that the server executes `r10k` (or `g10k`) as a local process, and the pub
 
 ### From source
 
-Building from source requires [Go](https://go.dev/dl/) >= 1.25:
+Building from source requires [Go](https://go.dev/dl/) >= 1.26:
 
 ```sh
 git clone https://github.com/voxpupuli/webhook-go.git
@@ -429,7 +429,7 @@ Requests from other providers, or with unsupported event types, fail with `500` 
 
 Required on all platforms:
 
-* [Go](https://go.dev/dl/) >= 1.25 — to build, test, and run the server
+* [Go](https://go.dev/dl/) >= 1.26 — to build, test, and run the server
 * `git` — the version for `make binary` is derived from `git describe --tags`
 * `make` — optional; every Makefile target wraps a command that can be run directly
 * [GoReleaser](https://goreleaser.com/) — only for the build/release targets (`make binary`, `make compile`, `make snapshot`, `make release`)
@@ -490,7 +490,7 @@ exclude=goreleaser-pro' | sudo tee /etc/yum.repos.d/goreleaser.repo
 sudo dnf install goreleaser
 ```
 
-Distribution Go packages often lag behind the required 1.25; if yours is older, install an official tarball from [go.dev/dl](https://go.dev/dl/).
+Distribution Go packages often lag behind the required 1.26; if yours is older, install an official tarball from [go.dev/dl](https://go.dev/dl/).
 
 #### macOS
 
@@ -532,7 +532,7 @@ The [Makefile](Makefile) provides the usual targets; run `make help` to list the
 * `make release` - build and publish a release (requires a `v*` tag)
 * `make clean` - clean up build and dependency artifacts
 
-CI runs on every push/PR to `master` and builds and tests with Go 1.25.
+CI runs on every push/PR to `master` and builds and tests with Go 1.27.
 
 ## License
 
