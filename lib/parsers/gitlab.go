@@ -10,9 +10,13 @@ import (
 )
 
 // parseGitlab processes a GitLab webhook, extracting branch, repository, and user information.
-// When a GitLab secret is configured, the X-Gitlab-Token header is verified first.
+// When verification is armed, the X-Gitlab-Token header is verified first.
 func (d *Data) parseGitlab(c *gin.Context) error {
-	if secret := providerSecret("gitlab"); secret != "" {
+	secret, err := verificationSecret("gitlab")
+	if err != nil {
+		return err
+	}
+	if secret != "" {
 		if err := verifyGitlabToken(c.Request.Header, secret); err != nil {
 			return err
 		}
