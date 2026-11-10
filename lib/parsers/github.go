@@ -2,7 +2,6 @@ package parsers
 
 import (
 	"fmt"
-	"io"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -11,12 +10,12 @@ import (
 
 // parseGithub processes a GitHub webhook, extracting branch, repository, and user information.
 // Handles both "push" and "workflow_run" events to set relevant fields based on the payload.
+// When a GitHub secret is configured, the payload signature is verified first.
 func (d *Data) parseGithub(c *gin.Context) error {
-	payload, err := io.ReadAll(c.Request.Body)
+	payload, err := readBodyAndVerify(c, "github", verifyGithubSignature)
 	if err != nil {
 		return err
 	}
-	defer c.Request.Body.Close()
 
 	event, err := github.ParseWebHook(github.WebHookType(c.Request), payload)
 	if err != nil {

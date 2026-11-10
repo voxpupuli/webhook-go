@@ -12,7 +12,14 @@ import (
 
 // parseAzureDevops processes an Azure DevOps webhook, extracting event details such as branch, module name, and repository info.
 // It handles the PushEvent type and marks the data as completed and successful upon successful parsing.
+// When an Azure DevOps secret is configured, the HTTP Basic auth header is verified first.
 func (d *Data) parseAzureDevops(c *gin.Context) error {
+	if secret := providerSecret("azuredevops"); secret != "" {
+		if err := verifyAzureDevopsAuth(c.Request, secret); err != nil {
+			return err
+		}
+	}
+
 	payload, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		return err

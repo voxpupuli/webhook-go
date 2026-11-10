@@ -97,6 +97,13 @@ r10k:
   default_branch: master
   allow_uppercase: false
   verbose: true
+secrets:
+  github: ""
+  gitlab: ""
+  bitbucket: ""
+  bitbucket_server: ""
+  gitea: ""
+  azure_devops: ""
 mappings:
   long-repo-name: lrp
 ```
@@ -339,6 +346,33 @@ Type: `map`
 Description: A map of long repository names to short names. This is useful for repositories that have long names that are not suitable for use in the URL. This is useful for multi tenant environments where you also want to use a shorter prefix for the environment. Used when `r10k.prefix` is set to `mapping`.
 Default: `{}`
 
+### `secrets`
+
+Type: `struct`
+Description: Per-provider secrets used to verify the authenticity of incoming webhook payloads. By default no verification happens: anyone who can reach the port can trigger deployments with a forged payload. Once a secret is set for a provider, every request from that provider must carry the matching signature or token, and requests that fail verification are rejected with `401 Unauthorized` before any deployment runs. Verification is per provider: setting a secret for one provider leaves unsigned webhooks from the others accepted as before.
+Default: all empty (verification disabled for every provider — the historical behavior)
+
+Each key matches one provider and the verification method its webhooks use:
+
+| Key | Provider | Verified via |
+|---|---|---|
+| `github` | GitHub | `X-Hub-Signature-256` header — hex-encoded HMAC-SHA256 of the raw request body, prefixed with `sha256=`. The legacy `X-Hub-Signature` (SHA-1) header is also accepted when the 256 variant is absent. |
+| `gitlab` | GitLab | `X-Gitlab-Token` header, compared in constant time. |
+| `bitbucket` | Bitbucket Cloud | `X-Hub-Signature` header — `sha256=`-prefixed, hex-encoded HMAC-SHA256 of the raw request body. |
+| `bitbucket_server` | Bitbucket Server | `X-Hub-Signature` header — `sha256=`-prefixed, hex-encoded HMAC-SHA256 of the raw request body. |
+| `gitea` | Gitea | `X-Gitea-Signature` header — hex-encoded HMAC-SHA256 of the raw request body (no prefix). |
+| `azure_devops` | Azure DevOps | HTTP Basic authentication (`Authorization` header); the password component carries the secret, the username is arbitrary. |
+
+Configure the secret to the same value you entered when creating the webhook in your provider:
+
+```yaml
+secrets:
+  github: "a-LongRandomString"
+  gitlab: "another-LongRandomString"
+```
+
+Setting a secret for every provider you use is strongly recommended in production: without one, a forged webhook from anyone who can reach the server triggers r10k/g10k deployments.
+
 ## Usage
 
 Start the server with:
@@ -422,6 +456,8 @@ The server detects the provider from the event headers each request carries and 
 | Gitea | `X-Gitea-Event` | `push`, `delete` |
 
 Requests from other providers, or with unsupported event types, fail with `500` and an explanatory message.
+
+Webhook payloads are not verified by default. When a secret is configured for a provider in the [`secrets`](#secrets) block, requests from that provider must carry the matching signature or token and are rejected with `401 Unauthorized` otherwise.
 
 ## Development
 

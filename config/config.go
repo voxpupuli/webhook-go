@@ -55,6 +55,18 @@ type Config struct {
 	// e.g.: my-puppet-repo: puppet_repo
 	// The key is the repository name, and the value is the prefix to use
 	RepoMapping map[string]string `mapstructure:"mappings"`
+	// Per-provider secrets used to verify the authenticity of incoming
+	// webhook payloads. An empty value (the default) disables verification
+	// for that provider, preserving the behavior of accepting unsigned
+	// webhooks.
+	Secrets struct {
+		Github          string `mapstructure:"github"`
+		Gitlab          string `mapstructure:"gitlab"`
+		Bitbucket       string `mapstructure:"bitbucket"`
+		BitbucketServer string `mapstructure:"bitbucket_server"`
+		Gitea           string `mapstructure:"gitea"`
+		AzureDevOps     string `mapstructure:"azure_devops"`
+	} `mapstructure:"secrets"`
 }
 
 // Init reads in the configuration file and populates the Config struct
@@ -108,6 +120,12 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("r10k.blocked_branches", []string{})
 	v.SetDefault("r10k.ignore_branch_prefixes", []string{})
 	v.SetDefault("mappings", map[string]string{})
+	v.SetDefault("secrets.github", "")
+	v.SetDefault("secrets.gitlab", "")
+	v.SetDefault("secrets.bitbucket", "")
+	v.SetDefault("secrets.bitbucket_server", "")
+	v.SetDefault("secrets.gitea", "")
+	v.SetDefault("secrets.azure_devops", "")
 
 	return v
 }
