@@ -17,9 +17,9 @@ import (
 )
 
 // providerSecret returns the webhook verification secret configured for the
-// given provider (as identified by ParseHeaders). An empty secret disables
-// verification for that provider, preserving the default behavior of
-// accepting unsigned webhooks.
+// given provider (as identified by ParseHeaders). An empty secret means the
+// provider itself has no verification configured; see verificationSecret
+// for how that is enforced.
 func providerSecret(provider string) string {
 	conf := config.GetConfig()
 
@@ -39,6 +39,37 @@ func providerSecret(provider string) string {
 	default:
 		return ""
 	}
+}
+
+// anySecretConfigured reports whether a verification secret is configured
+// for any provider. Configuring any secret arms verification for the whole
+// endpoint.
+func anySecretConfigured() bool {
+	conf := config.GetConfig()
+
+	return conf.Secrets.Github != "" ||
+		conf.Secrets.Gitlab != "" ||
+		conf.Secrets.Bitbucket != "" ||
+		conf.Secrets.BitbucketServer != "" ||
+		conf.Secrets.Gitea != "" ||
+		conf.Secrets.AzureDevOps != ""
+}
+
+// verificationSecret returns the secret to verify a request from the given
+// provider (as identified by ParseHeaders). With no secret configured for
+// any provider it returns an empty secret and no error, preserving the
+// default behavior of accepting unsigned webhooks. Once any provider has a
+// secret, requests claiming a provider without one are rejected with
+// ErrWebhookVerificationRequired: the provider is detected from headers the
+// sender controls, so accepting them unsigned would let an attacker bypass
+// verification by spoofing another provider's headers.
+func verificationSecret(provider string) (string, error) {
+	secret := providerSecret(provider)
+	if secret == "" && anySecretConfigured() {
+		return "", customerrors.ErrWebhookVerificationRequired
+	}
+
+	return secret, nil
 }
 
 // verifyGithubSignature validates the HMAC signature GitHub delivers in the
@@ -137,13 +168,18 @@ func verifyAzureDevopsAuth(r *http.Request, secret string) error {
 // and the request body is restored from it, so the webhook parsing libraries
 // that read the body themselves can still consume it.
 func readBodyAndVerify(c *gin.Context, provider string, verify func(header http.Header, payload []byte, secret string) error) ([]byte, error) {
+	secret, err := verificationSecret(provider)
+	if err != nil {
+		return nil, err
+	}
+
 	payload, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		return nil, err
 	}
 	defer c.Request.Body.Close()
 
-	if secret := providerSecret(provider); secret != "" {
+	if secret != "" {
 		if err := verify(c.Request.Header, payload, secret); err != nil {
 			return nil, err
 		}

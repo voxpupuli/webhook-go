@@ -45,7 +45,8 @@ secrets:
 
 // TestWebhookVerificationRoute verifies through the full router that a
 // configured GitHub secret rejects unsigned webhooks with 401 while
-// correctly signed ones are still processed.
+// correctly signed ones are still processed, and that webhooks claiming
+// an unconfigured provider cannot bypass verification.
 func TestWebhookVerificationRoute(t *testing.T) {
 	initVerificationConfig(t)
 
@@ -89,6 +90,29 @@ func TestWebhookVerificationRoute(t *testing.T) {
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+
+	t.Run("spoofed webhook from a provider without a secret rejected with 401", func(t *testing.T) {
+		// Only a GitHub secret is configured. The provider is detected
+		// from caller-controlled headers, so an unsigned request merely
+		// claiming to come from Gitea must not slip past verification.
+		giteaPayload, err := os.ReadFile("../lib/parsers/json/gitea/push.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/r10k/environment", bytes.NewReader(giteaPayload))
+		req.Header.Add("X-Gitea-Event", "push")
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+
+		var body map[string]interface{}
+		if err := json.Unmarshal(w.Body.Bytes(), &body); err != nil {
+			t.Fatalf("failed to unmarshal response body: %v", err)
+		}
+		assert.Equal(t, "Webhook verification required: no secret configured for this provider", body["message"])
 	})
 
 	t.Run("signed webhook accepted", func(t *testing.T) {

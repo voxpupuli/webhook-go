@@ -26,3 +26,10 @@ func NewAppError(statusCode int, errorText string) AppError {
 // configuration block); with no secret configured, unsigned webhooks are
 // accepted as before.
 var ErrWebhookVerificationFailed = NewAppError(http.StatusUnauthorized, "Webhook verification failed")
+
+// ErrWebhookVerificationRequired is returned when a verification secret is
+// configured for at least one provider but the request's provider has none,
+// so the request cannot be verified. Rejecting these requests prevents
+// bypassing verification by spoofing another provider's headers, since the
+// provider is detected from headers the sender controls.
+var ErrWebhookVerificationRequired = NewAppError(http.StatusUnauthorized, "Webhook verification required: no secret configured for this provider")

@@ -10,7 +10,7 @@ import (
 
 // parseGithub processes a GitHub webhook, extracting branch, repository, and user information.
 // Handles both "push" and "workflow_run" events to set relevant fields based on the payload.
-// When a GitHub secret is configured, the payload signature is verified first.
+// When verification is armed, the payload signature is verified first.
 func (d *Data) parseGithub(c *gin.Context) error {
 	payload, err := readBodyAndVerify(c, "github", verifyGithubSignature)
 	if err != nil {

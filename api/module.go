@@ -38,9 +38,10 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 	// Parse the data from the request and error if parsing fails
 	err := data.ParseData(c)
 	if err != nil {
-		// A typed error carries its own status code; this is only
-		// produced by webhook verification failures, which are only
-		// reachable when a secret is configured for the provider.
+		// A typed error carries its own status code; these are only
+		// produced by webhook verification: the request failed
+		// verification, or verification is armed but no secret is
+		// configured for the request's provider.
 		var appErr customerrors.AppError
 		if errors.As(err, &appErr) {
 			c.JSON(

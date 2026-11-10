@@ -16,7 +16,7 @@ func giteaWebhookType(r *http.Request) string {
 
 // parseGitea processes a Gitea webhook, extracting branch, repository, and user information.
 // Handles "push" and "delete" events to set relevant fields based on the payload.
-// When a Gitea secret is configured, the payload signature is verified first.
+// When verification is armed, the payload signature is verified first.
 func (d *Data) parseGitea(c *gin.Context) error {
 	payload, err := readBodyAndVerify(c, "gitea", verifyGiteaSignature)
 	if err != nil {

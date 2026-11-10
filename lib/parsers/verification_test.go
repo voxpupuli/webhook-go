@@ -68,10 +68,13 @@ type verificationProvider struct {
 }
 
 // Test_ParseData_Verification exercises, for every provider, that:
-//   - unsigned requests are still accepted when no secret is configured,
-//     including when secrets are configured for other providers only
-//     (backward compatibility)
-//   - valid signatures or tokens are accepted once a secret is configured
+//   - unsigned requests are still accepted when no secret is configured
+//     for any provider (backward compatibility)
+//   - unsigned requests are rejected once any provider has a secret,
+//     including when the request claims a provider without one, so
+//     spoofed headers cannot bypass verification
+//   - valid signatures or tokens are accepted once a secret is configured,
+//     including when every provider has a secret
 //   - invalid signatures, tampered payloads and missing authentication
 //     headers are rejected with the auth error once a secret is configured
 func Test_ParseData_Verification(t *testing.T) {
@@ -366,18 +369,34 @@ func testProviderVerification(t *testing.T, p verificationProvider) {
 		require.Equal(t, p.expected, d)
 	})
 
-	t.Run("parsed unsigned when only other providers have secrets", func(t *testing.T) {
+	t.Run("rejected unsigned when only other providers have secrets", func(t *testing.T) {
+		// Any configured secret arms verification for the whole
+		// endpoint: a request claiming a provider without a secret is
+		// rejected instead of accepted unsigned, so an attacker cannot
+		// bypass verification by spoofing another provider's headers.
 		loadSecretsConfig(t, othersSecrets)
 
 		d := Data{}
 		c := getGinContextFromBody(payload, p.headers)
 
-		require.NoError(t, d.ParseData(c))
-		require.Equal(t, p.expected, d)
+		require.ErrorIs(t, d.ParseData(c), customerrors.ErrWebhookVerificationRequired)
 	})
 
 	t.Run("parsed with a valid signature or token", func(t *testing.T) {
 		loadSecretsConfig(t, ownSecrets)
+
+		d := Data{}
+		c := getGinContextFromBody(payload, appendHeaders(p.headers, p.authHeaders(payload)))
+
+		require.NoError(t, d.ParseData(c))
+		require.Equal(t, p.expected, d)
+	})
+
+	t.Run("parsed with a valid signature or token when all providers have secrets", func(t *testing.T) {
+		// Arming verification must not over-block: a correctly
+		// authenticated request still parses when every provider has
+		// a secret.
+		loadSecretsConfig(t, verificationTestSecrets)
 
 		d := Data{}
 		c := getGinContextFromBody(payload, appendHeaders(p.headers, p.authHeaders(payload)))

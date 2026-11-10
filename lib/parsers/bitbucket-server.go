@@ -12,10 +12,13 @@ import (
 
 // parseBitbucketServer processes a Bitbucket Server webhook, extracting details such as branch, repository, and project info.
 // Handles RepositoryReferenceChangedEvent to set branch-related fields.
-// When a Bitbucket Server secret is configured, the payload signature is
-// verified by the webhook library.
+// When verification is armed, the payload signature is verified by the
+// webhook library.
 func (d *Data) parseBitbucketServer(c *gin.Context) error {
-	secret := providerSecret("bitbucket-server")
+	secret, err := verificationSecret("bitbucket-server")
+	if err != nil {
+		return err
+	}
 
 	var opts []bitbucketserver.Option
 	if secret != "" {
