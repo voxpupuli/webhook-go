@@ -25,6 +25,8 @@ func initVerificationConfig(t *testing.T) {
 	t.Helper()
 
 	configYAML := `---
+r10k:
+  command_path: /nonexistent/test/webhook-go-r10k
 server:
   queue:
     enabled: true
