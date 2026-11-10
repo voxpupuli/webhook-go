@@ -349,7 +349,7 @@ Default: `{}`
 ### `secrets`
 
 Type: `struct`
-Description: Per-provider secrets used to verify the authenticity of incoming webhook payloads. By default no verification happens: anyone who can reach the port can trigger deployments with a forged payload. Once a secret is set for a provider, every request from that provider must carry the matching signature or token, and requests that fail verification are rejected with `401 Unauthorized` before any deployment runs. Verification is per provider: setting a secret for one provider leaves unsigned webhooks from the others accepted as before.
+Description: Per-provider secrets used to verify the authenticity of incoming webhook payloads. By default no verification happens: anyone who can reach the port can trigger deployments with a forged payload. Once a secret is set for a provider, every request from that provider must carry the matching signature or token, and requests that fail verification are rejected with `401 Unauthorized` before any deployment runs. Setting any secret also arms verification for the whole endpoint: the webhook provider is detected from request headers, which the sender controls, so requests claiming a provider without a configured secret are rejected with `401 Unauthorized` as well — an attacker cannot bypass verification by merely spoofing another provider's headers.
 Default: all empty (verification disabled for every provider — the historical behavior)
 
 Each key matches one provider and the verification method its webhooks use:
@@ -361,7 +361,7 @@ Each key matches one provider and the verification method its webhooks use:
 | `bitbucket` | Bitbucket Cloud | `X-Hub-Signature` header — `sha256=`-prefixed, hex-encoded HMAC-SHA256 of the raw request body. |
 | `bitbucket_server` | Bitbucket Server | `X-Hub-Signature` header — `sha256=`-prefixed, hex-encoded HMAC-SHA256 of the raw request body. |
 | `gitea` | Gitea | `X-Gitea-Signature` header — hex-encoded HMAC-SHA256 of the raw request body (no prefix). |
-| `azure_devops` | Azure DevOps | HTTP Basic authentication (`Authorization` header); the password component carries the secret, the username is arbitrary. |
+| `azure_devops` | Azure DevOps | HTTP Basic authentication (`Authorization` header); the password component carries the secret, the username is arbitrary unless `server.protected` is enabled (see the Azure DevOps note below). |
 
 Configure the secret to the same value you entered when creating the webhook in your provider:
 
@@ -371,7 +371,7 @@ secrets:
   gitlab: "another-LongRandomString"
 ```
 
-Setting a secret for every provider you use is strongly recommended in production: without one, a forged webhook from anyone who can reach the server triggers r10k/g10k deployments.
+Because setting any secret arms verification for the whole endpoint, you only need secrets for the providers you actually use — webhooks claiming an unconfigured provider are rejected automatically. Setting a secret for every provider you use is strongly recommended in production: without one, a forged webhook from anyone who can reach the server triggers r10k/g10k deployments. Alternatively, protect the endpoint with an access control that authenticates every request regardless of provider, such as enabling [`server.protected`](#protected) or placing an authenticating reverse proxy or firewall in front of webhook-go.
 
 ### Creating the webhook in your provider
 
@@ -382,7 +382,7 @@ When you create the webhook, enter the same secret you configured in the `secret
 - **Bitbucket Cloud**: Repository *Repository settings* → *Webhooks* → *Add webhook*. Set the *Secret* field. Bitbucket signs the payload with HMAC-SHA256 and sends the signature in `X-Hub-Signature`.
 - **Bitbucket Server / Data Center**: Repository *Repository settings* → *Webhooks*. Set the *Secret* field when creating the webhook. Sends the HMAC-SHA256 signature in `X-Hub-Signature`.
 - **Gitea**: Repository *Settings* → *Webhooks* → *Add webhook*. Set the *Secret* field. Gitea signs the payload with HMAC-SHA256 and sends the signature in `X-Gitea-Signature`.
-- **Azure DevOps**: Project *Project settings* → *Service hooks* → *Create subscription* → *Web Hooks*. Set *Basic authentication username* and *Basic authentication password*; the password is the secret and the username is ignored by webhook-go. Note that when `server.protected` is enabled, the router-level Basic authentication runs first, so the username must be your `server.user` and the password must match your `server.password`.
+- **Azure DevOps**: Project *Project settings* → *Service hooks* → *Create subscription* → *Web Hooks*. Set *Basic authentication username* and *Basic authentication password*; the password is the secret and the username is ignored by webhook-go. Note that when `server.protected` is enabled, the router-level Basic authentication runs first and consumes the same `Authorization` header, so the webhook username must be your `server.user` and the webhook password must match both `server.password` and `secrets.azure_devops` — set all three to the same value.
 
 ## Usage
 
@@ -468,7 +468,7 @@ The server detects the provider from the event headers each request carries and 
 
 Requests from other providers, or with unsupported event types, fail with `500` and an explanatory message.
 
-Webhook payloads are not verified by default. When a secret is configured for a provider in the [`secrets`](#secrets) block, requests from that provider must carry the matching signature or token and are rejected with `401 Unauthorized` otherwise.
+Webhook payloads are not verified by default. When a secret is configured for a provider in the [`secrets`](#secrets) block, requests from that provider must carry the matching signature or token and are rejected with `401 Unauthorized` otherwise; once any secret is set, requests claiming a provider without a configured secret are rejected too.
 
 ## Development
 
