@@ -373,6 +373,17 @@ secrets:
 
 Setting a secret for every provider you use is strongly recommended in production: without one, a forged webhook from anyone who can reach the server triggers r10k/g10k deployments.
 
+### Creating the webhook in your provider
+
+When you create the webhook, enter the same secret you configured in the `secrets` block and point the webhook URL at `https://<your-server>/api/v1/r10k/environment` (or `/api/v1/r10k/module` for module deployments). Menu names vary slightly between product versions; the locations below are where each provider keeps the relevant setting.
+
+- **GitHub**: Repository *Settings* → *Webhooks* → *Add webhook*. Set the *Secret* field. GitHub signs the payload with HMAC-SHA256 and sends the signature in `X-Hub-Signature-256`.
+- **GitLab**: Project *Settings* → *Webhooks* (group-level webhooks work the same way). Set the *Secret token* field. GitLab sends the token back in `X-Gitlab-Token`.
+- **Bitbucket Cloud**: Repository *Repository settings* → *Webhooks* → *Add webhook*. Set the *Secret* field. Bitbucket signs the payload with HMAC-SHA256 and sends the signature in `X-Hub-Signature`.
+- **Bitbucket Server / Data Center**: Repository *Repository settings* → *Webhooks*. Set the *Secret* field when creating the webhook. Sends the HMAC-SHA256 signature in `X-Hub-Signature`.
+- **Gitea**: Repository *Settings* → *Webhooks* → *Add webhook*. Set the *Secret* field. Gitea signs the payload with HMAC-SHA256 and sends the signature in `X-Gitea-Signature`.
+- **Azure DevOps**: Project *Project settings* → *Service hooks* → *Create subscription* → *Web Hooks*. Set *Basic authentication username* and *Basic authentication password*; the password is the secret and the username is ignored by webhook-go. Note that when `server.protected` is enabled, the router-level Basic authentication runs first, so the username must be your `server.user` and the password must match your `server.password`.
+
 ## Usage
 
 Start the server with:
