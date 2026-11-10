@@ -9,7 +9,12 @@ import (
 
 // parseBitbucket processes a Bitbucket webhook, extracting branch, repository, and user information.
 // Handles RepoPushEvent to set relevant fields based on the payload.
+// When a Bitbucket secret is configured, the payload signature is verified first.
 func (d *Data) parseBitbucket(c *gin.Context) error {
+	if _, err := readBodyAndVerify(c, "bitbucket-cloud", verifyBitbucketSignature); err != nil {
+		return err
+	}
+
 	bh, err := bitbucket.New()
 	if err != nil {
 		return err

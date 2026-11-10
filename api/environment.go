@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"slices"
 	"strings"
@@ -8,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/voxpupuli/webhook-go/config"
+	customerrors "github.com/voxpupuli/webhook-go/lib"
 	"github.com/voxpupuli/webhook-go/lib/helpers"
 	"github.com/voxpupuli/webhook-go/lib/parsers"
 	"github.com/voxpupuli/webhook-go/lib/queue"
@@ -33,6 +35,20 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	// Parse the data from the request and error if the parsing fails
 	err := data.ParseData(c)
 	if err != nil {
+		// A typed error carries its own status code; this is only
+		// produced by webhook verification failures, which are only
+		// reachable when a secret is configured for the provider.
+		var appErr customerrors.AppError
+		if errors.As(err, &appErr) {
+			c.JSON(
+				appErr.StatusCode,
+				gin.H{"message": appErr.ErrorText, "error": err},
+			)
+			log.Warnf("rejected webhook: %s", appErr.ErrorText)
+			c.Abort()
+			return
+		}
+
 		c.JSON(
 			http.StatusInternalServerError,
 			gin.H{"message": "Error Parsing Webhook", "error": err},
