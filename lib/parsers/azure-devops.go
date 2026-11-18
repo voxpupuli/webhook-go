@@ -43,6 +43,9 @@ func (d *Data) parseAzureDevops(c *gin.Context) error {
 		}
 		d.Branch = d.parseBranch(parsed)
 		d.Deleted = d.azureDevopsDeleted(parsed)
+		if len(parsed.RefUpdates) > 0 && parsed.RefUpdates[0].NewObjectID != nil {
+			d.Commit = commitSHA(*parsed.RefUpdates[0].NewObjectID)
+		}
 		d.ModuleName = *parsed.Repository.Name
 		d.RepoName = *parsed.Repository.Name
 		d.RepoUser = *parsed.Repository.ID
@@ -70,7 +73,7 @@ func (d *Data) parseRawResource(e *azuredevops.Event) (payload *azuredevops.GitP
 
 // azureDevopsDeleted checks if the push event represents a branch deletion in Azure DevOps.
 func (d *Data) azureDevopsDeleted(e *azuredevops.GitPush) bool {
-	return *e.RefUpdates[0].NewObjectID == "0000000000000000000000000000000000000000"
+	return *e.RefUpdates[0].NewObjectID == deletedCommitSHA
 }
 
 // parseBranch extracts the branch name from the push event, removing the ref prefix.

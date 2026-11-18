@@ -17,7 +17,7 @@ func (h *Helper) GetG10kCommand() string {
 	return commandPath
 }
 
-func (h *Helper) GetG10kDeployEnvironmentCommand(env string, branch string) []string {
+func (h *Helper) GetG10kDeployEnvironmentCommand(env string, branch string, commit string) []string {
 	conf := config.GetConfig().R10k
 
 	cmd := []string{h.GetG10kCommand()}
@@ -28,6 +28,10 @@ func (h *Helper) GetG10kDeployEnvironmentCommand(env string, branch string) []st
 		cmd = append(cmd, fmt.Sprintf("-branch=%s", env))
 	} else {
 		cmd = append(cmd, fmt.Sprintf("-environment=%s", env))
+	}
+	// Pin the control-repo checkout to the webhook commit when available
+	if commit != "" {
+		cmd = append(cmd, fmt.Sprintf("-commit=%s", commit))
 	}
 	// Set additional optional g10k options if they are set
 	if conf.Verbose {

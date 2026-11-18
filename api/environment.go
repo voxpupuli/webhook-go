@@ -150,7 +150,7 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 
 	cmd := []string{}
 	if conf.R10k.UseG10kCommands {
-		cmd = h.GetG10kDeployEnvironmentCommand(env, branch)
+		cmd = h.GetG10kDeployEnvironmentCommand(env, branch, data.Commit)
 	} else {
 		cmd = h.GetR10kDeployEnvironmentCommand(env, noMods)
 	}

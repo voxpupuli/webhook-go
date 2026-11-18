@@ -1,0 +1,3 @@
+r10k:
+  command_path: g10k
+  use_g10k_commands: true

@@ -35,6 +35,7 @@ func (d *Data) parseGitlab(c *gin.Context) error {
 	switch e := event.(type) {
 	case *gitlab.PushEvent:
 		d.Branch = strings.TrimPrefix(e.Ref, prefix)
+		d.Commit = commitSHA(e.After)
 		d.Deleted = d.gitlabDeleted(e.After)
 		d.ModuleName = e.Project.Name
 		d.RepoName = e.Project.PathWithNamespace
@@ -43,6 +44,7 @@ func (d *Data) parseGitlab(c *gin.Context) error {
 		d.Succeed = true
 	case *gitlab.PipelineEvent:
 		d.Branch = e.ObjectAttributes.Ref
+		d.Commit = commitSHA(e.ObjectAttributes.SHA)
 		d.Deleted = d.gitlabDeleted(e.ObjectAttributes.SHA)
 		d.ModuleName = e.Project.Name
 		d.RepoName = e.Project.PathWithNamespace
@@ -57,5 +59,5 @@ func (d *Data) parseGitlab(c *gin.Context) error {
 }
 
 func (d *Data) gitlabDeleted(after string) bool {
-	return after == "0000000000000000000000000000000000000000"
+	return after == deletedCommitSHA
 }

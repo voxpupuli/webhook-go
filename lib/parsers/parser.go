@@ -10,8 +10,12 @@ import (
 
 const prefix = "refs/heads/"
 
+// deletedCommitSHA is the all-zero object id VCS providers send for deleted refs.
+const deletedCommitSHA = "0000000000000000000000000000000000000000"
+
 type Data struct {
 	Branch     string
+	Commit     string
 	Deleted    bool
 	ModuleName string
 	RepoName   string
@@ -19,6 +23,14 @@ type Data struct {
 	Completed  bool
 	Succeed    bool
 	Provider   string
+}
+
+// commitSHA returns sha unless it is empty or the all-zero deleted-ref marker.
+func commitSHA(sha string) string {
+	if sha == "" || sha == deletedCommitSHA {
+		return ""
+	}
+	return sha
 }
 
 // ParseData will takes in a *gin.Context c and parses webhook data into a Data struct.

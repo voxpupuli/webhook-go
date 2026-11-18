@@ -32,6 +32,10 @@ func (d *Data) parseGitea(c *gin.Context) error {
 			return api.ErrInvalidReceiveHook
 		}
 		d.Branch = e.Branch()
+		d.Commit = commitSHA(e.After)
+		if d.Commit == "" && e.HeadCommit != nil {
+			d.Commit = commitSHA(e.HeadCommit.ID)
+		}
 		d.Deleted = false // Deletion in Gitea is a different event
 		d.ModuleName = e.Repo.Name
 		d.RepoName = e.Repo.FullName

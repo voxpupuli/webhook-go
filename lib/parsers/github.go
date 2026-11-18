@@ -25,6 +25,7 @@ func (d *Data) parseGithub(c *gin.Context) error {
 	switch e := event.(type) {
 	case *github.PushEvent:
 		d.Branch = strings.TrimPrefix(*e.Ref, prefix)
+		d.Commit = commitSHA(e.GetAfter())
 		d.Deleted = *e.Deleted
 		d.ModuleName = *e.Repo.Name
 		d.RepoName = *e.Repo.FullName
@@ -33,6 +34,7 @@ func (d *Data) parseGithub(c *gin.Context) error {
 		d.Succeed = true
 	case *github.WorkflowRunEvent:
 		d.Branch = *e.WorkflowRun.HeadBranch
+		d.Commit = commitSHA(e.WorkflowRun.GetHeadSHA())
 		d.Deleted = d.githubDeleted(*e.WorkflowRun.HeadSHA)
 		d.ModuleName = *e.Repo.Name
 		d.RepoName = *e.Repo.FullName
@@ -55,5 +57,5 @@ func (d Data) isSucceed(conclusion *string) bool {
 
 // githubDeleted checks if the specified SHA represents a deleted commit.
 func (d *Data) githubDeleted(after string) bool {
-	return after == "0000000000000000000000000000000000000000"
+	return after == deletedCommitSHA
 }

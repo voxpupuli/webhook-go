@@ -34,6 +34,7 @@ func (d *Data) parseBitbucket(c *gin.Context) error {
 			d.Branch = p.Push.Changes[0].Old.Name
 		} else {
 			d.Branch = p.Push.Changes[0].New.Name
+			d.Commit = commitSHA(p.Push.Changes[0].New.Target.Hash)
 		}
 
 		d.ModuleName = p.Repository.Name
