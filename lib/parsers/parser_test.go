@@ -38,6 +38,7 @@ func Test_ParseData(t *testing.T) {
 
 			d_base := Data{
 				Branch:     "master",
+				Commit:     "33b55f7cb7e7e245323987634f960cf4a6e6bc74",
 				Deleted:    false,
 				ModuleName: "Fabrikam-Fiber-Git",
 				RepoName:   "Fabrikam-Fiber-Git",
@@ -93,6 +94,7 @@ func Test_ParseData(t *testing.T) {
 
 			d_base := Data{
 				Branch:     "master",
+				Commit:     "178864a7d521b6f5e720b386b2c2b0ef8563e0dc",
 				Deleted:    false,
 				ModuleName: "repository",
 				RepoName:   "project/repository",
@@ -152,6 +154,7 @@ func Test_ParseData(t *testing.T) {
 
 			d_base := Data{
 				Branch:     "master",
+				Commit:     "220f140f86a448eed12d0638df0493206ac10360",
 				Deleted:    false,
 				ModuleName: "hello_app",
 				RepoName:   "dhollinger/hello_app",
@@ -208,6 +211,7 @@ func Test_ParseData(t *testing.T) {
 
 			d_base := Data{
 				Branch:     "master",
+				Commit:     "da1560886d4f094c3e6c9ef40349f7d38b5d27d7",
 				Deleted:    false,
 				ModuleName: "Diaspora",
 				RepoName:   "mike/diaspora",
@@ -240,6 +244,7 @@ func Test_ParseData(t *testing.T) {
 
 			d_base := Data{
 				Branch:     "master",
+				Commit:     "5f13e1c12a0bf5d591587fb0a36c41cd4fe357d8",
 				Deleted:    false,
 				ModuleName: "webhook-test",
 				RepoName:   "meow/webhook-test",
@@ -261,6 +266,7 @@ func Test_ParseData(t *testing.T) {
 
 			d_base = Data{
 				Branch:     "master",
+				Commit:     "12787b2314bc7212e7f6bbfab8a461897ca67920",
 				Deleted:    false,
 				ModuleName: "webhook-test",
 				RepoName:   "meow/webhook-test",
@@ -282,6 +288,7 @@ func Test_ParseData(t *testing.T) {
 
 			d_base = Data{
 				Branch:     "master",
+				Commit:     "5f13e1c12a0bf5d591587fb0a36c41cd4fe357d8",
 				Deleted:    false,
 				ModuleName: "webhook-test",
 				RepoName:   "meow/webhook-test",
@@ -333,6 +340,7 @@ func Test_ParseData(t *testing.T) {
 
 			d_base := Data{
 				Branch:     "simple-tag",
+				Commit:     "",
 				Deleted:    true,
 				ModuleName: "Hello-World",
 				RepoName:   "Codertocat/Hello-World",
@@ -364,6 +372,7 @@ func Test_ParseData(t *testing.T) {
 
 			d_base := Data{
 				Branch:     "master",
+				Commit:     "a045fef242c4d8b3ef364e4cab02d8b2b593edbb",
 				Deleted:    false,
 				ModuleName: "webhook-test",
 				RepoName:   "meow/webhook-test",
@@ -385,6 +394,7 @@ func Test_ParseData(t *testing.T) {
 
 			d_base = Data{
 				Branch:     "master",
+				Commit:     "a045fef242c4d8b3ef364e4cab02d8b2b593edbb",
 				Deleted:    false,
 				ModuleName: "webhook-test",
 				RepoName:   "meow/webhook-test",
@@ -406,6 +416,7 @@ func Test_ParseData(t *testing.T) {
 
 			d_base = Data{
 				Branch:     "master",
+				Commit:     "ac151a8777d7b91422d52f2179257f172efe96ea",
 				Deleted:    false,
 				ModuleName: "webhook-test",
 				RepoName:   "meow/webhook-test",
@@ -458,6 +469,7 @@ func Test_ParseData(t *testing.T) {
 
 			d_base := Data{
 				Branch:     "simple-tag",
+				Commit:     "059bdbf404579f9f421c4bd32d90e5e9bbde2298",
 				Deleted:    false,
 				ModuleName: "Hello-World",
 				RepoName:   "Codertocat/Hello-World",

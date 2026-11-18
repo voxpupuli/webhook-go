@@ -86,6 +86,7 @@ func Test_ParseData_Verification(t *testing.T) {
 		githubHeaders := []Header{{Name: "X-Github-Event", Value: "push"}}
 		expected := Data{
 			Branch:     "simple-tag",
+			Commit:     "",
 			Deleted:    true,
 			ModuleName: "Hello-World",
 			RepoName:   "Codertocat/Hello-World",
@@ -146,6 +147,7 @@ func Test_ParseData_Verification(t *testing.T) {
 			},
 			expected: Data{
 				Branch:     "master",
+				Commit:     "da1560886d4f094c3e6c9ef40349f7d38b5d27d7",
 				Deleted:    false,
 				ModuleName: "Diaspora",
 				RepoName:   "mike/diaspora",
@@ -180,6 +182,7 @@ func Test_ParseData_Verification(t *testing.T) {
 			},
 			expected: Data{
 				Branch:     "master",
+				Commit:     "220f140f86a448eed12d0638df0493206ac10360",
 				Deleted:    false,
 				ModuleName: "hello_app",
 				RepoName:   "dhollinger/hello_app",
@@ -198,6 +201,7 @@ func Test_ParseData_Verification(t *testing.T) {
 		}
 		expected := Data{
 			Branch:     "master",
+			Commit:     "178864a7d521b6f5e720b386b2c2b0ef8563e0dc",
 			Deleted:    false,
 			ModuleName: "repository",
 			RepoName:   "project/repository",
@@ -262,6 +266,7 @@ func Test_ParseData_Verification(t *testing.T) {
 			},
 			expected: Data{
 				Branch:     "simple-tag",
+				Commit:     "059bdbf404579f9f421c4bd32d90e5e9bbde2298",
 				Deleted:    false,
 				ModuleName: "Hello-World",
 				RepoName:   "Codertocat/Hello-World",
@@ -277,6 +282,7 @@ func Test_ParseData_Verification(t *testing.T) {
 		azureHeaders := []Header{{Name: "X-Azure-DevOps", Value: "git.push"}}
 		expected := Data{
 			Branch:     "master",
+			Commit:     "33b55f7cb7e7e245323987634f960cf4a6e6bc74",
 			Deleted:    false,
 			ModuleName: "Fabrikam-Fiber-Git",
 			RepoName:   "Fabrikam-Fiber-Git",

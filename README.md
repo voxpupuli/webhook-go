@@ -337,7 +337,7 @@ r10k:
 #### `use_g10k_commands`
 
 Type: `boolean`
-Description: Use g10k commands instead of r10k (parameters are a little bit different)
+Description: Use g10k commands instead of r10k (parameters are a little bit different). When enabled, the commit SHA from the webhook payload is passed to g10k as `-commit` so the control repository is checked out at that exact revision while the environment name still comes from the branch.
 Default: `false`
 
 ### `mappings`

@@ -50,6 +50,7 @@ func (d *Data) parseBitbucketServer(c *gin.Context) error {
 	case bitbucketserver.RepositoryReferenceChangedPayload:
 		d.Branch = d.bsParseBranch(p)
 		d.Deleted = d.bitbucketServerDeleted(p)
+		d.Commit = commitSHA(p.Changes[0].ToHash)
 		d.ModuleName = p.Repository.Name
 		d.RepoName = p.Repository.Project.Name + "/" + p.Repository.Name
 		d.RepoUser = p.Repository.Project.Name
