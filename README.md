@@ -307,11 +307,42 @@ Type: `string`
 Description: Allow overriding the default path to r10k.
 Default: `/opt/puppetlabs/puppetserver/bin/r10k`
 
+#### `allowed_branches`
+
+Type: `array of strings`
+Description: An allow list of branches that may be deployed. When the list is not
+empty, a branch that matches no entry is answered with `403 Forbidden` and nothing is
+deployed. An empty list allows every branch. `blocked_branches` still wins over
+`allowed_branches`. Entries use the same syntax as `blocked_branches`, see
+[Branch name patterns](#branch-name-patterns).
+Default: `[]`
+
 #### `blocked_branches`
 
 Type: `array of strings`
-Description: A list of branches to not allow deployments to.
+Description: A list of branches to not allow deployments to. A match is answered with
+`403 Forbidden`. Entries use the same syntax as `allowed_branches`, see
+[Branch name patterns](#branch-name-patterns).
 Default: `[]`
+
+##### Branch name patterns
+
+Each entry of `allowed_branches` and `blocked_branches` is an exact branch name, which
+may contain wildcards: `*` matches any sequence of characters (including `/`) and `?`
+matches exactly one character. Nothing else is special, and matching is
+case-sensitive and anchored to the whole name. Git does not allow `*`, `?` or `[` in
+branch names, so a plain branch name is always matched literally.
+
+Example, to deploy only `production` and `release-*` branches, except `release-old`:
+
+```yaml
+r10k:
+  allowed_branches:
+    - production
+    - release-*
+  blocked_branches:
+    - release-old
+```
 
 #### `ignore_branch_prefixes`
 
@@ -321,8 +352,8 @@ is answered with `200 OK` and no r10k run, which is what you want for branches t
 are not environments at all. Set it to the same value as `ignore_branch_prefixes` in
 your `r10k.yaml`: r10k refuses to deploy those branches, so without this the webhook
 runs r10k, r10k fails with `Environment(s) '<name>' cannot be found in any source`, and
-the sender records a failed delivery. Unlike `blocked_branches`, which matches whole
-branch names and answers `403`, this matches by prefix.
+the sender records a failed delivery. Unlike `blocked_branches`, which matches whole branch names (with optional
+wildcards) and answers `403`, this matches by prefix.
 Default: `[]`
 
 Example, for a repository that has Renovate and Dependabot enabled:
@@ -433,7 +464,7 @@ curl -u puppet:puppet -X POST http://localhost:4000/api/v1/r10k/environment \
   -d '{"ref":"refs/heads/production","deleted":false,"repository":{"name":"webhook-go","full_name":"voxpupuli/webhook-go","owner":{"name":"voxpupuli"}}}'
 ```
 
-On success the server responds with `202 Accepted`: the raw r10k output when the queue is disabled, or the queued job when it is enabled. Deleting a ref or pushing a branch matching an `ignore_branch_prefixes` entry is answered with `200 OK` and nothing is deployed; a `blocked_branches` entry is answered with `403 Forbidden`.
+On success the server responds with `202 Accepted`: the raw r10k output when the queue is disabled, or the queued job when it is enabled. Deleting a ref or pushing a branch matching an `ignore_branch_prefixes` entry is answered with `200 OK` and nothing is deployed; a `blocked_branches` entry, or a branch not covered by a non-empty `allowed_branches`, is answered with `403 Forbidden`.
 
 ### POST /api/v1/r10k/module
 

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
-	"slices"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -85,9 +84,14 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 		branch := ""
 		if data.Branch == "" {
 			branch = conf.R10k.DefaultBranch
-		} else if slices.Contains(conf.R10k.BlockedBranches, data.Branch) {
-			c.JSON(http.StatusForbidden, gin.H{"message": "Branch not allowed to be deployed to.", "Branch": branch})
-			log.Errorf("branch not permitted for deployment: %s", branch)
+		} else if h.BranchMatches(data.Branch, conf.R10k.BlockedBranches) {
+			c.JSON(http.StatusForbidden, gin.H{"message": "Branch is blocked, it matches an entry of blocked_branches.", "Branch": data.Branch})
+			log.Errorf("branch is blocked, it matches an entry of blocked_branches: %s", data.Branch)
+			c.Abort()
+			return
+		} else if !h.BranchAllowed(data.Branch, conf.R10k.AllowedBranches) {
+			c.JSON(http.StatusForbidden, gin.H{"message": "Branch is not allowed, it matches no entry of allowed_branches.", "Branch": data.Branch})
+			log.Errorf("branch is not allowed, it matches no entry of allowed_branches: %s", data.Branch)
 			c.Abort()
 			return
 		} else if h.BranchIgnored(data.Branch, conf.R10k.IgnoreBranchPrefixes) {

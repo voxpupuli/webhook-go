@@ -47,6 +47,7 @@ type Config struct {
 		UseLegacyPuppetfileFlag bool     `mapstructure:"use_legacy_puppetfile_flag"`
 		GenerateTypes           bool     `mapstructure:"generate_types"`
 		EnvironmentIncremental  bool     `mapstructure:"env_incremental"`
+		AllowedBranches         []string `mapstructure:"allowed_branches"`
 		BlockedBranches         []string `mapstructure:"blocked_branches"`
 		IgnoreBranchPrefixes    []string `mapstructure:"ignore_branch_prefixes"`
 		UseG10kCommands         bool     `mapstructure:"use_g10k_commands"`
@@ -117,6 +118,7 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("r10k.generate_types", true)
 	v.SetDefault("r10k.env_incremental", false)
 	v.SetDefault("r10k.use_legacy_puppetfile_flag", false)
+	v.SetDefault("r10k.allowed_branches", []string{})
 	v.SetDefault("r10k.blocked_branches", []string{})
 	v.SetDefault("r10k.ignore_branch_prefixes", []string{})
 	v.SetDefault("mappings", map[string]string{})
