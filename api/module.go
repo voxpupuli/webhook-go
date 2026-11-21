@@ -90,6 +90,11 @@ func (m ModuleController) DeployModule(c *gin.Context) {
 			log.Errorf("branch not permitted for deployment: %s", branch)
 			c.Abort()
 			return
+		} else if !h.BranchAllowed(data.Branch, conf.R10k.AllowedBranches) {
+			c.JSON(http.StatusForbidden, gin.H{"message": "Branch not allowed to be deployed to.", "Branch": data.Branch})
+			log.Errorf("branch not in the allowed branches: %s", data.Branch)
+			c.Abort()
+			return
 		} else if h.BranchIgnored(data.Branch, conf.R10k.IgnoreBranchPrefixes) {
 			c.JSON(http.StatusOK, gin.H{"message": "Branch ignored, matches an r10k ignored branch prefix.", "Branch": data.Branch})
 			log.Infof("branch ignored, matches an ignored branch prefix: %s", data.Branch)

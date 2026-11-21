@@ -307,6 +307,26 @@ Type: `string`
 Description: Allow overriding the default path to r10k.
 Default: `/opt/puppetlabs/puppetserver/bin/r10k`
 
+#### `allowed_branches`
+
+Type: `array of strings`
+Description: An allow list of branches that may be deployed. Each entry is an exact
+branch name or a glob pattern (`*`, `?`, `[a-z]`); `*` does not match `/`, so use
+`release/*` for one level below `release/`. When the list is not empty, a branch that
+matches no entry is answered with `403 Forbidden` and nothing is deployed. An empty
+list allows every branch. `blocked_branches` still wins over `allowed_branches`. An
+invalid pattern stops the server at startup.
+Default: `[]`
+
+Example, to deploy only `production` and release branches:
+
+```yaml
+r10k:
+  allowed_branches:
+    - production
+    - release/*
+```
+
 #### `blocked_branches`
 
 Type: `array of strings`
@@ -433,7 +453,7 @@ curl -u puppet:puppet -X POST http://localhost:4000/api/v1/r10k/environment \
   -d '{"ref":"refs/heads/production","deleted":false,"repository":{"name":"webhook-go","full_name":"voxpupuli/webhook-go","owner":{"name":"voxpupuli"}}}'
 ```
 
-On success the server responds with `202 Accepted`: the raw r10k output when the queue is disabled, or the queued job when it is enabled. Deleting a ref or pushing a branch matching an `ignore_branch_prefixes` entry is answered with `200 OK` and nothing is deployed; a `blocked_branches` entry is answered with `403 Forbidden`.
+On success the server responds with `202 Accepted`: the raw r10k output when the queue is disabled, or the queued job when it is enabled. Deleting a ref or pushing a branch matching an `ignore_branch_prefixes` entry is answered with `200 OK` and nothing is deployed; a `blocked_branches` entry, or a branch not covered by a non-empty `allowed_branches`, is answered with `403 Forbidden`.
 
 ### POST /api/v1/r10k/module
 

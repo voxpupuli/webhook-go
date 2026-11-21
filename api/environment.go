@@ -113,6 +113,17 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 		return
 	}
 
+	// If an allow list is configured, only deploy branches that match it.
+	if !h.BranchAllowed(branch, conf.R10k.AllowedBranches) {
+		c.JSON(
+			http.StatusForbidden,
+			gin.H{"message": "Branch not allowed to be deployed to.", "Branch": branch},
+		)
+		log.Errorf("branch not in the allowed branches: %s", branch)
+		c.Abort()
+		return
+	}
+
 	// If the branch matches one of r10k's ignored prefixes there is no environment
 	// to deploy, so skip it and answer with a success status. Reporting an error
 	// here makes the sender record a failed delivery for a branch we deliberately

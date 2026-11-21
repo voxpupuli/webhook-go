@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	pathpkg "path"
 	"path/filepath"
 
 	"github.com/spf13/viper"
@@ -47,6 +48,7 @@ type Config struct {
 		UseLegacyPuppetfileFlag bool     `mapstructure:"use_legacy_puppetfile_flag"`
 		GenerateTypes           bool     `mapstructure:"generate_types"`
 		EnvironmentIncremental  bool     `mapstructure:"env_incremental"`
+		AllowedBranches         []string `mapstructure:"allowed_branches"`
 		BlockedBranches         []string `mapstructure:"blocked_branches"`
 		IgnoreBranchPrefixes    []string `mapstructure:"ignore_branch_prefixes"`
 		UseG10kCommands         bool     `mapstructure:"use_g10k_commands"`
@@ -96,6 +98,14 @@ func Init(path *string) {
 	if err != nil {
 		log.Fatalf("Unable to read config file: %v", err)
 	}
+
+	// A malformed glob never matches, which would silently block every deployment,
+	// so refuse to start instead.
+	for _, pattern := range config.R10k.AllowedBranches {
+		if _, err := pathpkg.Match(pattern, ""); err != nil {
+			log.Fatalf("invalid r10k.allowed_branches entry %q: %v", pattern, err)
+		}
+	}
 }
 
 // Provides defualt values in case of config file doesn't define some fields
@@ -117,6 +127,7 @@ func setDefaults(v *viper.Viper) *viper.Viper {
 	v.SetDefault("r10k.generate_types", true)
 	v.SetDefault("r10k.env_incremental", false)
 	v.SetDefault("r10k.use_legacy_puppetfile_flag", false)
+	v.SetDefault("r10k.allowed_branches", []string{})
 	v.SetDefault("r10k.blocked_branches", []string{})
 	v.SetDefault("r10k.ignore_branch_prefixes", []string{})
 	v.SetDefault("mappings", map[string]string{})
