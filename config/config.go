@@ -2,7 +2,6 @@ package config
 
 import (
 	"log"
-	pathpkg "path"
 	"path/filepath"
 
 	"github.com/spf13/viper"
@@ -97,14 +96,6 @@ func Init(path *string) {
 	err = v.Unmarshal(&config) // converts the configuration into the Config struct
 	if err != nil {
 		log.Fatalf("Unable to read config file: %v", err)
-	}
-
-	// A malformed glob never matches, which would silently block every deployment,
-	// so refuse to start instead.
-	for _, pattern := range config.R10k.AllowedBranches {
-		if _, err := pathpkg.Match(pattern, ""); err != nil {
-			log.Fatalf("invalid r10k.allowed_branches entry %q: %v", pattern, err)
-		}
 	}
 }
 

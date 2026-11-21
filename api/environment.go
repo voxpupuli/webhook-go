@@ -3,7 +3,6 @@ package api
 import (
 	"errors"
 	"net/http"
-	"slices"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -103,12 +102,12 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	}
 
 	// If branch is listed as a blocked branch, then log it and return.
-	if slices.Contains(conf.R10k.BlockedBranches, branch) {
+	if h.BranchMatches(branch, conf.R10k.BlockedBranches) {
 		c.JSON(
 			http.StatusForbidden,
-			gin.H{"message": "Branch not allowed to be deployed to.", "Branch": branch},
+			gin.H{"message": "Branch is blocked, it matches an entry of blocked_branches.", "Branch": branch},
 		)
-		log.Errorf("branch not permitted for deployment: %s", branch)
+		log.Errorf("branch is blocked, it matches an entry of blocked_branches: %s", branch)
 		c.Abort()
 		return
 	}
@@ -117,9 +116,9 @@ func (e EnvironmentController) DeployEnvironment(c *gin.Context) {
 	if !h.BranchAllowed(branch, conf.R10k.AllowedBranches) {
 		c.JSON(
 			http.StatusForbidden,
-			gin.H{"message": "Branch not allowed to be deployed to.", "Branch": branch},
+			gin.H{"message": "Branch is not allowed, it matches no entry of allowed_branches.", "Branch": branch},
 		)
-		log.Errorf("branch not in the allowed branches: %s", branch)
+		log.Errorf("branch is not allowed, it matches no entry of allowed_branches: %s", branch)
 		c.Abort()
 		return
 	}

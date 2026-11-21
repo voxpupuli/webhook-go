@@ -6,34 +6,49 @@ import (
 	"gotest.tools/assert"
 )
 
-func Test_BranchAllowed(t *testing.T) {
+func Test_BranchMatches(t *testing.T) {
 	h := Helper{}
 
-	allowed := []string{"production", "release/*", "feature_??"}
+	patterns := []string{"production", "release-*", "feature_??", "team/*/wip"}
 
 	tests := []struct {
 		name     string
 		branch   string
-		allowed  []string
+		patterns []string
 		expected bool
 	}{
-		{"exact name", "production", allowed, true},
-		{"glob matches one level", "release/1.2", allowed, true},
-		{"glob does not cross a slash", "release/1.2/hotfix", allowed, false},
-		{"single character wildcard", "feature_ab", allowed, true},
-		{"single character wildcard needs exactly two", "feature_abc", allowed, false},
-		{"unlisted branch is refused", "development", allowed, false},
-		{"a name is not a prefix match", "production2", allowed, false},
-		{"empty list allows everything", "development", []string{}, true},
-		{"nil list allows everything", "development", nil, true},
-		{"empty entry does not allow everything", "development", []string{""}, false},
-		{"malformed pattern never matches", "production", []string{"[prod"}, false},
-		{"empty branch is left to the caller", "", allowed, true},
+		{"exact name", "production", patterns, true},
+		{"star matches a suffix", "release-1.2", patterns, true},
+		{"star matches nothing", "release-", patterns, true},
+		{"star also crosses a slash", "team/a/b/wip", patterns, true},
+		{"question mark matches one character", "feature_ab", patterns, true},
+		{"question mark needs exactly one", "feature_abc", patterns, false},
+		{"unlisted branch", "development", patterns, false},
+		{"a name is not a prefix match", "production2", patterns, false},
+		{"pattern is anchored at the start", "old-release-1", patterns, false},
+		{"regexp characters are literal", "release-1.2", []string{"release-1.2"}, true},
+		{"a dot is not a wildcard", "release-1x2", []string{"release-1.2"}, false},
+		{"empty entry matches nothing", "development", []string{""}, false},
+		{"no patterns match nothing", "production", nil, false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.expected, h.BranchAllowed(tt.branch, tt.allowed))
+			assert.Equal(t, tt.expected, h.BranchMatches(tt.branch, tt.patterns))
 		})
 	}
+}
+
+func Test_BranchAllowed(t *testing.T) {
+	h := Helper{}
+
+	allowed := []string{"production", "release-*"}
+
+	assert.Equal(t, true, h.BranchAllowed("production", allowed))
+	assert.Equal(t, true, h.BranchAllowed("release-1.2", allowed))
+	assert.Equal(t, false, h.BranchAllowed("development", allowed))
+	assert.Equal(t, true, h.BranchAllowed("development", []string{}), "empty list allows everything")
+	assert.Equal(t, true, h.BranchAllowed("development", nil), "nil list allows everything")
+	assert.Equal(t, false, h.BranchAllowed("development", []string{""}), "an empty entry does not allow everything")
+	assert.Equal(t, true, h.BranchAllowed("", allowed), "an empty branch is left to the caller")
 }

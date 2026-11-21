@@ -310,28 +310,39 @@ Default: `/opt/puppetlabs/puppetserver/bin/r10k`
 #### `allowed_branches`
 
 Type: `array of strings`
-Description: An allow list of branches that may be deployed. Each entry is an exact
-branch name or a glob pattern (`*`, `?`, `[a-z]`); `*` does not match `/`, so use
-`release/*` for one level below `release/`. When the list is not empty, a branch that
-matches no entry is answered with `403 Forbidden` and nothing is deployed. An empty
-list allows every branch. `blocked_branches` still wins over `allowed_branches`. An
-invalid pattern stops the server at startup.
+Description: An allow list of branches that may be deployed. When the list is not
+empty, a branch that matches no entry is answered with `403 Forbidden` and nothing is
+deployed. An empty list allows every branch. `blocked_branches` still wins over
+`allowed_branches`. Entries use the same syntax as `blocked_branches`, see
+[Branch name patterns](#branch-name-patterns).
 Default: `[]`
 
-Example, to deploy only `production` and release branches:
+#### `blocked_branches`
+
+Type: `array of strings`
+Description: A list of branches to not allow deployments to. A match is answered with
+`403 Forbidden`. Entries use the same syntax as `allowed_branches`, see
+[Branch name patterns](#branch-name-patterns).
+Default: `[]`
+
+##### Branch name patterns
+
+Each entry of `allowed_branches` and `blocked_branches` is an exact branch name, which
+may contain wildcards: `*` matches any sequence of characters (including `/`) and `?`
+matches exactly one character. Nothing else is special, and matching is
+case-sensitive and anchored to the whole name. Git does not allow `*`, `?` or `[` in
+branch names, so a plain branch name is always matched literally.
+
+Example, to deploy only `production` and `release-*` branches, except `release-old`:
 
 ```yaml
 r10k:
   allowed_branches:
     - production
-    - release/*
+    - release-*
+  blocked_branches:
+    - release-old
 ```
-
-#### `blocked_branches`
-
-Type: `array of strings`
-Description: A list of branches to not allow deployments to.
-Default: `[]`
 
 #### `ignore_branch_prefixes`
 
@@ -341,8 +352,8 @@ is answered with `200 OK` and no r10k run, which is what you want for branches t
 are not environments at all. Set it to the same value as `ignore_branch_prefixes` in
 your `r10k.yaml`: r10k refuses to deploy those branches, so without this the webhook
 runs r10k, r10k fails with `Environment(s) '<name>' cannot be found in any source`, and
-the sender records a failed delivery. Unlike `blocked_branches`, which matches whole
-branch names and answers `403`, this matches by prefix.
+the sender records a failed delivery. Unlike `blocked_branches`, which matches whole branch names (with optional
+wildcards) and answers `403`, this matches by prefix.
 Default: `[]`
 
 Example, for a repository that has Renovate and Dependabot enabled:
